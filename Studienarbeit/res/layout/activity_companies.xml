@@ -10,46 +10,19 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".CompaniesActivity" >
 
-    <EditText
-        android:id="@+id/editText1"
+    <AutoCompleteTextView
+        android:id="@+id/searchCompanies"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="text" >
+        android:ems="10" >
 
         <requestFocus />
-    </EditText>
-    
+    </AutoCompleteTextView>
+
     <ListView
-        android:id="@android:id/list"
+        android:id="@+id/listView"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:background="#00FF00"
-        android:drawSelectorOnTop="false" />
-
-    <ImageButton
-        android:id="@+id/imageButton1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/label_doSearch"
-        android:src="@android:drawable/ic_menu_search" />
-
-    <MultiAutoCompleteTextView
-        android:id="@+id/multiAutoCompleteTextView1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:text="" />
-
-    <SearchView
-        android:id="@+id/searchView1"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
-    </SearchView>
-
-    <Spinner
-        android:id="@+id/spinner1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    </ListView>
 
 </LinearLayout>

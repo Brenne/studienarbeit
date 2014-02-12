@@ -1,21 +1,49 @@
 package de.dhbw.studientag;
 
-import android.app.Activity;
+import java.util.ArrayList;
+
+import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
-import android.view.View;
-import android.widget.EditText;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
-public class MainActivity extends Activity {
+public class MainActivity extends ListActivity {
 
-	public final static String EXTRA_MESSAGE = "hier steht schrott";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		final ArrayList<String> list = new ArrayList<String>();
+		list.add(getString(R.string.label_companies));
+		list.add(getString(R.string.label_faculties));
+		final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, list);
+		setListAdapter(adapter);
+		
+
+		
 	}
+	
+	@Override
+	protected void onListItemClick(android.widget.ListView l, android.view.View v, int position, long id) {
+	
+		String selected = (String) getListAdapter().getItem(position);
+		Log.d("Studientagapp", selected);
+		
+		
+		if(selected.equals(getString(R.string.label_companies))){
+			Intent intent = new Intent(this, CompaniesActivity.class);
+			startActivity(intent);
+		}else if(selected.equals(getString(R.string.label_faculties))){
+			
+		}
+		
+	};
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -24,13 +52,6 @@ public class MainActivity extends Activity {
 		return true;
 	}
 	
-	public void search(View view){
-		Intent intent = new Intent(this, CompaniesActivity.class);
-		EditText editText = (EditText) findViewById(R.id.editText1);
-		String message = editText.getText().toString();
-		intent.putExtra(EXTRA_MESSAGE, message);
-		startActivity(intent);
-		
-	}
+
 
 }

@@ -3,6 +3,11 @@ package de.dhbw.studientag;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.ListView;
+import de.dhbw.studientag.model.TestData;
 
 public class CompaniesActivity extends Activity {
 
@@ -10,6 +15,14 @@ public class CompaniesActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_companies);
+		TestData testData = new TestData();
+		View listView = findViewById(R.id.listView);
+		final ListView companiesList = (ListView) listView;
+		final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, 
+				testData.getCompanyNames());
+		companiesList.setAdapter(adapter);
+		AutoCompleteTextView textView = (AutoCompleteTextView) findViewById(R.id.searchCompanies);
+		textView.setAdapter(adapter);
 		
 		
 

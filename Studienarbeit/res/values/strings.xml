@@ -14,5 +14,10 @@
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
+    <string name="label_initDB">Initialisiere DB</string>
+    <string name="title_activity_company">Company</string>
+    <string name="label_companyName">Duale Hochschule Baden-Württemberg</string>
+    <string name="label_companyWWW">http://www.dhbw-stuttgart.de</string>
+    <string name="label_companyCity">Stuttgart</string>
 
 </resources>

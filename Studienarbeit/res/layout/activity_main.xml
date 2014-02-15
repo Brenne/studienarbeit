@@ -10,6 +10,13 @@
     android:textAlignment="center"
     tools:context=".MainActivity" >
 
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="initDB"
+        android:text="@string/label_initDB" />
+
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import de.dhbw.studientag.model.db.InitDB;
 
+import android.app.DialogFragment;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -47,7 +48,8 @@ public class MainActivity extends ListActivity {
 			Intent intent = new Intent(this, CompaniesActivity.class);
 			startActivity(intent);
 		}else if(selected.equals(getString(R.string.label_faculties))){
-			
+		    DialogFragment newFragment = new SelectFacultyDialogFragment();
+		    newFragment.show(getFragmentManager(), "faculties");
 		}
 		
 	}

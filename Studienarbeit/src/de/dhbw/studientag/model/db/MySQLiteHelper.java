@@ -1,5 +1,6 @@
 package de.dhbw.studientag.model.db;
 
+import de.dhbw.studientag.model.TestData;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
@@ -12,11 +13,14 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 //	public SQLiteDatabase database;
 	protected Context context;
 	protected static final String ID = "_id";
+	public static TestData testData = null;
 	
 	
 	public MySQLiteHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 		this.context = context;
+		if(testData == null)
+			MySQLiteHelper.testData = new TestData(context.getAssets());
 		
 	}
 
@@ -24,15 +28,21 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL(CompanyHelper.COMPANY_TABLE_CREATE);
+		db.execSQL(OfferedSubjectsHelper.OFFERED_SUBJECTS_TABLE_CREATE);
+		db.execSQL(SubjectsHelper.SUBJECTS_TABLE_CREATE);
+		SubjectsHelper subject = new SubjectsHelper(context);
+		subject.initSubjects(db);
 		CompanyHelper company = new CompanyHelper(context);
-		company.initCompanies(db, context);
+		company.initCompanies(db);
 		
+
 	}
 
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// TODO Auto-generated method stub
+		db.execSQL("DROP DATABASE IF EXISTS "+ DATABASE_NAME );
+		onCreate(db);
 		
 	}
 

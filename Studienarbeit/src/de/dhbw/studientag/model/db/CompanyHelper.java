@@ -12,8 +12,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
-public class CompanyHelper extends MySQLiteHelper {
+public final class CompanyHelper extends MySQLiteHelper {
 	
 	protected static final String COMPANY_TABLE_NAME ="Company";
 	protected static final String COMPANY_NAME = "name";
@@ -21,8 +22,8 @@ public class CompanyHelper extends MySQLiteHelper {
 	protected static final String COMPANY_CITY = "city";
 	protected static final String COMPANY_STREET ="street";
 	protected static final String COMPANY_PLZ= "plz";
-	protected static final String[] COMPANY_ALL_COLUMNS={
-		COMPANY_NAME, COMPANY_CITY, COMPANY_PLZ, COMPANY_STREET,
+	public static final String[] COMPANY_ALL_COLUMNS={
+		ID, COMPANY_NAME, COMPANY_CITY, COMPANY_PLZ, COMPANY_STREET,
 		COMPANY_WEBSITE
 		
 	};
@@ -37,38 +38,44 @@ public class CompanyHelper extends MySQLiteHelper {
 			COMPANY_PLZ		 + " TEXT "  +
 			")";
 	
-	private Context context;
+
 	private ContentValues values;
 	
 	
 	public CompanyHelper(Context context) {
 		super(context);
-		this.context=context;
+
 
 	}
 
-
 	
-	protected final void initCompanies(SQLiteDatabase db, Context context){
-		TestData testData = new TestData(context.getAssets());
-		for(Company company : testData.getCompanies())
+	protected final void initCompanies(SQLiteDatabase db){
+		ArrayList<Company> companies = testData.getCompanies();
+		for(Company company : companies)
 			initCompany(company,db);
 	}
 	
 	private final void initCompany(Company company, SQLiteDatabase db){
 		ContentValues values= new ContentValues();
-		values.put(CompanyHelper.COMPANY_NAME, company.getName());
-		values.put(CompanyHelper.COMPANY_CITY, company.getCity());
-		values.put(CompanyHelper.COMPANY_PLZ, company.getPlz());
-		values.put(CompanyHelper.COMPANY_STREET, company.getStreet());
-		db.insert(COMPANY_TABLE_NAME, null, values);
-				
+		values.put(COMPANY_NAME, company.getName());
+		values.put(COMPANY_CITY, company.getCity());
+		values.put(COMPANY_PLZ, company.getPlz());
+		values.put(COMPANY_STREET, company.getStreet());
+		values.put(COMPANY_WEBSITE, company.getWebiste());
+		long id = db.insert(COMPANY_TABLE_NAME, null, values);
+		company.setId(id);
+		OfferedSubjectsHelper.initOfferedSubjects(company, db);
 	}
-
-	
-	public Company getCompanyById(SQLiteDatabase database, long id){
+	public Cursor getCursor(SQLiteDatabase database, String[] columns){
 	    Cursor cursor = database.query(COMPANY_TABLE_NAME,
-	    		COMPANY_ALL_COLUMNS, MySQLiteHelper.ID + " = " + id, null,
+	    		columns, null, null,
+	            null, null, null);
+	    return cursor;
+	}
+	
+	public static Company getCompanyById(SQLiteDatabase database, long id){
+	    Cursor cursor = database.query(COMPANY_TABLE_NAME,
+	    		COMPANY_ALL_COLUMNS, ID + " = " + id, null,
 	            null, null, null);
 	    cursor.moveToFirst();
 	    Company company = cursorToCompany(cursor);
@@ -84,6 +91,7 @@ public class CompanyHelper extends MySQLiteHelper {
 	    cursor.moveToFirst();
 	    while (!cursor.isAfterLast()) {
 	      Company company = cursorToCompany(cursor);
+	      company.setSubjectList(OfferedSubjectsHelper.getOfferdSubjectsByCompanyId(company.getId(), database));
 	      companies.add(company);
 	      cursor.moveToNext();
 	    }
@@ -100,11 +108,15 @@ public class CompanyHelper extends MySQLiteHelper {
 		return companyNames;
 	}
 	
-	private Company cursorToCompany(Cursor cursor){
-		Company company = new Company(cursor.getString(cursor.getColumnIndex(COMPANY_NAME)),
+	private static Company cursorToCompany(Cursor cursor){
+//		Log.d("id" ,cursor.getColumnNames().toString());
+		Company company = new Company(
+				cursor.getInt(0),
+				cursor.getString(cursor.getColumnIndex(COMPANY_NAME)),
 				cursor.getString(cursor.getColumnIndex(COMPANY_STREET)),
 				cursor.getString(cursor.getColumnIndex(COMPANY_CITY)),
-				cursor.getString(cursor.getColumnIndex(COMPANY_PLZ)));
+				cursor.getString(cursor.getColumnIndex(COMPANY_PLZ)),
+				cursor.getString(cursor.getColumnIndex(COMPANY_WEBSITE)));
 		return company;
 				
 	}

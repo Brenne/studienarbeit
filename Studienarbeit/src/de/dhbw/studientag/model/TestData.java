@@ -7,14 +7,19 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.util.Log;
 import au.com.bytecode.opencsv.CSVReader;
 
 public class TestData {
 	
-	private ArrayList<Company> companies= new ArrayList<Company>();
+	private static  ArrayList<Company> companies= new ArrayList<Company>();
+	private static  List<String> subjectNamesList = new ArrayList<String>();
+	private static  ArrayList<Subject> subjects = new ArrayList<Subject>();
 	
 	private static final int COMPANY_NAME = 0;
 	private static final int COMPANY_SHORT_NAME = 1;
@@ -25,24 +30,44 @@ public class TestData {
 	private static final int COMPANY_WWW = 12;
 	private static final int COMPANY_OFFERED_SUBJECTS = 14;
 	
+	
 	public  TestData(AssetManager assets){
 		
-		try {
 
+		
+		
+		try {
+			//Read faculty subject mapping
+			CSVReader facultySubjectReader = new CSVReader( new InputStreamReader(assets.open("faculty_subject_mapping.csv")), ';');
+			String[] nextLine;
+			facultySubjectReader.readNext();
+			while ((nextLine = facultySubjectReader.readNext()) != null) {
+				Subject subject = new Subject(nextLine[0], 
+						Faculty.valueOf(
+									nextLine[1].toUpperCase()
+								)
+				);
+				subjects.add(subject);
+			}
+			facultySubjectReader.close();
 			CSVReader reader = new CSVReader( new InputStreamReader(assets.open("beispieldaten.csv")), ';');
-		    String [] nextLine;
+
 		    //skip first line
 		    reader.readNext();
 		    while ((nextLine = reader.readNext()) != null) {
 		        // nextLine[] is an array of values from the line
 //		        System.out.println(nextLine[COMPANY_NAME]+" "+  nextLine[COMPANY_STREET] +" "+
 //		        		nextLine[COMPANY_CITY] + " "+ nextLine[COMPANY_PLZ] +" "+ nextLine[COMPANY_WWW]);
-		        
-		        Company company = new Company(nextLine[COMPANY_NAME], nextLine[COMPANY_STREET], 
+		        ArrayList<Subject> companyOfferedSubjects = getSubjectList(nextLine[COMPANY_OFFERED_SUBJECTS]);
+		
+		        Company company = new Company(0,nextLine[COMPANY_NAME], nextLine[COMPANY_STREET], 
 		        		nextLine[COMPANY_CITY], nextLine[COMPANY_PLZ], nextLine[COMPANY_WWW]);
-		        this.companies.add(company);
+		        company.setSubjectList(companyOfferedSubjects);
+		        TestData.companies.add(company);
+		       
 		    }
 		    reader.close();
+		    
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -50,6 +75,9 @@ public class TestData {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		
+		
 
 	}
 	
@@ -71,16 +99,45 @@ public class TestData {
 //	}
 	
 	public ArrayList<Company> getCompanies(){
-		return this.companies;
+		return TestData.companies;
+	}
+
+	public ArrayList<Subject> getSubjects(){
+		return TestData.subjects;
 	}
 	
 	public ArrayList<String> getCompanyNames(){
 		ArrayList<String> companyNamesList = new ArrayList<String>();
-		for(int i=0; i<this.companies.size(); i++){
-			companyNamesList.add(this.companies.get(i).getName());
+		for(int i=0; i<TestData.companies.size(); i++){
+			companyNamesList.add(TestData.companies.get(i).getName());
 		}
 		return companyNamesList;
 	}
+	
+	private ArrayList<Subject> getSubjectList(String subjects){
+		String[] subjectNames = subjects.split(",");
+		ArrayList<Subject> subjectList = new ArrayList<Subject>();
+		for(String subjectName : subjectNames){
+			/*TODO work with a copy of TestData.subjects
+			 * remove found subjects of list -> improve performance because fewer loops 
+			 */
+			for(Subject subject : TestData.subjects){
+				if(subject.getName().equalsIgnoreCase(subjectName.trim())){
+					subjectList.add(subject);
+					break;
+				}
+					
+			}
+		}
+		if(subjectNames.length != subjectList.size())
+			Log.i("studientag", "Not all subjects of company found in subject list ");
+		
+		return subjectList;
+	}
+	
+	
+	
+
 	
 
 }

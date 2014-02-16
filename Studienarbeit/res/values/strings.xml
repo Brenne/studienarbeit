@@ -19,5 +19,13 @@
     <string name="label_companyName">Duale Hochschule Baden-Württemberg</string>
     <string name="label_companyWWW">http://www.dhbw-stuttgart.de</string>
     <string name="label_companyCity">Stuttgart</string>
+    <string name="id">label_id</string>
+    <string name="label_id">Id</string>
+    <string name="label_select_faculty">Wähle die Faktultät</string>
+    <string-array name="faculty_array">
+        <item>Technik</item>
+        <item>Wirtschaft</item>
+        <item>Sozialwesen</item>
+    </string-array>
 
 </resources>

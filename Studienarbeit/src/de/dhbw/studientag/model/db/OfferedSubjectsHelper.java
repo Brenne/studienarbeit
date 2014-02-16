@@ -1,36 +1,65 @@
 package de.dhbw.studientag.model.db;
 
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
+import java.util.ArrayList;
 
-public class OfferedSubjectsHelper extends SQLiteOpenHelper {
+import de.dhbw.studientag.model.Company;
+import de.dhbw.studientag.model.Faculty;
+import de.dhbw.studientag.model.Subject;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
+public final class OfferedSubjectsHelper extends MySQLiteHelper {
 	
-	private static final int DATABASE_VERSION = 1;
-	private static final String OFFERED_SUBJECTS_TABLE_NAME ="OfferedSubjects";
-	private static final String COMPANY_ID = "companyId";
-	private static final String SUBJECT_ID = "subjectId";
-	private static final String OFFERED_SUBJECTS_TABLE_CREATE=
-			"CREATE TABLE " + OFFERED_SUBJECTS_TABLE_NAME + " (" +
-			COMPANY_ID + " INTEGER," +
+	protected static final String OFFERED_SUBJECTS_TABLE_NAME ="OfferedSubjects";
+	protected static final String COMPANY_ID = "companyId";
+	protected static final String SUBJECT_ID = "subjectId";
+	protected static final String[] OFFERED_SUBJECTS_ALL_COLUMNS ={
+		COMPANY_ID , SUBJECT_ID
+	};
+	
+	protected static final String OFFERED_SUBJECTS_TABLE_CREATE=
+			"CREATE TABLE " + OFFERED_SUBJECTS_TABLE_NAME + " ( " +
+			COMPANY_ID + " INTEGER, " +
 			SUBJECT_ID + " INTEGER"  +
 			")";
 	
 	public OfferedSubjectsHelper(Context context) {
-		super(context, MySQLiteHelper.DATABASE_NAME, null, DATABASE_VERSION);
+		super(context);
 		// TODO Auto-generated constructor stub
 	}
-
-	@Override
-	public void onCreate(SQLiteDatabase db) {
-		db.execSQL(OFFERED_SUBJECTS_TABLE_CREATE);
-
+	
+	protected static final void initOfferedSubjects(Company company, SQLiteDatabase db){
+		
+		ArrayList<Subject> offeredSubjects = company.getSubjectList();
+		for(Subject subject : offeredSubjects){
+			ContentValues values= new ContentValues();
+			values.put(COMPANY_ID, company.getId());
+			Subject subjectbyname = SubjectsHelper.getSubjectByName(db, 
+					subject.getName());
+			values.put(SUBJECT_ID, subjectbyname.getId());
+			db.insert(OFFERED_SUBJECTS_TABLE_NAME, null, values);			
+		}
+	
+				
 	}
-
-	@Override
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// TODO Auto-generated method stub
-
+	
+	protected static ArrayList<Subject> getOfferdSubjectsByCompanyId(long companyId, SQLiteDatabase db){
+		ArrayList<Subject> offeredSubjects = new ArrayList<Subject>();
+	    Cursor cursor = db.query(OFFERED_SUBJECTS_TABLE_NAME,
+	    		new String[] {SUBJECT_ID}, COMPANY_ID + " = " + companyId, null,
+	            null, null, null);
+	    cursor.moveToFirst();
+	    while (!cursor.isAfterLast()) {
+	    	int subjectId = cursor.getInt(cursor.getColumnIndex(SUBJECT_ID));
+	    	Subject subject = SubjectsHelper.getSubjectById(db, subjectId);
+	    	offeredSubjects.add(subject);
+	    	cursor.moveToNext();
+	    }
+		return offeredSubjects;
+		
 	}
+	
 
 }

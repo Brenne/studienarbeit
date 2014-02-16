@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import de.dhbw.studientag.model.Company;
 import de.dhbw.studientag.model.TestData;
 import de.dhbw.studientag.model.db.CompanyHelper;
@@ -25,7 +26,14 @@ public class CompaniesActivity extends ListActivity {
 //		MySQLiteHelper dbHelper = new MySQLiteHelper(getBaseContext());
 		CompanyHelper companyDB = new CompanyHelper(getBaseContext());
 		
-
+//		final SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(
+//				this, 
+//				android.R.layout.simple_list_item_1, 
+//				companyDB.getCursor(companyDB.getReadableDatabase(), CompanyHelper.COMPANY_ALL_COLUMNS), 
+//				new String[]{"name","plz"}, 
+//				new int[]{android.R.id.text1, 
+//					android.R.id.text2},
+//				0);
 		final ArrayAdapter<Company> adapter = new ArrayAdapter<Company>(this, android.R.layout.simple_list_item_1, 
 				companyDB.getAllCompanies(companyDB.getReadableDatabase()));
 		setListAdapter(adapter);
@@ -39,16 +47,12 @@ public class CompaniesActivity extends ListActivity {
 	@Override
 	protected void onListItemClick(android.widget.ListView l, android.view.View v, int position, long id) {
 	
-		String selected = (String) getListAdapter().getItem(position);
-		Log.d("Studientagapp", selected);
+		Company selectedCompany = (Company) getListAdapter().getItem(position);
+		Intent intent = new Intent(this,CompanyActivity.class);
+		intent.putExtra("company", selectedCompany);
+		startActivity(intent);
 		
-		
-		if(selected.equals(getString(R.string.label_companies))){
-			Intent intent = new Intent(this, CompaniesActivity.class);
-			startActivity(intent);
-		}else if(selected.equals(getString(R.string.label_faculties))){
-			
-		}
+
 		
 	}
 

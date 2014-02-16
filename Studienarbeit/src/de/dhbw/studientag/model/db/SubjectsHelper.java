@@ -48,14 +48,14 @@ public final class SubjectsHelper extends MySQLiteHelper {
 	public Cursor getCursor(SQLiteDatabase database, String[] columns){
 	    Cursor cursor = database.query(SUBJECTS_TABLE_NAME,
 	    		columns, null, null,
-	            null, null, null);
+	            null, null, SUBJECT_NAME + " ASC");
 	    return cursor;
 	}
 	
 	public static Subject getSubjectById(SQLiteDatabase database, long id){
 	    Cursor cursor = database.query(SUBJECTS_TABLE_NAME,
 	    		SUBJECT_ALL_COLUMNS, ID + " = " + id, null,
-	            null, null, null);
+	            null, null, SUBJECT_NAME + " ASC");
 	    cursor.moveToFirst();
 	    Subject subject = cursorToSubject(cursor);
 	    cursor.close();
@@ -76,7 +76,7 @@ public final class SubjectsHelper extends MySQLiteHelper {
 		
 		int facultyId = faculty.getId();
 		Cursor cursor = database.query(SUBJECTS_TABLE_NAME,
-		        SUBJECT_ALL_COLUMNS, FACULTY_ID + " = "+ facultyId, null, null, null, null);
+		        SUBJECT_ALL_COLUMNS, FACULTY_ID + " = "+ facultyId, null, null, null, SUBJECT_NAME + " ASC");
 
 
 	    List<Subject> subjects = cursorToSubjectList(cursor);

@@ -30,5 +30,7 @@
     </string-array>
 
     <string name="title_activity_faculty">FacultyActivity</string>
+    <string name="search_hint">Suche Unternehmen</string>
+    <string name="label_subject">Studiengang</string>
 
 </resources>

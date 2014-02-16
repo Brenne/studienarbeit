@@ -24,7 +24,13 @@
         </activity>
         <activity
             android:name="de.dhbw.studientag.CompaniesActivity"
-            android:label="@string/label_companies" >
+            android:label="@string/label_companies"
+            android:launchMode="singleTop" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                   android:resource="@xml/searchable_info"/>
         </activity>
         <activity
             android:name="de.dhbw.studientag.CompaniesAdapter"

@@ -63,7 +63,7 @@ public final class CompanyHelper extends MySQLiteHelper {
 	public Cursor getCursor(SQLiteDatabase database, String[] columns){
 	    Cursor cursor = database.query(COMPANY_TABLE_NAME,
 	    		columns, null, null,
-	            null, null, null);
+	            null, null, COMPANY_NAME + " ASC");
 	    return cursor;
 	}
 	
@@ -80,7 +80,7 @@ public final class CompanyHelper extends MySQLiteHelper {
 	public static List<Company> getAllCompanies(SQLiteDatabase database){
 		List<Company> companies = new ArrayList<Company>();
 	    Cursor cursor = database.query(COMPANY_TABLE_NAME,
-		        COMPANY_ALL_COLUMNS, null, null, null, null, null);
+		        COMPANY_ALL_COLUMNS, null, null, null, null, COMPANY_NAME + " ASC ");
 
 	    cursor.moveToFirst();
 	    while (!cursor.isAfterLast()) {
@@ -98,7 +98,7 @@ public final class CompanyHelper extends MySQLiteHelper {
 		List<Company> companies = new ArrayList<Company>();
 		//Select name  from company c, subjects s WHERE s.companyId == c._id 
 	    Cursor cursor = database.rawQuery("SELECT * " + 
-		" FROM company c  INNER JOIN offeredsubjects os ON c._id=os.companyId AND os.subjectID=?", 
+		" FROM company c  INNER JOIN offeredsubjects os ON c._id=os.companyId AND os.subjectID=? ORDER BY c.name ASC", 
 	    		new String[]{Long.toString(subject.getId())});
 
 	    cursor.moveToFirst();

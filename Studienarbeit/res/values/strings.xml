@@ -22,10 +22,13 @@
     <string name="id">label_id</string>
     <string name="label_id">Id</string>
     <string name="label_select_faculty">Wähle die Faktultät</string>
+
     <string-array name="faculty_array">
         <item>Technik</item>
         <item>Wirtschaft</item>
         <item>Sozialwesen</item>
     </string-array>
+
+    <string name="title_activity_faculty">FacultyActivity</string>
 
 </resources>

@@ -2,13 +2,12 @@ package de.dhbw.studientag.model.db;
 
 import java.util.ArrayList;
 
-import de.dhbw.studientag.model.Company;
-import de.dhbw.studientag.model.Faculty;
-import de.dhbw.studientag.model.Subject;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import de.dhbw.studientag.model.Company;
+import de.dhbw.studientag.model.Subject;
 
 public final class OfferedSubjectsHelper extends MySQLiteHelper {
 	

@@ -38,6 +38,10 @@
             android:name="de.dhbw.studientag.CompanyActivity"
             android:label="@string/title_activity_company" >
         </activity>
+        <activity
+            android:name="de.dhbw.studientag.FacultyActivity"
+            android:label="@string/title_activity_faculty" >
+        </activity>
     </application>
 
 </manifest>

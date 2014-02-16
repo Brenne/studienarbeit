@@ -2,19 +2,15 @@ package de.dhbw.studientag;
 
 import java.util.ArrayList;
 
-import de.dhbw.studientag.model.db.InitDB;
-
 import android.app.DialogFragment;
 import android.app.ListActivity;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Parcelable;
 import android.view.Menu;
-import android.view.View;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.Toast;
+import de.dhbw.studientag.model.db.CompanyHelper;
+import de.dhbw.studientag.model.db.MySQLiteHelper;
 
 public class MainActivity extends ListActivity {
 
@@ -34,10 +30,7 @@ public class MainActivity extends ListActivity {
 		
 	}
 	
-	public void initDB(View view){
 
-		
-	}
 	
 	@Override
 	protected void onListItemClick(android.widget.ListView l, android.view.View v, int position, long id) {
@@ -46,6 +39,10 @@ public class MainActivity extends ListActivity {
 		
 		if(selected.equals(getString(R.string.label_companies))){
 			Intent intent = new Intent(this, CompaniesActivity.class);
+			MySQLiteHelper mysqlHelper = new MySQLiteHelper(this);
+			ArrayList<? extends Parcelable> companies = (ArrayList<? extends Parcelable>) CompanyHelper.getAllCompanies(mysqlHelper.getReadableDatabase());
+			intent.putParcelableArrayListExtra("companies", companies);
+			mysqlHelper.close();
 			startActivity(intent);
 		}else if(selected.equals(getString(R.string.label_faculties))){
 		    DialogFragment newFragment = new SelectFacultyDialogFragment();

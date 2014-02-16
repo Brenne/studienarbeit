@@ -1,6 +1,9 @@
 package de.dhbw.studientag.model;
 
-public enum Faculty {
+import java.io.Serializable;
+
+public enum Faculty implements Serializable{
+	
 	TECHNIK(1), WIRTSCHAFT(2), SOZIALWESEN(3);
 	
 	private int id;

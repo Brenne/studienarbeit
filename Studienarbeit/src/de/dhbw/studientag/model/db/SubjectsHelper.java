@@ -3,16 +3,12 @@ package de.dhbw.studientag.model.db;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.dhbw.studientag.model.Company;
-import de.dhbw.studientag.model.Faculty;
-import de.dhbw.studientag.model.Subject;
-import de.dhbw.studientag.model.TestData;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+import de.dhbw.studientag.model.Faculty;
+import de.dhbw.studientag.model.Subject;
 
 public final class SubjectsHelper extends MySQLiteHelper {
 
@@ -76,17 +72,24 @@ public final class SubjectsHelper extends MySQLiteHelper {
 	    return subject;
 	}
 	
+	public static List<Subject> getSubjectsByFaculty(SQLiteDatabase database, Faculty faculty){
+		
+		int facultyId = faculty.getId();
+		Cursor cursor = database.query(SUBJECTS_TABLE_NAME,
+		        SUBJECT_ALL_COLUMNS, FACULTY_ID + " = "+ facultyId, null, null, null, null);
+
+
+	    List<Subject> subjects = cursorToSubjectList(cursor);
+	    // make sure to close the cursor
+	    cursor.close();
+		return subjects;
+	}
+	
 	public List<Subject> getAllSubjects(SQLiteDatabase database){
-		List<Subject> subjects = new ArrayList<Subject>();
 	    Cursor cursor = database.query(SUBJECTS_TABLE_NAME,
 		        SUBJECT_ALL_COLUMNS, null, null, null, null, null);
 
-	    cursor.moveToFirst();
-	    while (!cursor.isAfterLast()) {
-	      Subject subject = cursorToSubject(cursor);
-	      subjects.add(subject);
-	      cursor.moveToNext();
-	    }
+	    List<Subject> subjects = cursorToSubjectList(cursor);
 	    // make sure to close the cursor
 	    cursor.close();
 		return subjects;
@@ -109,6 +112,17 @@ public final class SubjectsHelper extends MySQLiteHelper {
 				Faculty.getById(cursor.getInt(cursor.getColumnIndex(FACULTY_ID))));
 		return subject;
 				
+	}
+	
+	private static List<Subject> cursorToSubjectList(Cursor cursor){
+	    List<Subject> subjects = new ArrayList<Subject>();
+		cursor.moveToFirst();
+	    while (!cursor.isAfterLast()) {
+	      Subject subject = cursorToSubject(cursor);
+	      subjects.add(subject);
+	      cursor.moveToNext();
+	    }
+	    return subjects;
 	}
 
 

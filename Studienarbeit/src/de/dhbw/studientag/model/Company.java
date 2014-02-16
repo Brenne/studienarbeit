@@ -1,15 +1,16 @@
 package de.dhbw.studientag.model;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class Company implements Serializable{
+
+public class Company implements Parcelable{
 	
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -7389788887935934036L;
 	private long id;
 	private String name;
 	private String street;
@@ -32,7 +33,7 @@ public class Company implements Serializable{
 		this(id, name, street, city,plz);
 		this.website=website;
 	}
-	
+		
 	public long getId(){
 		return id;
 	}
@@ -77,5 +78,39 @@ public class Company implements Serializable{
 	public String toString() {
 		return this.getName();
 	}
+
+	@Override
+	public int describeContents() {
+		return this.hashCode();
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeLong(id);
+		dest.writeString(name);
+		dest.writeString(street);
+		dest.writeString(city);
+		dest.writeString(plz);
+		dest.writeString(website);
+		dest.writeSerializable(subjectList);
+		
+	}
+	
+	private Company(Parcel source){
+		this(source.readLong(), source.readString(), source.readString(), 
+				source.readString(), source.readString(), source.readString());
+		this.setSubjectList((ArrayList<Subject>) source.readSerializable());
+	}
+	
+   public static final Parcelable.Creator<Company> CREATOR = 
+            new Parcelable.Creator<Company>() {
+        public Company createFromParcel(Parcel in) {
+            return new Company(in);
+        }
+
+        public Company[] newArray(int size) {
+            return new Company[size];
+        }
+    };
 
 }

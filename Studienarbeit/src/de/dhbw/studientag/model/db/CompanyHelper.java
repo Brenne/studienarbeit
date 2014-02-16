@@ -3,16 +3,12 @@ package de.dhbw.studientag.model.db;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.dhbw.studientag.model.Company;
-import de.dhbw.studientag.model.TestData;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+import de.dhbw.studientag.model.Company;
+import de.dhbw.studientag.model.Subject;
 
 public final class CompanyHelper extends MySQLiteHelper {
 	
@@ -39,8 +35,6 @@ public final class CompanyHelper extends MySQLiteHelper {
 			")";
 	
 
-	private ContentValues values;
-	
 	
 	public CompanyHelper(Context context) {
 		super(context);
@@ -83,7 +77,7 @@ public final class CompanyHelper extends MySQLiteHelper {
 	    return company;
 	}
 	
-	public List<Company> getAllCompanies(SQLiteDatabase database){
+	public static List<Company> getAllCompanies(SQLiteDatabase database){
 		List<Company> companies = new ArrayList<Company>();
 	    Cursor cursor = database.query(COMPANY_TABLE_NAME,
 		        COMPANY_ALL_COLUMNS, null, null, null, null, null);
@@ -98,6 +92,26 @@ public final class CompanyHelper extends MySQLiteHelper {
 	    // make sure to close the cursor
 	    cursor.close();
 		return companies;
+	}
+	
+	public static List<Company> getAllCompaniesBySubject(SQLiteDatabase database, Subject subject){
+		List<Company> companies = new ArrayList<Company>();
+		//Select name  from company c, subjects s WHERE s.companyId == c._id 
+	    Cursor cursor = database.rawQuery("SELECT * " + 
+		" FROM company c  INNER JOIN offeredsubjects os ON c._id=os.companyId AND os.subjectID=?", 
+	    		new String[]{Long.toString(subject.getId())});
+
+	    cursor.moveToFirst();
+	    while (!cursor.isAfterLast()) {
+	      Company company = cursorToCompany(cursor);
+	      company.setSubjectList(OfferedSubjectsHelper.getOfferdSubjectsByCompanyId(company.getId(), database));
+	      companies.add(company);
+	      cursor.moveToNext();
+	    }
+	    // make sure to close the cursor
+	    cursor.close();
+		return companies;
+		
 	}
 	
 	public List<String> getAllCompanyNames(SQLiteDatabase database){
@@ -120,5 +134,7 @@ public final class CompanyHelper extends MySQLiteHelper {
 		return company;
 				
 	}
+	
+	
 
 }

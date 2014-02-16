@@ -2,12 +2,16 @@ package de.dhbw.studientag.model;
 
 import java.io.Serializable;
 
-public class Subject implements Serializable{
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Subject implements Parcelable, Serializable{
+
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1323432420L;
 	private long id;
 	private String name;
 	private Faculty faculty;
@@ -43,6 +47,35 @@ public class Subject implements Serializable{
 	public String toString() {
 		return this.getName();
 	}
+
+	@Override
+	public int describeContents() {
+		return this.hashCode();
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeLong(id);
+		dest.writeString(name);
+		dest.writeSerializable(faculty);
+		
+	}
+	
+	private Subject(Parcel source){
+		this(source.readLong(), source.readString(), (Faculty) source.readSerializable());
+	
+	}
+	
+   public static final Parcelable.Creator<Subject> CREATOR = 
+            new Parcelable.Creator<Subject>() {
+        public Subject createFromParcel(Parcel in) {
+            return new Subject(in);
+        }
+
+        public Subject[] newArray(int size) {
+            return new Subject[size];
+        }
+    };
 
 
 	

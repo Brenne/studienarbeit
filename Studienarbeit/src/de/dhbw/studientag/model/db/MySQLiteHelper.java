@@ -1,10 +1,9 @@
 package de.dhbw.studientag.model.db;
 
-import de.dhbw.studientag.model.TestData;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
+import de.dhbw.studientag.model.TestData;
 
 public class MySQLiteHelper extends SQLiteOpenHelper {
 	

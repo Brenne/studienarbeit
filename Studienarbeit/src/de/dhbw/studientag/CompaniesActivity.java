@@ -2,20 +2,20 @@ package de.dhbw.studientag;
 
 import java.util.List;
 
-import android.app.ActionBar;
 import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MenuItem.OnActionExpandListener;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.Toast;
 import de.dhbw.studientag.model.Company;
 
 public class CompaniesActivity extends ListActivity {
@@ -40,23 +40,9 @@ public class CompaniesActivity extends ListActivity {
 //				0);
 		final ArrayAdapter<Company> adapter = new ArrayAdapter<Company>(this, android.R.layout.simple_list_item_1, 
 				companies);
+		
 		setListAdapter(adapter);
-		
-		AutoCompleteTextView textView = (AutoCompleteTextView) findViewById(R.id.searchCompanies);
-		textView.setAdapter(adapter);
-		
-		
 
-		
-		
-		
-//		Intent intent = getIntent();
-//	    if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-//	        String query = intent.getStringExtra(SearchManager.QUERY);
-//	        Log.i("suche",query);
-//	        Toast toast = Toast.makeText(this, query, query.length());
-//	        toast.show();
-//	      }
 
 	}
 	
@@ -67,8 +53,7 @@ public class CompaniesActivity extends ListActivity {
 	}
 
 	@Override
-	protected void onListItemClick(android.widget.ListView l, android.view.View v, int position, long id) {
-	
+	protected void onListItemClick(ListView l, View v, int position, long id) {
 		Company selectedCompany = (Company) getListAdapter().getItem(position);
 		Intent intent = new Intent(this,CompanyActivity.class);
 		intent.putExtra("company", selectedCompany);
@@ -88,17 +73,35 @@ public class CompaniesActivity extends ListActivity {
 	    // Assumes current activity is the searchable activity
 	    searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 	    searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+	    searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+			
+			@Override
+			public boolean onQueryTextSubmit(String query) {
+				// TODO maybe not LIKE search but full text search?
+				return false;
+			}
+			
+			@Override
+			public boolean onQueryTextChange(String newText) {
+				Log.d("studientag", newText);
+				handleIntent(getIntent());
+	            ArrayAdapter<Company> adapter = (ArrayAdapter<Company>) getListAdapter();
+	            adapter.getFilter().filter(newText);
+				return false;
+			}
+		});
 
 	    return true;
 	}
 	
 	
+
+	
 	private void handleIntent(Intent intent){
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             //use the query to search your data somehow
-            Log.i("studeintag", query);
-            
+ 
             
         }
         

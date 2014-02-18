@@ -2,6 +2,7 @@ package de.dhbw.studientag;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import android.app.ListActivity;
 import android.content.Context;
@@ -21,6 +22,9 @@ public class FacultyActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_faculty);
 		List<Subject> subjects = getIntent().getParcelableArrayListExtra("subjects");
+		String title =(String) getIntent().getCharSequenceExtra("faculty");
+		title = getString(R.string.label_faculty)+ " "+ title.charAt(0) + title.substring(1).toLowerCase();
+		setTitle(title);
 		final ArrayAdapter<Subject> adapter = new ArrayAdapter<Subject>(this, android.R.layout.simple_list_item_1, 
 				subjects);
 		setListAdapter(adapter);

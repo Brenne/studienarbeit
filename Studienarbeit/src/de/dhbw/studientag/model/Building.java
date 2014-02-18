@@ -1,15 +1,26 @@
 package de.dhbw.studientag.model;
 
-public abstract class Building {
-
-
-	private String buildingName;
-	private String shortName;
+public enum Building {
 	
-	public String getBuildingName() {
-		return buildingName;
+	R41,P50,J56,J58;
+	
+
+	private String fullName;
+	private String shortName;
+			
+	public void setFullName(String fullName){
+		this.fullName=fullName;
+	}
+
+	public String getFullNaem() {
+		return fullName;
 	}
 	public String getShortName() {
 		return shortName;
 	}
+
+
+	
+
+
 }

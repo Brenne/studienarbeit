@@ -1,11 +1,11 @@
 package de.dhbw.studientag.model;
 
-public class Room extends Building {
+public class Room {
 
 	private String roomNo;
 	private int floor;
 	
-	public Room(String buildingName, String roomNo, int floor){
+	public Room(long buildingid, String roomNo, int floor){
 		
 		
 	}

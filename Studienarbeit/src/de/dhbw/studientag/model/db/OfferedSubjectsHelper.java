@@ -46,7 +46,8 @@ public final class OfferedSubjectsHelper extends MySQLiteHelper {
 	
 	protected static ArrayList<Subject> getOfferdSubjectsByCompanyId(long companyId, SQLiteDatabase db){
 		ArrayList<Subject> offeredSubjects = new ArrayList<Subject>();
-	    Cursor cursor = db.query(OFFERED_SUBJECTS_TABLE_NAME,
+//TODO SQL inner join
+		Cursor cursor = db.query(OFFERED_SUBJECTS_TABLE_NAME,
 	    		new String[] {SUBJECT_ID}, COMPANY_ID + " = " + companyId, null,
 	            null, null, null);
 	    cursor.moveToFirst();

@@ -23,8 +23,10 @@ public class SelectFacultyDialogFragment extends DialogFragment {
 		               public void onClick(DialogInterface dialog, int which) {
 		            	   MySQLiteHelper mySQLiteHelper = new MySQLiteHelper(getActivity().getBaseContext());
 		            	   Intent intent = new Intent(getActivity().getBaseContext(), FacultyActivity.class);
+		            	   Faculty faculty =  Faculty.getById(++which);
+		            	   intent.putExtra("faculty", faculty.name());
 		            	   intent.putParcelableArrayListExtra("subjects", (ArrayList<? extends Parcelable>) SubjectsHelper.
-		            			   getSubjectsByFaculty(mySQLiteHelper.getReadableDatabase(), Faculty.getById(++which)));
+		            			   getSubjectsByFaculty(mySQLiteHelper.getReadableDatabase(),faculty));
 		            	   mySQLiteHelper.close();
 		            	   startActivity(intent);
 

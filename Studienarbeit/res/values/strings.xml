@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Studienarbeit</string>
+    <string name="app_name">Studientag DHBW Stuttgart</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="label_faculties">Fakultäten</string>
@@ -32,5 +32,6 @@
     <string name="title_activity_faculty">FacultyActivity</string>
     <string name="search_hint">Suche Unternehmen</string>
     <string name="label_subject">Studiengang</string>
+    <string name="label_faculty">Fakultät</string>
 
 </resources>

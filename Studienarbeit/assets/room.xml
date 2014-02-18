@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<buildings>
+	<building shortname="RB41" fullname="Rotebuehlplatz 41/1">  
+		<floor num="0"  name="EG">
+			<room>0.11</room>
+			<room>0.12</room>
+		</floor>
+		<floor num="1" name="1.OG">
+			<room>1.14</room>
+		</floor>
+		
+	</building>
+
+</buildings>

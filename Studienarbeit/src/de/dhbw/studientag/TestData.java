@@ -26,6 +26,7 @@ public class TestData {
 	private static ArrayList<Company> companies = new ArrayList<Company>();
 	private static List<String> subjectNamesList = new ArrayList<String>();
 	private static ArrayList<Subject> subjects = new ArrayList<Subject>();
+	private static List<Building> buildings = new ArrayList<Building>();
 
 	private static final int COMPANY_NAME = 0;
 	private static final int COMPANY_SHORT_NAME = 1;
@@ -76,7 +77,7 @@ public class TestData {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		//Building TestData
 		try {
 			Type listType = new TypeToken<ArrayList<Building>>() {
 
@@ -92,9 +93,9 @@ public class TestData {
 			}
 			
 			
-			List<Building> buildingList = new Gson().fromJson(buf.toString(),
+			final List<Building> buildingList = new Gson().fromJson(buf.toString(),
 					listType);
-
+			TestData.buildings = buildingList;
 			System.out.println(buildingList.get(0).getFullName());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -141,5 +142,11 @@ public class TestData {
 
 		return subjectList;
 	}
+
+	public static List<Building> getBuildings() {
+		return buildings;
+	}
+
+
 
 }

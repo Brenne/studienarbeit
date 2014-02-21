@@ -9,11 +9,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MenuItem.OnActionExpandListener;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import de.dhbw.studientag.model.Company;
@@ -85,6 +82,7 @@ public class CompaniesActivity extends ListActivity {
 			public boolean onQueryTextChange(String newText) {
 				Log.d("studientag", newText);
 				handleIntent(getIntent());
+				
 	            ArrayAdapter<Company> adapter = (ArrayAdapter<Company>) getListAdapter();
 	            adapter.getFilter().filter(newText);
 				return false;

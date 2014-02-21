@@ -29,6 +29,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 		db.execSQL(CompanyHelper.COMPANY_TABLE_CREATE);
 		db.execSQL(OfferedSubjectsHelper.OFFERED_SUBJECTS_TABLE_CREATE);
 		db.execSQL(SubjectsHelper.SUBJECTS_TABLE_CREATE);
+		db.execSQL(FloorHelper.FLOOR_TABLE_CREATE);
 		SubjectsHelper subject = new SubjectsHelper(context);
 		subject.initSubjects(db);
 		CompanyHelper company = new CompanyHelper(context);

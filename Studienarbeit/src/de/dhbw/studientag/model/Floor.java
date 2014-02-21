@@ -7,6 +7,7 @@ import android.util.Log;
 
 public class Floor {
 	
+	private long id;
 	private int number;
 	private String name;
 	private ArrayList<Room> roomList = new ArrayList<Room>();
@@ -15,7 +16,16 @@ public class Floor {
 		this.number=number;
 		this.name=name;
 	}
+	
+	public Floor(long id, int number, String name){
+		this(number,name);
+		this.id=id;
+	}
 
+	public long getId(){
+		return this.id;
+	}
+	
 	public int getNumber() {
 		return number;
 	}

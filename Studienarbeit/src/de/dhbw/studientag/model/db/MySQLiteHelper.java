@@ -5,21 +5,23 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import de.dhbw.studientag.TestData;
 
-public class MySQLiteHelper extends SQLiteOpenHelper {
+public final class MySQLiteHelper extends SQLiteOpenHelper {
 	
 	public static final String DATABASE_NAME ="studientag";
 	public static final int DATABASE_VERSION = 1;
 //	public SQLiteDatabase database;
 	protected Context context;
 	protected static final String ID = "_id";
-	public static TestData testData = null;
+	public static boolean init = false;
 	
 	
 	public MySQLiteHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 		this.context = context;
-		if(testData == null)
-			MySQLiteHelper.testData = new TestData(context.getAssets());
+		if(!init){
+			new TestData(context.getAssets());
+			init=true;
+		}
 		
 	}
 
@@ -30,10 +32,15 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 		db.execSQL(OfferedSubjectsHelper.OFFERED_SUBJECTS_TABLE_CREATE);
 		db.execSQL(SubjectsHelper.SUBJECTS_TABLE_CREATE);
 		db.execSQL(FloorHelper.FLOOR_TABLE_CREATE);
-		SubjectsHelper subject = new SubjectsHelper(context);
-		subject.initSubjects(db);
-		CompanyHelper company = new CompanyHelper(context);
-		company.initCompanies(db);
+		db.execSQL(BuildingHelper.BUILDING_TABLE_CREATE);
+		db.execSQL(RoomHelper.ROOM_TABLE_CREATE);
+		db.execSQL(CompanyRoomHelper.COMPANYRROOM_TABLE_CREATE);
+		db.execSQL(CommentHelper.COMMENT_TABLE_CREATE);
+		
+		SubjectsHelper.initSubjects(db);
+		CompanyHelper.initCompanies(db);
+		BuildingHelper.initBuildings(db);
+		CompanyRoomHelper.init(db);
 		
 
 	}

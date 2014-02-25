@@ -4,9 +4,11 @@ package de.dhbw.studientag.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
-public  class Building {
+public  class Building implements Parcelable{
 	
 	private final String fullName;
 	private final String shortName;
@@ -62,6 +64,41 @@ public  class Building {
 		}
 		return false;
 	}
+
+	@Override
+	public String toString() {
+		return this.getFullName();
+	}
+
+	@Override
+	public int describeContents() {
+		return this.hashCode();
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeLong(id);
+		dest.writeString(shortName);
+		dest.writeString(fullName);
+		dest.writeTypedList(floorList);
+		
+	}
+	
+	private Building(Parcel source){
+		this(source.readLong(), source.readString(), source.readString());
+		source.readTypedList(floorList, Floor.CREATOR);
+	}
+	
+   public static final Parcelable.Creator<Building> CREATOR = 
+            new Parcelable.Creator<Building>() {
+        public Building createFromParcel(Parcel in) {
+            return new Building(in);
+        }
+
+        public Building[] newArray(int size) {
+            return new Building[size];
+        }
+    };
 
 
 	

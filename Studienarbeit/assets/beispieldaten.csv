@@ -1,7 +1,7 @@
-Firma;Kurzform;Adresse;PLZ;Stadt;Land;Anrede;Name;Titel ;Telefon;Fax;E-Mail;www;Spezielle Interessen;Gewählte Optionen(angebotene Studiengänge)
-IBM Deutschland MBS GmbH;IBM;Am Fichtenberg 1;71083;Herrenberg;Deutschland;Herr;Müller;Prof;012345/34242342;012234/432423;E-Mail@ibm.de.com;http://ibm.com;;Angewandte Informatik, Wirtschaftsinformatik, Dienstleistungsmanagement
-Siemens AG;Siemens;Weisacherstrasse 1;70499;Stuttgart;Deutschland;Frau;Schmidt;;987452/33421;9342135/4324;schmidt@siemens.de;http://siemens.de/ausbildung;;Angewandte Informatik, BWL
-Infineon Technologies AG;Infineon;Siemensstrasse 31;71254;Ditzingen;Deutschland;Herr;Maler;Dr;34245/3242342;44352352352;maler@infineon.com;http://infineon.com;;Angewandte Informatik, International Business
-Hirschmann Automation and Controll GMBH und Belden;Hirschmann;Stuttgarter Strasse 45;72654;Neckartenzlingen;Deutschland;Frau;Müller;;073234/34239;07342/34234;mueller@beldensolutions.com;http://www.beldensolutions.com;;Angewandte Informatik, Maschinenbau
-Trumpf GmbH & Co.KG ;Trumpf;Johann-Maus-Strasse 2;71254;Ditzingen;Deutschland;Herr;Gruber;;07342/34525324;324234/34223;gruber@trumpf.de;http://www.trumpf.com;;Maschinenbau, Angewandte Informatik
-Kreissparkassse Esslingen-Nürtingen;Kreissparkasse Esslingen-Nürtingen;Bahnhofstr 8;73728;Esslingen;Deutschland;;;;;073742/34224;;http://www.Ksk-es.de;;Finanzdienstleistungen, Versicherung
+Firma;Kurzform;Adresse;PLZ;Stadt;Land;Anrede;Name;Titel ;Telefon;Fax;E-Mail;www;Spezielle Interessen;Gewählte Optionen(angebotene Studiengänge);Gebäude;Raum
+IBM Deutschland MBS GmbH;IBM;Am Fichtenberg 1;71083;Herrenberg;Deutschland;Herr;Müller;Prof;012345/34242342;012234/432423;E-Mail@ibm.de.com;http://ibm.com;;Angewandte Informatik, Wirtschaftsinformatik, Dienstleistungsmanagement;RB41;4.11
+Siemens AG;Siemens;Weisacherstrasse 1;70499;Stuttgart;Deutschland;Frau;Schmidt;;987452/33421;9342135/4324;schmidt@siemens.de;http://siemens.de/ausbildung;;Angewandte Informatik, BWL;J56;112/113
+Infineon Technologies AG;Infineon;Siemensstrasse 31;71254;Ditzingen;Deutschland;Herr;Maler;Dr;34245/3242342;44352352352;maler@infineon.com;http://infineon.com;;Angewandte Informatik, International Business;P50;204
+Hirschmann Automation and Controll GMBH und Belden;Hirschmann;Stuttgarter Strasse 45;72654;Neckartenzlingen;Deutschland;Frau;Müller;;073234/34239;07342/34234;mueller@beldensolutions.com;http://www.beldensolutions.com;;Angewandte Informatik, Maschinenbau;J58;106
+Trumpf GmbH & Co.KG ;Trumpf;Johann-Maus-Strasse 2;71254;Ditzingen;Deutschland;Herr;Gruber;;07342/34525324;324234/34223;gruber@trumpf.de;http://www.trumpf.com;;Maschinenbau, Angewandte Informatik;RB41;1.14
+Kreissparkassse Esslingen-Nürtingen;Kreissparkasse Esslingen-Nürtingen;Bahnhofstr 8;73728;Esslingen;Deutschland;;;;;073742/34224;;http://www.Ksk-es.de;;Finanzdienstleistungen, Versicherung;RB41;0.11

@@ -13,6 +13,7 @@
         android:id="@+id/textView_companyName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/textView_paddingBottom"
         android:text="@string/label_companyName"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -20,20 +21,52 @@
         android:id="@+id/textView_companyWWW"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:autoLink="web"
+        android:paddingBottom="@dimen/textView_paddingBottom"
         android:text="@string/label_companyWWW"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/textView_companyCityDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="0dp"
+        android:text="@string/label_companyCityDesc"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
         android:id="@+id/textView_companyCity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/textView_paddingBottom"
         android:text="@string/label_companyCity"
         android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/textView_companyBuilding"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_companyBuilding"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/textView_companyRoom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/textView_paddingBottom"
+            android:paddingLeft="18dp"
+            android:text="@string/label_companyRoom"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    </LinearLayout>
 
     <ListView
         android:id="@+id/listView_companyOfferedSubjects"
         android:layout_width="match_parent"
-        android:layout_height="123dp" >
+        android:layout_height="210dp" >
     </ListView>
 
 </LinearLayout>

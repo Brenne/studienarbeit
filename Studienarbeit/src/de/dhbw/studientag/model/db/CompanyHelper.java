@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import de.dhbw.studientag.TestData;
 import de.dhbw.studientag.model.Company;
 import de.dhbw.studientag.model.Subject;
 
-public final class CompanyHelper extends MySQLiteHelper {
+public final class CompanyHelper {
 	
 	protected static final String COMPANY_TABLE_NAME ="Company";
 	protected static final String COMPANY_NAME = "name";
@@ -19,14 +19,14 @@ public final class CompanyHelper extends MySQLiteHelper {
 	protected static final String COMPANY_STREET ="street";
 	protected static final String COMPANY_PLZ= "plz";
 	public static final String[] COMPANY_ALL_COLUMNS={
-		ID, COMPANY_NAME, COMPANY_CITY, COMPANY_PLZ, COMPANY_STREET,
+		MySQLiteHelper.ID, COMPANY_NAME, COMPANY_CITY, COMPANY_PLZ, COMPANY_STREET,
 		COMPANY_WEBSITE
 		
 	};
 	
 	protected static final String COMPANY_TABLE_CREATE = 
 			"CREATE TABLE " + COMPANY_TABLE_NAME + " (" +
-			ID 	+ " integer primary key autoincrement," +
+			MySQLiteHelper.ID 	+ " integer primary key autoincrement," +
 			COMPANY_NAME	 + " TEXT, " +
 			COMPANY_WEBSITE	 + " TEXT, " +
 			COMPANY_CITY	 + " TEXT, " +
@@ -36,20 +36,15 @@ public final class CompanyHelper extends MySQLiteHelper {
 	
 
 	
-	public CompanyHelper(Context context) {
-		super(context);
-
-
-	}
 
 	
-	protected final void initCompanies(SQLiteDatabase db){
-		ArrayList<Company> companies = testData.getCompanies();
+	protected static final void initCompanies(SQLiteDatabase db){
+		ArrayList<Company> companies = TestData.getCompanies();
 		for(Company company : companies)
 			initCompany(company,db);
 	}
 	
-	private final void initCompany(Company company, SQLiteDatabase db){
+	private static final void initCompany(Company company, SQLiteDatabase db){
 		ContentValues values= new ContentValues();
 		values.put(COMPANY_NAME, company.getName());
 		values.put(COMPANY_CITY, company.getCity());
@@ -69,7 +64,7 @@ public final class CompanyHelper extends MySQLiteHelper {
 	
 	public static Company getCompanyById(SQLiteDatabase database, long id){
 	    Cursor cursor = database.query(COMPANY_TABLE_NAME,
-	    		COMPANY_ALL_COLUMNS, ID + " = " + id, null,
+	    		COMPANY_ALL_COLUMNS, MySQLiteHelper.ID + " = " + id, null,
 	            null, null, null);
 	    cursor.moveToFirst();
 	    Company company = cursorToCompany(cursor);

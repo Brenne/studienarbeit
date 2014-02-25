@@ -1,140 +1,106 @@
 package de.dhbw.studientag.model.db;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import de.dhbw.studientag.model.Company;
-import de.dhbw.studientag.model.Subject;
+import de.dhbw.studientag.TestData;
+import de.dhbw.studientag.model.CompanyLocation;
 
-public final class CompanyRoomHelper extends MySQLiteHelper {
-	
-	protected static final String COMPANY_TABLE_NAME ="Company";
-	protected static final String COMPANY_NAME = "name";
-	protected static final String COMPANY_WEBSITE ="website";
-	protected static final String COMPANY_CITY = "city";
-	protected static final String COMPANY_STREET ="street";
-	protected static final String COMPANY_PLZ= "plz";
-	public static final String[] COMPANY_ALL_COLUMNS={
-		ID, COMPANY_NAME, COMPANY_CITY, COMPANY_PLZ, COMPANY_STREET,
-		COMPANY_WEBSITE
-		
-	};
-	
-	protected static final String COMPANY_TABLE_CREATE = 
-			"CREATE TABLE " + COMPANY_TABLE_NAME + " (" +
-			ID 	+ " integer primary key autoincrement," +
-			COMPANY_NAME	 + " TEXT, " +
-			COMPANY_WEBSITE	 + " TEXT, " +
-			COMPANY_CITY	 + " TEXT, " +
-			COMPANY_STREET	 + " TEXT, " +
-			COMPANY_PLZ		 + " TEXT "  +
-			")";
-	
+public class CompanyRoomHelper {
 
-	
-	public CompanyRoomHelper(Context context) {
-		super(context);
+	protected static final String COMPANYROOM_TABLE_NAME = "CompanyRoom";
+	protected static final String COMPANYROOM_COMPANY_ID = "companyId";
+	protected static final String COMPANYROOM_ROOM_ID = "roomId";
 
+	public static final String[] COMPANYROOM_ALL_COLUMNS = {
+			COMPANYROOM_COMPANY_ID, COMPANYROOM_ROOM_ID };
 
-	}
+	protected static final String COMPANYRROOM_TABLE_CREATE = "CREATE TABLE "
+			+ COMPANYROOM_TABLE_NAME + " (" + COMPANYROOM_COMPANY_ID
+			+ " INTEGER, " + COMPANYROOM_ROOM_ID + " INTEGER " + ")";
 
-	
-	protected final void initCompanies(SQLiteDatabase db){
-		ArrayList<Company> companies = testData.getCompanies();
-		for(Company company : companies)
-			initCompany(company,db);
-	}
-	
-	private final void initCompany(Company company, SQLiteDatabase db){
-		ContentValues values= new ContentValues();
-		values.put(COMPANY_NAME, company.getName());
-		values.put(COMPANY_CITY, company.getCity());
-		values.put(COMPANY_PLZ, company.getPlz());
-		values.put(COMPANY_STREET, company.getStreet());
-		values.put(COMPANY_WEBSITE, company.getWebiste());
-		long id = db.insert(COMPANY_TABLE_NAME, null, values);
-		company.setId(id);
-		OfferedSubjectsHelper.initOfferedSubjects(company, db);
-	}
-	public Cursor getCursor(SQLiteDatabase database, String[] columns){
-	    Cursor cursor = database.query(COMPANY_TABLE_NAME,
-	    		columns, null, null,
-	            null, null, COMPANY_NAME + " ASC");
-	    return cursor;
-	}
-	
-	public static Company getCompanyById(SQLiteDatabase database, long id){
-	    Cursor cursor = database.query(COMPANY_TABLE_NAME,
-	    		COMPANY_ALL_COLUMNS, ID + " = " + id, null,
-	            null, null, null);
-	    cursor.moveToFirst();
-	    Company company = cursorToCompany(cursor);
-	    cursor.close();
-	    return company;
-	}
-	
-	public static List<Company> getAllCompanies(SQLiteDatabase database){
-		List<Company> companies = new ArrayList<Company>();
-	    Cursor cursor = database.query(COMPANY_TABLE_NAME,
-		        COMPANY_ALL_COLUMNS, null, null, null, null, COMPANY_NAME + " ASC ");
+	protected static void init(SQLiteDatabase db) {
+		List<CompanyLocation> companyLocation = TestData.getCompanyLocation();
+		for (int i = 0; i < companyLocation.size(); i++) {
+			CompanyLocation curCompanyLocation = companyLocation.get(i);
+			String companyName = curCompanyLocation.getCompanyName();
+			String companyBld = curCompanyLocation.getBuildingShortName();
+			String companyRoom = curCompanyLocation.getRoomNo();
+//			 SELECT c._id, r._id FROM Company c, Room r, Floor f, Building b
+//			 WHERE
+//			 c.name=? AND r.number=? AND r.floorId=f._id AND f.buildingId =
+//			 b._id AND b.shortName=?
+			String query = "SELECT c._id AS " + COMPANYROOM_COMPANY_ID
+					+ ", r._id AS " + COMPANYROOM_ROOM_ID + " FROM "
+					+ CompanyHelper.COMPANY_TABLE_NAME + " c, "
+					+ RoomHelper.ROOM_TABLE_NAME + " r, "
+					+ FloorHelper.FLOOR_TABLE_NAME + " f, "
+					+ BuildingHelper.BUILDING_TABLE_NAME + " b WHERE " + "c."
+					+ CompanyHelper.COMPANY_NAME + "=? AND r."
+					+ RoomHelper.ROOM_NUMBER + "=? AND " + "r."
+					+ RoomHelper.ROOM_FLOOR + "=f." + MySQLiteHelper.ID
+					+ " AND f." + FloorHelper.FLOOR_BUILDING_ID + "= b."
+					+ MySQLiteHelper.ID + " AND " + "b."
+					+ BuildingHelper.BUILDING_SHORTNAME + "=?";
+//			Log.d("studientag", query);
+			Cursor cursor = db.rawQuery(query, new String[] { companyName,
+					companyRoom, companyBld });
+			if (cursor.getCount() == 1) {
+				cursor.moveToFirst();
+				ContentValues values = new ContentValues();
 
-	    cursor.moveToFirst();
-	    while (!cursor.isAfterLast()) {
-	      Company company = cursorToCompany(cursor);
-	      company.setSubjectList(OfferedSubjectsHelper.getOfferdSubjectsByCompanyId(company.getId(), database));
-	      companies.add(company);
-	      cursor.moveToNext();
-	    }
-	    // make sure to close the cursor
-	    cursor.close();
-		return companies;
-	}
-	
-	public static List<Company> getAllCompaniesBySubject(SQLiteDatabase database, Subject subject){
-		List<Company> companies = new ArrayList<Company>();
-		//Select name  from company c, subjects s WHERE s.companyId == c._id 
-	    Cursor cursor = database.rawQuery("SELECT * " + 
-		" FROM company c  INNER JOIN offeredsubjects os ON c._id=os.companyId AND os.subjectID=? ORDER BY c.name ASC", 
-	    		new String[]{Long.toString(subject.getId())});
+				values.put(COMPANYROOM_COMPANY_ID, cursor.getInt(cursor
+						.getColumnIndex(COMPANYROOM_COMPANY_ID)));
+				values.put(COMPANYROOM_ROOM_ID, cursor.getInt(cursor
+						.getColumnIndex(COMPANYROOM_ROOM_ID)));
+				db.insert(COMPANYROOM_TABLE_NAME, null, values);
+			}
+			cursor.close();
 
-	    cursor.moveToFirst();
-	    while (!cursor.isAfterLast()) {
-	      Company company = cursorToCompany(cursor);
-	      company.setSubjectList(OfferedSubjectsHelper.getOfferdSubjectsByCompanyId(company.getId(), database));
-	      companies.add(company);
-	      cursor.moveToNext();
-	    }
-	    // make sure to close the cursor
-	    cursor.close();
-		return companies;
-		
-	}
-	
-	public List<String> getAllCompanyNames(SQLiteDatabase database){
-		List<String> companyNames = new ArrayList<String>();
-		for(Company company : getAllCompanies(database)){
-			companyNames.add(company.getName());
 		}
-		return companyNames;
+
 	}
-	
-	private static Company cursorToCompany(Cursor cursor){
-//		Log.d("id" ,cursor.getColumnNames().toString());
-		Company company = new Company(
-				cursor.getInt(0),
-				cursor.getString(cursor.getColumnIndex(COMPANY_NAME)),
-				cursor.getString(cursor.getColumnIndex(COMPANY_STREET)),
-				cursor.getString(cursor.getColumnIndex(COMPANY_CITY)),
-				cursor.getString(cursor.getColumnIndex(COMPANY_PLZ)),
-				cursor.getString(cursor.getColumnIndex(COMPANY_WEBSITE)));
-		return company;
-				
+
+	public static CompanyLocation getLocationByCompanyId(long id,
+			SQLiteDatabase db) {
+		final String BUILDING_FULLNAME = "BuildingFullName";
+		final String BUILDING_SHORTNAME = "BuildingShortName";
+		final String COMPANY_NAME = "CompanyName";
+		final String ROOM_NO = "RoomNo";
+
+		String query = "SELECT  b." + BuildingHelper.BUILDING_FULLNAME + " AS "
+				+ BUILDING_FULLNAME + ", b."
+				+ BuildingHelper.BUILDING_SHORTNAME + "" + " AS "
+				+ BUILDING_SHORTNAME + ", r." + RoomHelper.ROOM_NUMBER + " AS "
+				+ ROOM_NO + ", c." + CompanyHelper.COMPANY_NAME + " AS "
+				+ COMPANY_NAME + " FROM " + CompanyHelper.COMPANY_TABLE_NAME
+				+ " c, " + BuildingHelper.BUILDING_TABLE_NAME + " b, "
+				+ RoomHelper.ROOM_TABLE_NAME + " r, " + COMPANYROOM_TABLE_NAME
+				+ " cr, " + FloorHelper.FLOOR_TABLE_NAME + " f " + "WHERE c."
+				+ MySQLiteHelper.ID + "=cr." + COMPANYROOM_COMPANY_ID + " AND "
+				+ "cr." + COMPANYROOM_ROOM_ID + "=r." + MySQLiteHelper.ID
+				+ " AND " + "r." + RoomHelper.ROOM_FLOOR + "=f."
+				+ MySQLiteHelper.ID + " AND " + "f."
+				+ FloorHelper.FLOOR_BUILDING_ID + "=b." + MySQLiteHelper.ID
+				+ " AND " + "c." + MySQLiteHelper.ID + "=?";
+
+		Cursor cursor = db.rawQuery(query, new String[] { Long.toString(id) });
+
+		if (cursor.getCount() >= 1) {
+			cursor.moveToFirst();
+			CompanyLocation companyLocation = new CompanyLocation(
+					cursor.getString(cursor.getColumnIndex(COMPANY_NAME)),
+					cursor.getString(cursor.getColumnIndex(BUILDING_SHORTNAME)),
+					cursor.getString(cursor.getColumnIndex(BUILDING_FULLNAME)),
+					cursor.getString(cursor.getColumnIndex(ROOM_NO)));
+
+			cursor.close();
+			return companyLocation;
+		}
+		return null;
+
 	}
-	
-	
 
 }

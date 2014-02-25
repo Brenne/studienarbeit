@@ -3,24 +3,13 @@
 
     <string name="app_name">Studientag DHBW Stuttgart</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
     <string name="label_faculties">Fakultäten</string>
     <string name="label_companies">Unternehmen</string>
-    <string name="title_activity_companies">CompaniesActivity</string>
     <string name="label_search">Suche</string>
-    <string name="label_doSearch">Suchen</string>
-    <string name="label_result">Ausgabe</string>
-    <string name="title_activity_companies_adapter">CompaniesAdapter</string>
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
-    <string name="label_initDB">Initialisiere DB</string>
     <string name="title_activity_company">Company</string>
     <string name="label_companyName">Duale Hochschule Baden-Württemberg</string>
     <string name="label_companyWWW">http://www.dhbw-stuttgart.de</string>
     <string name="label_companyCity">Stuttgart</string>
-    <string name="id">label_id</string>
-    <string name="label_id">Id</string>
     <string name="label_select_faculty">Wähle die Faktultät</string>
 
     <string-array name="faculty_array">
@@ -31,7 +20,14 @@
 
     <string name="title_activity_faculty">FacultyActivity</string>
     <string name="search_hint">Suche Unternehmen</string>
-    <string name="label_subject">Studiengang</string>
     <string name="label_faculty">Fakultät</string>
+    <string name="label_companyBuilding">RB41</string>
+    <string name="label_companyRoom">1.18</string>
+    <string name="title_activity_locations">Lokationen</string>
+    <string name="label_companyCityDesc">Standort des Unternehmens</string>
+    <string name="label_companyProfile">Steckbrief</string>
+    <string name="title_activity_comment">Notiz</string>
+    <string name="title_activity_comments">Notizen</string>
+    <string name="label_comments">Notizen</string>
 
 </resources>

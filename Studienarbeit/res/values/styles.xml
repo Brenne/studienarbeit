@@ -16,8 +16,8 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
-    <color name="color_listItem">#DEE1E3</color>
+   
     <color name="red">#FF0000</color>
-    <drawable name="drawable_color">#dee1e3</drawable>
+   
 
 </resources>

@@ -3,13 +3,13 @@ package de.dhbw.studientag.model.db;
 import java.util.ArrayList;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import de.dhbw.studientag.model.Company;
 import de.dhbw.studientag.model.Subject;
 
-public final class OfferedSubjectsHelper extends MySQLiteHelper {
+public final class OfferedSubjectsHelper  {
 	
 	protected static final String OFFERED_SUBJECTS_TABLE_NAME ="OfferedSubjects";
 	protected static final String COMPANY_ID = "companyId";
@@ -24,10 +24,6 @@ public final class OfferedSubjectsHelper extends MySQLiteHelper {
 			SUBJECT_ID + " INTEGER"  +
 			")";
 	
-	public OfferedSubjectsHelper(Context context) {
-		super(context);
-		// TODO Auto-generated constructor stub
-	}
 	
 	protected static final void initOfferedSubjects(Company company, SQLiteDatabase db){
 		
@@ -46,10 +42,13 @@ public final class OfferedSubjectsHelper extends MySQLiteHelper {
 	
 	protected static ArrayList<Subject> getOfferdSubjectsByCompanyId(long companyId, SQLiteDatabase db){
 		ArrayList<Subject> offeredSubjects = new ArrayList<Subject>();
-//TODO SQL inner join
-		Cursor cursor = db.query(OFFERED_SUBJECTS_TABLE_NAME,
-	    		new String[] {SUBJECT_ID}, COMPANY_ID + " = " + companyId, null,
-	            null, null, null);
+		String query = "SELECT "+SUBJECT_ID + ", " + SubjectsHelper.SUBJECT_NAME +" FROM "+
+					OFFERED_SUBJECTS_TABLE_NAME + " os INNER JOIN " + SubjectsHelper.SUBJECTS_TABLE_NAME + " s ON "
+					+"s."+MySQLiteHelper.ID+"=os."+SUBJECT_ID + " WHERE os."+
+				COMPANY_ID +"=? ORDER BY s."+SubjectsHelper.SUBJECT_NAME+" ASC";
+
+		Cursor cursor = db.rawQuery(query, new String[]{Long.toString(companyId)});
+
 	    cursor.moveToFirst();
 	    while (!cursor.isAfterLast()) {
 	    	int subjectId = cursor.getInt(cursor.getColumnIndex(SUBJECT_ID));
@@ -57,6 +56,7 @@ public final class OfferedSubjectsHelper extends MySQLiteHelper {
 	    	offeredSubjects.add(subject);
 	    	cursor.moveToNext();
 	    }
+	    cursor.close();
 		return offeredSubjects;
 		
 	}

@@ -7,7 +7,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import android.content.res.AssetManager;
 import android.util.Log;
@@ -18,37 +20,39 @@ import com.google.gson.reflect.TypeToken;
 
 import de.dhbw.studientag.model.Building;
 import de.dhbw.studientag.model.Company;
+import de.dhbw.studientag.model.CompanyLocation;
 import de.dhbw.studientag.model.Faculty;
 import de.dhbw.studientag.model.Subject;
 
-public class TestData {
+public final class TestData {
 
 	private static ArrayList<Company> companies = new ArrayList<Company>();
-	private static List<String> subjectNamesList = new ArrayList<String>();
 	private static ArrayList<Subject> subjects = new ArrayList<Subject>();
 	private static List<Building> buildings = new ArrayList<Building>();
+	private static List<CompanyLocation> companyLocation = new ArrayList<CompanyLocation>();
 
-	private static final int COMPANY_NAME = 0;
-	private static final int COMPANY_SHORT_NAME = 1;
-	private static final int COMPANY_STREET = 2;
-	private static final int COMPANY_PLZ = 3;
-	private static final int COMPANY_CITY = 4;
-	private static final int COMPANY_MAIL = 11;
-	private static final int COMPANY_WWW = 12;
-	private static final int COMPANY_OFFERED_SUBJECTS = 14;
+	private static final short COMPANY_NAME = 0;
+	private static final short COMPANY_SHORT_NAME = 1;
+	private static final short COMPANY_STREET = 2;
+	private static final short COMPANY_PLZ = 3;
+	private static final short COMPANY_CITY = 4;
+	private static final short COMPANY_MAIL = 11;
+	private static final short COMPANY_WWW = 12;
+	private static final short COMPANY_OFFERED_SUBJECTS = 14;
+	private static final short COMPANY_BUILDING = 15;
+	private static final short COMPANY_ROOM = 16;
 
 	public TestData(AssetManager assets) {
 
 		try {
 			// Read faculty subject mapping
-			CSVReader facultySubjectReader = new CSVReader(
-					new InputStreamReader(
-							assets.open("faculty_subject_mapping.csv")), ';');
+			CSVReader facultySubjectReader = new CSVReader(new InputStreamReader(
+					assets.open("faculty_subject_mapping.csv")), ';');
 			String[] nextLine;
 			facultySubjectReader.readNext();
 			while ((nextLine = facultySubjectReader.readNext()) != null) {
-				Subject subject = new Subject(nextLine[0],
-						Faculty.valueOf(nextLine[1].toUpperCase()));
+				Subject subject = new Subject(nextLine[0], Faculty.valueOf(nextLine[1]
+						.toUpperCase(Locale.getDefault())));
 				subjects.add(subject);
 			}
 			facultySubjectReader.close();
@@ -66,7 +70,8 @@ public class TestData {
 						nextLine[COMPANY_PLZ], nextLine[COMPANY_WWW]);
 				company.setSubjectList(companyOfferedSubjects);
 				TestData.companies.add(company);
-
+				TestData.companyLocation.add(new CompanyLocation(nextLine[COMPANY_NAME],
+						nextLine[COMPANY_BUILDING], nextLine[COMPANY_ROOM]));
 			}
 			reader.close();
 
@@ -77,10 +82,10 @@ public class TestData {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//Building TestData
+		// Building TestData
 		try {
 			Type listType = new TypeToken<ArrayList<Building>>() {
-
+				
 			}.getType();
 
 			StringBuilder buf = new StringBuilder();
@@ -91,12 +96,10 @@ public class TestData {
 			while ((line = in.readLine()) != null) {
 				buf.append(line);
 			}
-			
-			
+
 			final List<Building> buildingList = new Gson().fromJson(buf.toString(),
 					listType);
 			TestData.buildings = buildingList;
-			System.out.println(buildingList.get(0).getFullName());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -104,15 +107,15 @@ public class TestData {
 
 	}
 
-	public ArrayList<Company> getCompanies() {
+	public static ArrayList<Company> getCompanies() {
 		return TestData.companies;
 	}
 
-	public ArrayList<Subject> getSubjects() {
+	public static ArrayList<Subject> getSubjects() {
 		return TestData.subjects;
 	}
 
-	public ArrayList<String> getCompanyNames() {
+	public static ArrayList<String> getCompanyNames() {
 		ArrayList<String> companyNamesList = new ArrayList<String>();
 		for (int i = 0; i < TestData.companies.size(); i++) {
 			companyNamesList.add(TestData.companies.get(i).getName());
@@ -120,25 +123,30 @@ public class TestData {
 		return companyNamesList;
 	}
 
-	private ArrayList<Subject> getSubjectList(String subjects) {
+	/**
+	 * 
+	 * @param subjects
+	 *            String of comma seperated subject Names
+	 * @return
+	 */
+	private static ArrayList<Subject> getSubjectList(String subjects) {
 		String[] subjectNames = subjects.split(",");
 		ArrayList<Subject> subjectList = new ArrayList<Subject>();
+		ArrayList<Subject> allSubjects = new ArrayList<Subject>(TestData.subjects);
 		for (String subjectName : subjectNames) {
-			/*
-			 * TODO work with a copy of TestData.subjects remove found subjects
-			 * of list -> improve performance because fewer loops
-			 */
-			for (Subject subject : TestData.subjects) {
+			Iterator<Subject> i = allSubjects.iterator();
+			while (i.hasNext()) {
+				Subject subject = (Subject) i.next();
 				if (subject.getName().equalsIgnoreCase(subjectName.trim())) {
 					subjectList.add(subject);
+					allSubjects.remove(subject);
 					break;
 				}
-
 			}
+
 		}
 		if (subjectNames.length != subjectList.size())
-			Log.i("studientag",
-					"Not all subjects of company found in subject list ");
+			Log.w("studientag", "Not all subjects of company found in subject list ");
 
 		return subjectList;
 	}
@@ -147,6 +155,8 @@ public class TestData {
 		return buildings;
 	}
 
-
+	public static List<CompanyLocation> getCompanyLocation() {
+		return companyLocation;
+	}
 
 }

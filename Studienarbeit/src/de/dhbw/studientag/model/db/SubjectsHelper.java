@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import de.dhbw.studientag.TestData;
 import de.dhbw.studientag.model.Faculty;
 import de.dhbw.studientag.model.Subject;
 
-public final class SubjectsHelper extends MySQLiteHelper {
+public final class SubjectsHelper  {
 
 
 	protected static final String SUBJECTS_TABLE_NAME ="Subjects";
@@ -18,25 +18,22 @@ public final class SubjectsHelper extends MySQLiteHelper {
 	protected static final String FACULTY_ID = "facultyId";
 	protected static final String SUBJECTS_TABLE_CREATE=
 			"CREATE TABLE " + SUBJECTS_TABLE_NAME + " ( " +
-			ID 	+ " integer primary key autoincrement, " +
+			MySQLiteHelper.ID 	+ " integer primary key autoincrement, " +
 			SUBJECT_NAME + " TEXT unique, " +
 			FACULTY_ID + " INTEGER"  +
 			")";
 	protected static final String[] SUBJECT_ALL_COLUMNS ={
-		ID, SUBJECT_NAME, FACULTY_ID
+		MySQLiteHelper.ID, SUBJECT_NAME, FACULTY_ID
 	};
 	
-	public SubjectsHelper(Context context) {
-		super(context);
-		
-	}
 	
-	protected final void initSubjects(SQLiteDatabase db){
-		for(Subject subject : testData.getSubjects())
+	
+	protected static final void initSubjects(SQLiteDatabase db){
+		for(Subject subject : TestData.getSubjects())
 			initSubject(subject,db);
 	}
 	
-	private final void initSubject(Subject subject, SQLiteDatabase db){
+	private static final void initSubject(Subject subject, SQLiteDatabase db){
 		ContentValues values= new ContentValues();
 		values.put(SUBJECT_NAME, subject.getName());
 		values.put(FACULTY_ID, 
@@ -54,7 +51,7 @@ public final class SubjectsHelper extends MySQLiteHelper {
 	
 	public static Subject getSubjectById(SQLiteDatabase database, long id){
 	    Cursor cursor = database.query(SUBJECTS_TABLE_NAME,
-	    		SUBJECT_ALL_COLUMNS, ID + " = " + id, null,
+	    		SUBJECT_ALL_COLUMNS, MySQLiteHelper.ID + " = " + id, null,
 	            null, null, SUBJECT_NAME + " ASC");
 	    cursor.moveToFirst();
 	    Subject subject = cursorToSubject(cursor);
@@ -107,7 +104,7 @@ public final class SubjectsHelper extends MySQLiteHelper {
 //		Log.d("id" ,cursor.getColumnNames().toString());
 		int col = cursor.getColumnIndex(SUBJECT_NAME);
 		Subject subject = new Subject(
-				cursor.getLong(cursor.getColumnIndex(ID)),
+				cursor.getLong(cursor.getColumnIndex(MySQLiteHelper.ID)),
 				cursor.getString(col),
 				Faculty.getById(cursor.getInt(cursor.getColumnIndex(FACULTY_ID))));
 		return subject;

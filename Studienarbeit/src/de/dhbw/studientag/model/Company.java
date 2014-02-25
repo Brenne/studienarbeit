@@ -12,25 +12,25 @@ public class Company implements Parcelable{
 	 * 
 	 */
 	private long id;
-	private String name;
+	private String fullName;
 	private String street;
 	private String plz;
 	private String city;
 	private String website;
-	private ArrayList<Subject> subjectList;
+	private ArrayList<Subject> subjectList = new ArrayList<Subject>();
 
 	
 	
-	public Company(long id, String name, String street, String city, String plz){
+	public Company(long id, String fullName, String street, String city, String plz){
 		this.id=id;
-		this.name=name;
+		this.fullName=fullName;
 		this.street=street;
 		this.city=city;
 		this.plz=plz;
 	}
 	
-	public Company(long id, String name, String street, String city, String plz, String website){
-		this(id, name, street, city,plz);
+	public Company(long id, String fullName, String street, String city, String plz, String website){
+		this(id, fullName, street, city,plz);
 		this.website=website;
 	}
 		
@@ -43,7 +43,7 @@ public class Company implements Parcelable{
 	}
 
 	public String getName() {
-		return name;
+		return fullName;
 	}
 	
 	public String getAdress(){
@@ -87,19 +87,20 @@ public class Company implements Parcelable{
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeLong(id);
-		dest.writeString(name);
+		dest.writeString(fullName);
 		dest.writeString(street);
 		dest.writeString(city);
 		dest.writeString(plz);
 		dest.writeString(website);
-		dest.writeSerializable(subjectList);
+		dest.writeTypedList(subjectList);
 		
 	}
 	
 	private Company(Parcel source){
 		this(source.readLong(), source.readString(), source.readString(), 
 				source.readString(), source.readString(), source.readString());
-		this.setSubjectList((ArrayList<Subject>) source.readSerializable());
+		source.readTypedList(subjectList, Subject.CREATOR);
+		
 	}
 	
    public static final Parcelable.Creator<Company> CREATOR = 

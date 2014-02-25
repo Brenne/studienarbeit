@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import de.dhbw.studientag.model.Building;
 import de.dhbw.studientag.model.Floor;
 
-public final class FloorHelper extends MySQLiteHelper {
+public final class FloorHelper  {
 	
 	protected static final String FLOOR_TABLE_NAME ="Floor";
 	protected static final String FLOOR_NUM = "num";
@@ -17,13 +17,13 @@ public final class FloorHelper extends MySQLiteHelper {
 	protected static final String FLOOR_BUILDING_ID ="buildingId";
 
 	public static final String[] FLOOR_ALL_COLUMNS={
-		ID, FLOOR_NUM, FLOOR_NAME, FLOOR_BUILDING_ID
+		MySQLiteHelper.ID, FLOOR_NUM, FLOOR_NAME, FLOOR_BUILDING_ID
 		
 	};
 	
 	protected static final String FLOOR_TABLE_CREATE = 
 			"CREATE TABLE " + FLOOR_TABLE_NAME + " (" +
-			ID 	+ " integer primary key autoincrement," +
+			MySQLiteHelper.ID 	+ " integer primary key autoincrement," +
 			FLOOR_NUM	 + " INTEGER, " +
 			FLOOR_NAME	 + " TEXT, " +
 			FLOOR_BUILDING_ID + " INTEGER" +
@@ -31,21 +31,23 @@ public final class FloorHelper extends MySQLiteHelper {
 	
 
 	
-	public FloorHelper(Context context) {
-		super(context);
-
-
-	}
+	
+	
 
 
 	
-	private final void initFloor(Floor floor, SQLiteDatabase db){
-		ContentValues values= new ContentValues();
-		values.put(FLOOR_NUM, floor.getNumber());
-		values.put(FLOOR_NAME, floor.getName());
-		long id = db.insert(FLOOR_TABLE_NAME, null, values);
-//		floor.setId(id);
-		//.initOfferedSubjects(building, db);
+	protected static final void initFloors(Building building, SQLiteDatabase db){
+		for(Floor floor : building.getFloorList()){
+			ContentValues values= new ContentValues();
+			values.put(FLOOR_NUM, floor.getNumber());
+			values.put(FLOOR_NAME, floor.getName());
+			values.put(FLOOR_BUILDING_ID, building.getId());
+			long id = db.insert(FLOOR_TABLE_NAME, null, values);
+			floor.setId(id);
+			RoomHelper.initRooms(floor, db);
+	//		floor.setId(id);
+			//.initOfferedSubjects(building, db);
+		}
 	}
 	public Cursor getCursor(SQLiteDatabase database, String[] columns){
 	    Cursor cursor = database.query(FLOOR_TABLE_NAME,
@@ -56,7 +58,7 @@ public final class FloorHelper extends MySQLiteHelper {
 	
 	public static Floor getFloorById(SQLiteDatabase database, long id){
 	    Cursor cursor = database.query(FLOOR_TABLE_NAME,
-	    		FLOOR_ALL_COLUMNS, ID + " = " + id, null,
+	    		FLOOR_ALL_COLUMNS, MySQLiteHelper.ID + " = " + id, null,
 	            null, null, null);
 	    cursor.moveToFirst();
 	    Floor floor = cursorToFloor(cursor);
@@ -68,11 +70,12 @@ public final class FloorHelper extends MySQLiteHelper {
 		List<Floor> floorList = new ArrayList<Floor>();
 		//SELECT * FROM Floor f INNER JOIN Building b ON f.buildingId=b._id AND b._id = ?
 		 Cursor cursor = database.rawQuery("SELECT * " + 
-					" FROM Floor f  INNER JOIN Building b ON f.buildingId=b._id AND b._id? ORDER BY c.name ASC", 
+					" FROM Floor f  INNER JOIN Building b ON f.buildingId=b._id AND b._id=? ", 
 				    		new String[]{Long.toString(buildingId)});
 	    cursor.moveToFirst();
 	    while (!cursor.isAfterLast()) {
 	      Floor floor = cursorToFloor(cursor);
+	      floor.setRoomList(RoomHelper.getRoomsByFloorId(floor.getId(), database));
 	      floorList.add(floor);
 	      cursor.moveToNext();
 	    }

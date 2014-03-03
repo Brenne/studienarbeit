@@ -1,38 +1,32 @@
 package de.dhbw.studientag.model;
 
 public class CompanyLocation {
-	private String companyName;
-	private String buildingShortName;
-	private String buildingFullName;
-	private String roomNo;
 
-	public CompanyLocation(String companyName, String buildingShortName, String roomNo) {
-		this.companyName = companyName;
-		this.buildingShortName = buildingShortName;
-		this.roomNo = roomNo;
-	}
-
-	public CompanyLocation(String companyName, String buildingShortName, String buildingFullName, String roomNo) {
-		this(companyName, buildingShortName, roomNo);
-		this.buildingFullName=buildingFullName;
-	}
+	private Room room;
+	private Building building;
+	private Company company;
 	
-	public String getCompanyName() {
-		return companyName;
+	public CompanyLocation(Company company, Building buildng, Room room){
+		this.company=company;
+		this.building=buildng;
+		this.room=room;
 	}
 
-	public String getBuildingShortName() {
-		return buildingShortName;
+	public Company getCompany() {
+		return company;
 	}
 
-	public String getRoomNo() {
-		return roomNo;
+	public void setCompany(Company company) {
+
+		this.company = company;
 	}
 
-	public String getBuildingFullName() {
-		return buildingFullName;
+	public Room getRoom() {
+		return room;
 	}
 
-
+	public Building getBuilding() {
+		return building;
+	}
 
 }

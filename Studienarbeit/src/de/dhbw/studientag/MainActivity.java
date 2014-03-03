@@ -9,9 +9,9 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.Menu;
 import android.widget.ArrayAdapter;
-import de.dhbw.studientag.model.db.BuildingHelper;
-import de.dhbw.studientag.model.db.CompanyHelper;
-import de.dhbw.studientag.model.db.MySQLiteHelper;
+import de.dhbw.studientag.dbHelpers.BuildingHelper;
+import de.dhbw.studientag.dbHelpers.CompanyHelper;
+import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 
 public class MainActivity extends ListActivity {
 
@@ -27,6 +27,7 @@ public class MainActivity extends ListActivity {
 		list.add(getString(R.string.label_faculties));
 		list.add(getString(R.string.title_activity_locations));
 		list.add(getString(R.string.label_comments));
+		list.add(getString(R.string.title_activity_tour));
 		
 		final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, list);
@@ -60,6 +61,9 @@ public class MainActivity extends ListActivity {
 			startActivity(intent);
 		} else if (selected.equals(getString(R.string.label_comments))){
 			Intent intent = new Intent(this, CommentsActivity.class);
+			startActivity(intent);
+		} else if(selected.equals(getString(R.string.title_activity_tour))){
+			Intent intent = new Intent(this, TourActivity.class);
 			startActivity(intent);
 		}
 

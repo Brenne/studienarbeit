@@ -29,5 +29,13 @@
     <string name="title_activity_comment">Notiz</string>
     <string name="title_activity_comments">Notizen</string>
     <string name="label_comments">Notizen</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_tour">Touren</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="label_TourName">Meine Tour</string>
+    <string name="label_tours">Touren</string>
+    <string name="label_addToTour">Zur Tour hinzufügen</string>
+    <string name="label_Select_Tour">Hinzufügen zu Tour</string>
+    <string name="label_create_new_Tour">Neue Tour erstellen</string>
 
 </resources>

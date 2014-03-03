@@ -5,8 +5,8 @@
     <item android:state_enabled="true"
      android:state_focused="true" android:drawable="@color/red" />
     <item android:state_enabled="true"
-     android:state_selected="true" android:drawable="@drawable/list_item_background_gradient" />
+     android:state_selected="true" android:drawable="@android:color/transparent" />
     <item
-     android:drawable="@drawable/list_item_background_gradient" />
+     android:drawable="@android:color/transparent" />
 
 </selector>

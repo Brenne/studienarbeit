@@ -1,13 +1,17 @@
 package de.dhbw.studientag;
 
 import java.util.List;
+import java.util.Map;
 
+import android.app.Activity;
 import android.app.ListFragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import com.google.android.gms.maps.model.LatLng;
+
 import de.dhbw.studientag.model.Building;
 
 /**
@@ -21,6 +25,14 @@ import de.dhbw.studientag.model.Building;
  */
 public class LocationsFragment extends ListFragment {
 
+	
+	OnBuildingSelectedListener mCallback;
+	
+	//Conatiner Activty must implement this interface
+	public interface OnBuildingSelectedListener{
+		public void onBuildingClicked(Building building);
+	}
+	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
@@ -28,6 +40,7 @@ public class LocationsFragment extends ListFragment {
 				.getParcelableArrayListExtra("buildings");
 		setListAdapter(new ArrayAdapter<Building>(getActivity(),
 				android.R.layout.simple_list_item_1, buildings));
+		
 
 	}
 
@@ -36,10 +49,13 @@ public class LocationsFragment extends ListFragment {
 
 		Building building = (Building) getListView()
 				.getItemAtPosition(position);
-		Log.i("building fullName ", building.getFullName());
+		Map<String,LatLng> locations = ((LocationsActivity)getActivity()).getLocations();
+		LatLng location = locations.get(building.getShortName());
+		if(location != null){
+			((LocationsActivity)getActivity()).setMarker(location);
+		}
 		getActivity().getIntent().putExtra("bulding", building);
-		BuildingFragment buildingFragement = BuildingFragment
-				.newInstance(building);
+		mCallback.onBuildingClicked(building);
 
 	}
 
@@ -47,6 +63,20 @@ public class LocationsFragment extends ListFragment {
 	public void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
+	}
+	
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		
+	    // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            mCallback = (OnBuildingSelectedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnBuildingSelectedListener");
+        }
 	}
 
 }

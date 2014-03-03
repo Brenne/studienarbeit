@@ -11,9 +11,9 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.Menu;
 import android.widget.ArrayAdapter;
+import de.dhbw.studientag.dbHelpers.CompanyHelper;
+import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.model.Subject;
-import de.dhbw.studientag.model.db.CompanyHelper;
-import de.dhbw.studientag.model.db.MySQLiteHelper;
 
 public class FacultyActivity extends ListActivity {
 

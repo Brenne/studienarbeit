@@ -5,14 +5,18 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import android.content.res.AssetManager;
 import android.util.Log;
+import android.util.Pair;
 import au.com.bytecode.opencsv.CSVReader;
 
 import com.google.gson.Gson;
@@ -22,6 +26,8 @@ import de.dhbw.studientag.model.Building;
 import de.dhbw.studientag.model.Company;
 import de.dhbw.studientag.model.CompanyLocation;
 import de.dhbw.studientag.model.Faculty;
+import de.dhbw.studientag.model.Floor;
+import de.dhbw.studientag.model.Room;
 import de.dhbw.studientag.model.Subject;
 
 public final class TestData {
@@ -29,7 +35,9 @@ public final class TestData {
 	private static ArrayList<Company> companies = new ArrayList<Company>();
 	private static ArrayList<Subject> subjects = new ArrayList<Subject>();
 	private static List<Building> buildings = new ArrayList<Building>();
-	private static List<CompanyLocation> companyLocation = new ArrayList<CompanyLocation>();
+//	private static List<CompanyLocation> companyLocation = new ArrayList<CompanyLocation>();
+	private static Map<String, Pair<Room, Building>> buildingMap = new HashMap<String, Pair<Room,Building>>();
+	private static List<CompanyLocation> companyLocations = new ArrayList<CompanyLocation>();
 
 	private static final short COMPANY_NAME = 0;
 	private static final short COMPANY_SHORT_NAME = 1;
@@ -43,7 +51,7 @@ public final class TestData {
 	private static final short COMPANY_ROOM = 16;
 
 	public TestData(AssetManager assets) {
-
+		initBuildingList(assets);
 		try {
 			// Read faculty subject mapping
 			CSVReader facultySubjectReader = new CSVReader(new InputStreamReader(
@@ -69,9 +77,19 @@ public final class TestData {
 						nextLine[COMPANY_STREET], nextLine[COMPANY_CITY],
 						nextLine[COMPANY_PLZ], nextLine[COMPANY_WWW]);
 				company.setSubjectList(companyOfferedSubjects);
+				Pair<Room, Building> pair = buildingMap.get(nextLine[COMPANY_ROOM]);
+				if(pair.second.getShortName().equalsIgnoreCase(nextLine[COMPANY_BUILDING])){
+					CompanyLocation companyLocation = new CompanyLocation(company, pair.second, pair.first);
+					companyLocations.add(companyLocation);
+				}else{
+					Log.w("studientag","Building "+pair.second.getFullName() + " has no room "+ pair.first.getRoomNo());
+				}
+				
+				
+				
+				
 				TestData.companies.add(company);
-				TestData.companyLocation.add(new CompanyLocation(nextLine[COMPANY_NAME],
-						nextLine[COMPANY_BUILDING], nextLine[COMPANY_ROOM]));
+
 			}
 			reader.close();
 
@@ -82,7 +100,12 @@ public final class TestData {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// Building TestData
+
+
+	}
+	
+	private final void initBuildingList(AssetManager assets){
+		// Building room.json TestData
 		try {
 			Type listType = new TypeToken<ArrayList<Building>>() {
 				
@@ -100,11 +123,27 @@ public final class TestData {
 			final List<Building> buildingList = new Gson().fromJson(buf.toString(),
 					listType);
 			TestData.buildings = buildingList;
+			initBuildingMap(buildingList);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+	}
+	
+	private void initBuildingMap(List<Building> buildingList){
+		Map<String, Pair<Room, Building>> buildingMap = new HashMap<String,Pair<Room,Building>>();
+		for(Building building : buildingList){
+			for(Floor floor : building.getFloorList()){
+				for(Room room : floor.getRoomList()){
+					Pair<Room, Building> pair = new Pair<Room, Building>(room, building);
+					buildingMap.put(room.getRoomNo(), pair);
+				}
+				
+			}
+			
+		}
+		
+		this.buildingMap= buildingMap;
 	}
 
 	public static ArrayList<Company> getCompanies() {
@@ -155,8 +194,12 @@ public final class TestData {
 		return buildings;
 	}
 
-	public static List<CompanyLocation> getCompanyLocation() {
-		return companyLocation;
+	
+	
+	public static List<CompanyLocation> getCompanyLocation(){
+		return companyLocations;
 	}
+	
+
 
 }

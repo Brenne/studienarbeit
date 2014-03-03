@@ -9,9 +9,9 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import de.dhbw.studientag.dbHelpers.CommentHelper;
+import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.model.Company;
-import de.dhbw.studientag.model.db.CommentHelper;
-import de.dhbw.studientag.model.db.MySQLiteHelper;
 
 public class CommentActivity extends Activity {
 

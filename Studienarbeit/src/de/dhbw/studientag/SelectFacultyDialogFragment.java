@@ -9,9 +9,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
+import de.dhbw.studientag.dbHelpers.SubjectsHelper;
 import de.dhbw.studientag.model.Faculty;
-import de.dhbw.studientag.model.db.MySQLiteHelper;
-import de.dhbw.studientag.model.db.SubjectsHelper;
 
 public class SelectFacultyDialogFragment extends DialogFragment {
 

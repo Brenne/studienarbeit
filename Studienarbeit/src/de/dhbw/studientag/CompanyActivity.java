@@ -1,6 +1,7 @@
 package de.dhbw.studientag;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
@@ -11,12 +12,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import de.dhbw.studientag.dbHelpers.CommentHelper;
+import de.dhbw.studientag.dbHelpers.CompanyRoomHelper;
+import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.model.Company;
 import de.dhbw.studientag.model.CompanyLocation;
 import de.dhbw.studientag.model.Subject;
-import de.dhbw.studientag.model.db.CommentHelper;
-import de.dhbw.studientag.model.db.CompanyRoomHelper;
-import de.dhbw.studientag.model.db.MySQLiteHelper;
 
 public class CompanyActivity extends Activity {
 
@@ -42,8 +43,8 @@ public class CompanyActivity extends Activity {
 		companyCity.setText(company.getPlz() + " " +company.getCity());
 		CompanyLocation companyLocation = CompanyRoomHelper.getLocationByCompanyId(company.getId(), dbHelper.getReadableDatabase());
 		dbHelper.close();
-		companyRoom.setText(companyLocation.getRoomNo());
-		companyBld.setText(companyLocation.getBuildingShortName());
+		companyRoom.setText(companyLocation.getRoom().getRoomNo());
+		companyBld.setText(companyLocation.getBuilding().getShortName());
 		final ListView offeredSubjects = (ListView) findViewById(R.id.listView_companyOfferedSubjects);
 		final ArrayAdapter<Subject> adapter = new ArrayAdapter<Subject>(this,android.R.layout.simple_list_item_1, 
 				company.getSubjectList());
@@ -87,6 +88,12 @@ public class CompanyActivity extends Activity {
 	            intent.putExtra("company", company);
 	            startActivity(intent);
 	            return true;
+	            
+	        case R.id.action_addToTour:
+	        	DialogFragment toursDialog = SelectTourDialogFragment.newInstance(company);
+	        	
+	        	toursDialog.show(getFragmentManager(),"tours");
+	        	return true;
 
 	        default:
 	            return super.onOptionsItemSelected(item);

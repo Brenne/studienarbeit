@@ -10,9 +10,9 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import de.dhbw.studientag.dbHelpers.CommentHelper;
+import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.model.Company;
-import de.dhbw.studientag.model.db.CommentHelper;
-import de.dhbw.studientag.model.db.MySQLiteHelper;
 
 public class CommentsActivity extends ListActivity {
 

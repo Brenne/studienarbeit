@@ -1,8 +1,12 @@
 package de.dhbw.studientag;
 
+import java.util.List;
+
+import android.app.ListFragment;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
+import android.widget.ArrayAdapter;
 import de.dhbw.studientag.model.Building;
+import de.dhbw.studientag.model.Floor;
 
 /**
  * A fragment representing a list of Items.
@@ -25,7 +29,10 @@ public class BuildingFragment extends ListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+		Building building = getArguments().getParcelable("building");
+		List<Floor> floors = building.getFloorList();
+		setListAdapter(new ArrayAdapter<Floor>(getActivity(),
+				android.R.layout.simple_list_item_1, floors));
 		
 	}
 

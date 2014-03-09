@@ -37,5 +37,21 @@
     <string name="label_addToTour">Zur Tour hinzufügen</string>
     <string name="label_Select_Tour">Hinzufügen zu Tour</string>
     <string name="label_create_new_Tour">Neue Tour erstellen</string>
+    <string name="warning_tourName_exists">Dieser Tour Name existiert bereits</string>
+    <string name="warning_empty_TourName">Bitte einen Tour Namen eingeben</string>
+    <string name="delete">Löschen</string>
+    <string name="dhbw_stuttgart">DHBW Stuttgart</string>
+    <string name="main_heading">Studientag</string>
+    <string name="label_share">Teilen</string>
+    <string name="label_import_tour">Tour importieren</string>
+    <string name="label_nfc_enabled">NFC ist aktiviert</string>
+    <string name="label_nfc_disabled">NFC ist deaktiviert</string>
+    <string name="label_wait_for_Tag">Warte auf NFC Tag</string>
+    <string name="label_activate_nfc">Bitte NFC aktivieren</string>
+    <string name="title_map">Map</string>
+    <string name="label_begin_share_message">Hallo, ich habe für den Studientag der DHBW Stuttgart eine Liste mit interessanten Unternehmen zusammengestellt.</string>
+    <string name="room">Raum</string>
+    <string name="label_export">Tour exportieren</string>
+    <string name="label_no_nfc_support">diese Funktion benötigt NFC</string>
 
 </resources>

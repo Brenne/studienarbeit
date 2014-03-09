@@ -10,6 +10,27 @@
     android:textAlignment="center"
     tools:context=".MainActivity" >
 
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="0dp"
+        android:contentDescription="@string/dhbw_stuttgart"
+        android:scaleType="fitStart"
+        android:src="@drawable/ic_dhbw_logo" />
+
+    <TextView
+        android:id="@+id/textView_main_heading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/main_heading"
+        android:paddingBottom="@dimen/textView_paddingBottom"
+        android:textStyle="bold"
+        android:textColor="@color/red"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"

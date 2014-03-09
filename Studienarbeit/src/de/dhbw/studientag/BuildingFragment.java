@@ -2,9 +2,12 @@ package de.dhbw.studientag;
 
 import java.util.List;
 
+import android.app.Activity;
 import android.app.ListFragment;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import de.dhbw.studientag.model.Building;
 import de.dhbw.studientag.model.Floor;
 
@@ -16,7 +19,9 @@ import de.dhbw.studientag.model.Floor;
  * interface.
  */
 public class BuildingFragment extends ListFragment {
-
+	
+	private static final String BUILDING = "building";
+	OnFloorSelectedListener mCallback;
 
 
 	/**
@@ -29,15 +34,36 @@ public class BuildingFragment extends ListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Building building = getArguments().getParcelable("building");
+		Building building = getArguments().getParcelable(BUILDING);
 		List<Floor> floors = building.getFloorList();
 		setListAdapter(new ArrayAdapter<Floor>(getActivity(),
 				android.R.layout.simple_list_item_1, floors));
 		
 	}
+	
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+	    // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            mCallback = (OnFloorSelectedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFloorSelectedListener");
+        }
+	}
+	
 
 
+	@Override
+	public void onListItemClick(ListView l, View v, int position, long id) {
+		Floor floor = (Floor) getListView()
+				.getItemAtPosition(position);
+	
 
+		mCallback.onFloorSelected(floor);
+	}
 
 
 	
@@ -51,16 +77,14 @@ public class BuildingFragment extends ListFragment {
 	 * "http://developer.android.com/training/basics/fragments/communicating.html"
 	 * >Communicating with Other Fragments</a> for more information.
 	 */
-	public interface OnFragmentInteractionListener {
-		// TODO: Update argument type and name
-		public void onFragmentInteraction(String id);
+	public interface OnFloorSelectedListener {
+		public void onFloorSelected(Floor floor);
 	}
 
 	public static BuildingFragment newInstance(Building building) {
 		BuildingFragment f = new BuildingFragment();
-		
 		Bundle args = new Bundle();
-		args.putParcelable("building", building);
+		args.putParcelable(BUILDING, building);
 		f.setArguments(args);
 		return f;
 	}

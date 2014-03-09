@@ -74,7 +74,7 @@ public class CompanyActivity extends Activity {
 		MenuItem comment = menu.findItem(R.id.action_comment);
 		
 		if(CommentHelper.commentsForCompanyExist(company.getId(), dbHelper.getReadableDatabase() ))
-			comment.setIcon(android.R.drawable.ic_menu_add);
+			comment.setIcon(android.R.drawable.ic_input_get);
 		dbHelper.close();
 		return super.onPrepareOptionsMenu(menu);
 	}

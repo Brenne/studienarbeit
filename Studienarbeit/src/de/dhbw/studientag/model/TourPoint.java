@@ -6,6 +6,7 @@ import android.os.Parcelable;
 public class TourPoint implements Parcelable{
 
 	private long tourId;
+	private long id;
 	private String tourName;
 	private Company company;
 	private int position;
@@ -27,6 +28,14 @@ public class TourPoint implements Parcelable{
 	
 	public void setTourId(long tourId){
 		this.tourId=tourId;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public String getName() {

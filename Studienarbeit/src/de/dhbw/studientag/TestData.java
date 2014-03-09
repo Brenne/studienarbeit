@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,19 +31,19 @@ import de.dhbw.studientag.model.Subject;
 
 public final class TestData {
 
+	private static final String TAG ="TestData";
 	private static ArrayList<Company> companies = new ArrayList<Company>();
 	private static ArrayList<Subject> subjects = new ArrayList<Subject>();
 	private static List<Building> buildings = new ArrayList<Building>();
-//	private static List<CompanyLocation> companyLocation = new ArrayList<CompanyLocation>();
 	private static Map<String, Pair<Room, Building>> buildingMap = new HashMap<String, Pair<Room,Building>>();
 	private static List<CompanyLocation> companyLocations = new ArrayList<CompanyLocation>();
 
 	private static final short COMPANY_NAME = 0;
-	private static final short COMPANY_SHORT_NAME = 1;
+//	private static final short COMPANY_SHORT_NAME = 1;
 	private static final short COMPANY_STREET = 2;
 	private static final short COMPANY_PLZ = 3;
 	private static final short COMPANY_CITY = 4;
-	private static final short COMPANY_MAIL = 11;
+//	private static final short COMPANY_MAIL = 11;
 	private static final short COMPANY_WWW = 12;
 	private static final short COMPANY_OFFERED_SUBJECTS = 14;
 	private static final short COMPANY_BUILDING = 15;
@@ -94,11 +93,9 @@ public final class TestData {
 			reader.close();
 
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e(TAG,"FileNot Found, no space left on device?",e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e(TAG, "IOException", e);
 		}
 
 
@@ -125,8 +122,7 @@ public final class TestData {
 			TestData.buildings = buildingList;
 			initBuildingMap(buildingList);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e(TAG,"Error in initBuldings could not open assets",e);
 		}
 	}
 	
@@ -143,7 +139,7 @@ public final class TestData {
 			
 		}
 		
-		this.buildingMap= buildingMap;
+		TestData.buildingMap= buildingMap;
 	}
 
 	public static ArrayList<Company> getCompanies() {

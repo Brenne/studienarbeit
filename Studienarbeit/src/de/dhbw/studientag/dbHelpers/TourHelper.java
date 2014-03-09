@@ -1,13 +1,14 @@
 package de.dhbw.studientag.dbHelpers;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
@@ -15,162 +16,152 @@ import de.dhbw.studientag.model.Company;
 import de.dhbw.studientag.model.TourPoint;
 
 public class TourHelper {
-	
-	
-	protected final static String TOUR_TABLE_NAME= "Tour";
-	protected final static String TOUR_POINT_TABLE_NAME="TourPoint";
-	protected final static String TOUR_POINT_TOUR_ID ="tourId";
-	protected final static String TOUR_NAME="name";
-	protected final static String TOUR_POINT_COMPANY_ID="companyId";
-	protected final static String TOUR_POINT_POSITION="position";
-	protected final static String TOUR_TABLE_CREATE=
-			"CREATE TABLE "+TOUR_TABLE_NAME+" ("+
-			MySQLiteHelper.ID+" INTEGER PRIMARY KEY AUTOINCREMENT, "+
-			TOUR_NAME+" TEXT unique"+
-			")";
-	protected final static String TOUR_POINT_TABLE_CREATE =
-			"CREATE TABLE "+TOUR_POINT_TABLE_NAME+" ( "+
-			MySQLiteHelper.ID+" INTEGER PRIMARY KEY AUTOINCREMENT, "+
-			TOUR_POINT_TOUR_ID +" integer REFERENCES "+TOUR_TABLE_NAME+"("+MySQLiteHelper.ID+"), "+
-			TOUR_POINT_COMPANY_ID + " integer REFERENCES "+CompanyHelper.COMPANY_TABLE_NAME+"("+
-			MySQLiteHelper.ID+"), "+
-			TOUR_POINT_POSITION + " integer not null, "+
-			"UNIQUE("+TOUR_POINT_TOUR_ID+", "+TOUR_POINT_COMPANY_ID+ ") ON CONFLICT REPLACE, "+
-			"UNIQUE("+TOUR_POINT_TOUR_ID+", "+TOUR_POINT_POSITION+ " ) ON CONFLICT REPLACE"+
-			")";
 
-	private final static String[] TOUR_POINT_ALL_COLUMNS={
-		MySQLiteHelper.ID, TOUR_POINT_COMPANY_ID, TOUR_POINT_POSITION, TOUR_POINT_TOUR_ID
-	};
-	
-	public static long insertTour(SQLiteDatabase db, String tourName){
+	protected final static String TOUR_TABLE_NAME = "Tour";
+	protected final static String TOUR_POINT_TABLE_NAME = "TourPoint";
+	protected final static String TOUR_POINT_TOUR_ID = "tourId";
+	protected final static String TOUR_NAME = "name";
+	protected final static String TOUR_POINT_COMPANY_ID = "companyId";
+	protected final static String TOUR_POINT_POSITION = "position";
+	private   final static String TOUR_POINT_ID = "tourPointId";
+	protected final static String TOUR_TABLE_CREATE = "CREATE TABLE " + TOUR_TABLE_NAME
+			+ " (" + MySQLiteHelper.ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+			+ TOUR_NAME + " TEXT unique" + ")";
+	protected final static String TOUR_POINT_TABLE_CREATE = "CREATE TABLE "
+			+ TOUR_POINT_TABLE_NAME + " ( " + MySQLiteHelper.ID
+			+ " INTEGER PRIMARY KEY AUTOINCREMENT, " + TOUR_POINT_TOUR_ID
+			+ " INTEGER REFERENCES " + TOUR_TABLE_NAME + "(" + MySQLiteHelper.ID + "), "
+			+ TOUR_POINT_COMPANY_ID + " integer REFERENCES "
+			+ CompanyHelper.COMPANY_TABLE_NAME + "(" + MySQLiteHelper.ID + "), "
+			+ TOUR_POINT_POSITION + " integer not null, " + "UNIQUE("
+			+ TOUR_POINT_TOUR_ID + ", " + TOUR_POINT_COMPANY_ID
+			+ ") ON CONFLICT REPLACE, " + "UNIQUE(" + TOUR_POINT_TOUR_ID + ", "
+			+ TOUR_POINT_POSITION + " ) ON CONFLICT REPLACE" + ")";
+
+	private final static String[] TOUR_POINT_ALL_COLUMNS = { MySQLiteHelper.ID,
+			TOUR_POINT_COMPANY_ID, TOUR_POINT_POSITION, TOUR_POINT_TOUR_ID };
+
+	public static long insertTour(SQLiteDatabase db, String tourName) {
 		ContentValues values = new ContentValues();
 		values.put(TOUR_NAME, tourName);
 		long id = db.insert(TOUR_TABLE_NAME, null, values);
 		return id;
 	}
-	
-	public static long insertTourPoint(SQLiteDatabase db, TourPoint tourPoint){
-		if(tourPoint.getCompany() == null || tourPoint.getTourId() == 0){
+
+	public static long insertTourPoint(SQLiteDatabase db, TourPoint tourPoint) {
+		if (tourPoint.getCompany() == null || tourPoint.getTourId() == 0) {
 			Log.d("studientag", "cannot Insert TourPoint no valid companyId or no tourId");
 		}
-		
-	
+
 		ContentValues values = new ContentValues();
 		int position = getNewTourPointPosition(db, tourPoint.getTourId());
 		values.put(TOUR_POINT_COMPANY_ID, tourPoint.getCompany().getId());
 		values.put(TOUR_POINT_TOUR_ID, tourPoint.getTourId());
-		//TODO raw query mit position = SELECT max(position+1) WHERE tourid=tourId 
+		// TODO raw query mit position = SELECT max(position+1) WHERE
+		// tourid=tourId
 		values.put(TOUR_POINT_POSITION, position);
 		long id = db.insert(TOUR_POINT_TABLE_NAME, null, values);
 
-		
 		return id;
-		
-		
+
 	}
-	
-	public static String getTourNameByTourId(SQLiteDatabase db, int tourId){
-		Cursor cursor = db.query(TOUR_TABLE_NAME, new String[]{"DISTINCT("+TOUR_NAME+")"}, MySQLiteHelper.ID+"="+tourId, null, null, null, null);
+
+	public static String getTourNameByTourId(SQLiteDatabase db, int tourId) {
+		Cursor cursor = db.query(TOUR_TABLE_NAME, new String[] { "DISTINCT(" + TOUR_NAME
+				+ ")" }, MySQLiteHelper.ID + "=" + tourId, null, null, null, null);
 		cursor.moveToFirst();
 		String tourName = cursor.getString(0);
 		cursor.close();
 		return tourName;
-		
+
 	}
-	
-	public static void updateTourName(SQLiteDatabase db, long tourId, String tourName){
+
+	public static void updateTourName(SQLiteDatabase db, long tourId, String tourName) {
 		ContentValues values = new ContentValues();
 		values.put(TOUR_NAME, tourName);
-		db.update(TOUR_TABLE_NAME, values, MySQLiteHelper.ID+"="+tourId, null);
+		try {
+			db.update(TOUR_TABLE_NAME, values, MySQLiteHelper.ID + "=" + tourId, null);
+		} catch (SQLiteConstraintException ex) {
+			ex.printStackTrace();
+			Log.e("studientag", "SQLiteConstraintException: Coud not update tourName. ");
+		}
 	}
-	
-	@SuppressLint("UseSparseArrays") //SparseArrays can not parameterized with <Integer,List<TourPoint>>
-	public static Map<Integer, List<TourPoint>> getAllTours(SQLiteDatabase db){
-		Map<Integer, List<TourPoint>> allTourPoints = new HashMap<Integer, List<TourPoint>>();
-		final String TP_PREFIX="tp";
-		final String T_PREFIX="t";
-		String query = "SELECT "+TP_PREFIX+"."+TOUR_POINT_COMPANY_ID+", "
-		+TP_PREFIX+"."+TOUR_POINT_POSITION+", "
-		+TP_PREFIX+"."+TOUR_POINT_TOUR_ID+", "
-		+T_PREFIX+"."+TOUR_NAME+
-		" FROM "+TOUR_POINT_TABLE_NAME+" "+TP_PREFIX
-		+"  INNER JOIN "+TOUR_TABLE_NAME+" "+T_PREFIX+" ON "
-		+T_PREFIX+"."+MySQLiteHelper.ID+"="+TP_PREFIX+"."+TOUR_POINT_TOUR_ID+ " ORDER BY "+TOUR_POINT_TOUR_ID+" ASC";
-//		Log.v("studientag", query);
+
+	@SuppressLint("UseSparseArrays")
+	// SparseArrays can not parameterized with <Integer,List<TourPoint>>
+	public static Map<Integer, List<TourPoint>> getAllTours(SQLiteDatabase db) {
+		Map<Integer, List<TourPoint>> allTourPoints = new LinkedHashMap<Integer, List<TourPoint>>();
+
+		String orderBy=  TOUR_POINT_TOUR_ID + " ASC";
+		String query = myQueryBuilder(null, orderBy);
 		Cursor cursor = db.rawQuery(query, null);
-		int tourId=0;
-		int newTourId=0;
+		int tourId = 0;
+		int newTourId = 0;
 		List<TourPoint> tourPoints = new ArrayList<TourPoint>();
 		cursor.moveToFirst();
-		while(!cursor.isAfterLast()){
+		while (!cursor.isAfterLast()) {
 			TourPoint tourPoint = cursorToTourPoint(cursor, db);
-			try{
+			try {
 				newTourId = (int) tourPoint.getTourId();
-			}catch(ClassCastException e){
-				Log.d("studientag","Class Cast Exception tourId no Integer");
+			} catch (ClassCastException e) {
+				Log.d("studientag", "Class Cast Exception tourId no Integer");
 			}
-			if(newTourId != tourId){
+			if (newTourId != tourId) {
 				tourPoints = new ArrayList<TourPoint>();
 			}
 			tourPoints.add(tourPoint);
-			if(newTourId != tourId)
+			if (newTourId != tourId)
 				allTourPoints.put(newTourId, tourPoints);
-			tourId=newTourId;
+			tourId = newTourId;
 			cursor.moveToNext();
 		}
 		cursor.close();
 
 		return allTourPoints;
 	}
-	public static List<String> getTourNames(SQLiteDatabase db){
+
+	public static List<String> getTourNames(SQLiteDatabase db) {
 		List<String> tourNames = new ArrayList<String>();
-		Cursor cursor = db.query(TOUR_TABLE_NAME, new String[]{"distinct("+TOUR_NAME+")"}, null, null, null, null, null);
+		Cursor cursor = db.query(true,TOUR_TABLE_NAME, new String[] {TOUR_NAME}, null, null, null, null, null, null);
 		cursor.moveToFirst();
-		while(!cursor.isAfterLast()){
+		while (!cursor.isAfterLast()) {
 			tourNames.add(cursor.getString(0));
 		}
 		cursor.close();
 		return tourNames;
 	}
+
 	private static TourPoint cursorToTourPoint(Cursor cursor, SQLiteDatabase db) {
 		int companyId = cursor.getInt(cursor.getColumnIndex(TOUR_POINT_COMPANY_ID));
 		Company company = CompanyHelper.getCompanyById(db, companyId);
 		int position = cursor.getInt(cursor.getColumnIndex(TOUR_POINT_POSITION));
 		int colIndex = cursor.getColumnIndex(TOUR_POINT_TOUR_ID);
-		if(colIndex == -1){
-			colIndex = cursor.getColumnIndex(MySQLiteHelper.ID);
-		}
 		int tourId = cursor.getInt(colIndex);
+		long tourPointId = cursor.getLong(cursor.getColumnIndex(TOUR_POINT_ID));
 		String tourName = cursor.getString(cursor.getColumnIndex(TOUR_NAME));
 		TourPoint tourPoint = new TourPoint(tourName, tourId, company, position);
+		tourPoint.setId(tourPointId);
 		return tourPoint;
 	}
 
-
-	
-	private static int getNewTourPointPosition(SQLiteDatabase db, long tourId){
-		Cursor cursor = db.query(TOUR_POINT_TABLE_NAME, new String[]{"max("+TOUR_POINT_POSITION+")"}, TOUR_POINT_TOUR_ID+"="+tourId, null, null, null, null);
+	private static int getNewTourPointPosition(SQLiteDatabase db, long tourId) {
+		Cursor cursor = db.query(TOUR_POINT_TABLE_NAME, new String[] { "max("
+				+ TOUR_POINT_POSITION + ")" }, TOUR_POINT_TOUR_ID + "=" + tourId, null,
+				null, null, null);
 		cursor.moveToFirst();
 		int position = cursor.getInt(0);
 		cursor.close();
 		return ++position;
 	}
-	
-	public static List<TourPoint> getTourPointListByTourId(SQLiteDatabase db, long tourId){
+
+	public static List<TourPoint> getTourPointListByTourId(SQLiteDatabase db, long tourId) {
 		List<TourPoint> tourPointList = new ArrayList<TourPoint>();
-		//TODO select tourName from tour
-		String where = TOUR_POINT_TOUR_ID+"="+Long.toString(tourId);
-		String orderBy =  TOUR_POINT_POSITION+ " ASC";
-		String query = SQLiteQueryBuilder.buildQueryString(true, 
-				TOUR_POINT_TABLE_NAME+" INNER JOIN "+TOUR_TABLE_NAME+" ON "+TOUR_TABLE_NAME+"."+MySQLiteHelper.ID+"="+TOUR_POINT_TABLE_NAME+"."+TOUR_POINT_TOUR_ID, 
-				new String[]{TOUR_NAME,TOUR_POINT_COMPANY_ID,TOUR_POINT_POSITION,TOUR_POINT_TOUR_ID},
-				where, null, null, orderBy, null);
-		
-		
+		String where = TOUR_POINT_TOUR_ID + "=" + Long.toString(tourId);
+		String orderBy = TOUR_POINT_POSITION + " ASC";
+		String query=myQueryBuilder(where, orderBy);
 		Cursor cursor = db.rawQuery(query, null);
 		cursor.moveToFirst();
-		while(!cursor.isAfterLast()){
+		while (!cursor.isAfterLast()) {
 			tourPointList.add(cursorToTourPoint(cursor, db));
 			cursor.moveToNext();
 		}
@@ -178,5 +169,82 @@ public class TourHelper {
 		return tourPointList;
 	}
 	
+	public static boolean tourNameExists(SQLiteDatabase db, String tourName){
+		Cursor cursor = db.query(TOUR_TABLE_NAME, new String[]{TOUR_NAME}, TOUR_NAME+"=?", new String[]{tourName}, null, null, null);
+		cursor.moveToFirst();
+		if(cursor.getCount()==0)
+			return false;
+		else
+			return true;
+	}
 
+	private static String myQueryBuilder(String where, String orderBy){
+	
+		String query = SQLiteQueryBuilder.buildQueryString(true, TOUR_POINT_TABLE_NAME
+				+ " INNER JOIN " + TOUR_TABLE_NAME + " ON " + TOUR_TABLE_NAME + "."
+				+ MySQLiteHelper.ID + "=" + TOUR_POINT_TABLE_NAME + "."
+				+ TOUR_POINT_TOUR_ID, new String[] { TOUR_NAME, TOUR_POINT_COMPANY_ID,
+				TOUR_POINT_POSITION, TOUR_POINT_TOUR_ID, TOUR_POINT_TABLE_NAME+"."+MySQLiteHelper.ID+" AS "+TOUR_POINT_ID }, where, null, null, orderBy,
+				null);
+		
+		return query;
+	}
+	
+	public static void deleteTourById(SQLiteDatabase db, long tourId){
+		db.delete(TOUR_TABLE_NAME, MySQLiteHelper.ID+"="+Long.toString(tourId), null);
+	}
+	
+	public static int deleteTourPointById(SQLiteDatabase db, long tourPointId){
+		
+		String query ="SELECT "+TOUR_POINT_TOUR_ID+ " FROM "+ TOUR_POINT_TABLE_NAME + " WHERE "+ TOUR_POINT_TOUR_ID+ "="+
+				"(SELECT "+TOUR_POINT_TOUR_ID+" FROM "+TOUR_POINT_TABLE_NAME+ " WHERE "+MySQLiteHelper.ID+"=?)";
+		Log.v("TourHelper",query);
+		Cursor cursor = db.rawQuery(query, new String[]{Long.toString(tourPointId)});
+		cursor.moveToFirst();
+		//if tourPoint is the last of the tour also delete the Tour because no tour without tourPoints
+		if(cursor.getCount()==1){
+			long tourId = cursor.getLong(0);
+			deleteTourById(db, tourId);
+		}
+
+	
+		int count_rows =db.delete(TOUR_POINT_TABLE_NAME, MySQLiteHelper.ID+"="+Long.toString(tourPointId), null);
+
+			
+		return count_rows;
+	}
+	
+	public static boolean hasTourPoints(SQLiteDatabase db, long tourId){
+		
+		return false;
+		
+	}
+	
+	public static String getFreeTourName(SQLiteDatabase db, String tourName){
+		if(!tourNameExists(db, tourName)){
+			return tourName;
+		}
+		for(int i=1; i< Integer.MAX_VALUE; i++){
+			String checkTourName = tourName + " "+ Integer.toString(i);
+			if(!tourNameExists(db, checkTourName))
+				return checkTourName;
+		}
+		//more than Integer.MAY_VALUE entries in table
+		return tourName+" changeme";
+	}
+	
+	public static boolean isCompanyInTour(SQLiteDatabase db, long companyId, long tourId){
+		
+		Cursor cursor = db.query(true, TOUR_POINT_TABLE_NAME, new String[]{TOUR_POINT_TOUR_ID, TOUR_POINT_COMPANY_ID },
+				TOUR_POINT_TOUR_ID+"=? "+" AND "+TOUR_POINT_COMPANY_ID+"=?", new String[]{Long.toString(tourId),Long.toString(companyId)}, 
+				null, null, null, null);
+		cursor.moveToFirst();
+		if(cursor.getCount()>=1){
+			return true;
+		}else{
+			return false;
+		}
+		
+		
+	}
 }

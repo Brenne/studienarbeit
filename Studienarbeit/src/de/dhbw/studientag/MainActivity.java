@@ -7,7 +7,7 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.view.Menu;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import de.dhbw.studientag.dbHelpers.BuildingHelper;
 import de.dhbw.studientag.dbHelpers.CompanyHelper;
@@ -20,6 +20,7 @@ public class MainActivity extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
 
 		final ArrayList<String> list = new ArrayList<String>();
@@ -28,6 +29,7 @@ public class MainActivity extends ListActivity {
 		list.add(getString(R.string.title_activity_locations));
 		list.add(getString(R.string.label_comments));
 		list.add(getString(R.string.title_activity_tour));
+	
 		
 		final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, list);
@@ -65,16 +67,11 @@ public class MainActivity extends ListActivity {
 		} else if(selected.equals(getString(R.string.title_activity_tour))){
 			Intent intent = new Intent(this, TourActivity.class);
 			startActivity(intent);
-		}
+		} 
 
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
+
 
 	@Override
 	protected void onPause() {

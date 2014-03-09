@@ -20,6 +20,7 @@
         android:required="true" />
 
     <uses-permission android:name="read" />
+    <uses-permission android:name="android.permission.NFC" />
 
     <application
         android:allowBackup="true"
@@ -42,6 +43,7 @@
         </activity>
         <activity
             android:name="de.dhbw.studientag.CompaniesActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/label_companies"
             android:launchMode="singleTop" >
             <intent-filter>
@@ -62,6 +64,7 @@
         </activity>
         <activity
             android:name="de.dhbw.studientag.LocationsActivity"
+           
             android:label="@string/title_activity_locations" >
         </activity>
         <activity
@@ -80,7 +83,13 @@
 
         <activity
             android:name="de.dhbw.studientag.TourActivity"
-            android:label="@string/title_activity_tour" >
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_tour"
+            android:parentActivityName="de.dhbw.studientag.MainActivity" >
+        </activity>
+        <activity
+            android:name="de.dhbw.studientag.ImportActivity"
+            android:label="@string/label_import_tour" >
         </activity>
     </application>
 

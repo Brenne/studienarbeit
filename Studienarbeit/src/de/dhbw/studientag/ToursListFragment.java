@@ -8,16 +8,18 @@ import java.util.Map.Entry;
 
 import android.app.Activity;
 import android.app.ListFragment;
+import android.content.Intent;
+import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
-import android.widget.TextView;
+import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
+import de.dhbw.studientag.dbHelpers.TourHelper;
 import de.dhbw.studientag.model.TourPoint;
 
 /**
@@ -30,23 +32,18 @@ import de.dhbw.studientag.model.TourPoint;
  * interface.
  */
 public class ToursListFragment extends ListFragment implements
-		AbsListView.OnItemClickListener {
+		MyAdapterWithBin.OnBinClicked {
 
 	private OnTourSelectedListener mTourListener;
-	protected static final String TOUR_NAME ="tourName";
-	protected static final String TOUR_STATIONS="stations";
-	protected static final String TOUR_ID="tourId";
-
-	/**
-	 * The fragment's ListView/GridView.
-	 */
-	private AbsListView mListView;
+	protected static final String TOUR_NAME = "tourName";
+	protected static final String TOUR_STATIONS = "stations";
+	protected static final String TOUR_ID = "tourId";
 
 	/**
 	 * The Adapter which will be used to populate the ListView/GridView with
 	 * Views.
 	 */
-	private ListAdapter mTours;
+	private MyAdapterWithBin mTours;
 
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
@@ -58,14 +55,16 @@ public class ToursListFragment extends ListFragment implements
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
 
-		List<Map<String,Object>> tourPoints = (List<Map<String, Object>>) getArguments().getSerializable("tours");
-		
-	
-		mTours = new SimpleAdapter(getActivity().getBaseContext(), tourPoints, android.R.layout.simple_list_item_2, 
-				new String[] {TOUR_NAME, TOUR_STATIONS}, 
-				new int[]{android.R.id.text1, android.R.id.text2});
-		
+	}
+
+	private void initAdapter(List<Map<String, Object>> tourPoints) {
+		mTours = new MyAdapterWithBin(getActivity().getBaseContext(), tourPoints,
+				new String[] { TOUR_NAME, TOUR_STATIONS });
+		mTours.notifyDataSetChanged();
+		mTours.setOnBinClickListener(this);
+
 	}
 
 	@Override
@@ -77,7 +76,6 @@ public class ToursListFragment extends ListFragment implements
 		// Set the adapter
 		setListAdapter(mTours);
 
-
 		return view;
 	}
 
@@ -88,7 +86,7 @@ public class ToursListFragment extends ListFragment implements
 			mTourListener = (OnTourSelectedListener) activity;
 		} catch (ClassCastException e) {
 			throw new ClassCastException(activity.toString()
-					+ " must implement OnTourPointSelectedListener");
+					+ " must implement OnTourSelectedListener");
 		}
 	}
 
@@ -97,31 +95,30 @@ public class ToursListFragment extends ListFragment implements
 		super.onDetach();
 		mTourListener = null;
 	}
-	
+
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		if (null != mTourListener) {
-			Map<String,Object> tourPoint = (Map<String, Object>) getListView().getItemAtPosition(position);
+
+//		Log.i("studientag", "onListItemClick pos " + Integer.toString(position) + " id "
+//				+ Long.toString(id));
+		if (mTourListener != null) {
+			Map<String, Object> tourPoint = (Map<String, Object>) l
+					.getItemAtPosition(position);
 			mTourListener.onTourSelected(tourPoint);
 		}
+
 		super.onListItemClick(l, v, position, id);
+
 	}
 
+	@Override
+	public void onResume() {
 
+		initAdapter(getTourPoints());
+		setListAdapter(mTours);
 
-	/**
-	 * The default content for this Fragment has a TextView that is shown when
-	 * the list is empty. If you would like to change the text, call this method
-	 * to supply the text it should use.
-	 */
-	public void setEmptyText(CharSequence emptyText) {
-		View emptyView = mListView.getEmptyView();
-
-		if (emptyText instanceof TextView) {
-			((TextView) emptyView).setText(emptyText);
-		}
+		super.onResume();
 	}
-	
 
 	/**
 	 * This interface must be implemented by activities that contain this
@@ -135,39 +132,72 @@ public class ToursListFragment extends ListFragment implements
 	public interface OnTourSelectedListener {
 		public void onTourSelected(Map<String, Object> tourPoint);
 	}
-	
-	public static ToursListFragment newInstance(Map<Integer, List<TourPoint>> allTourPoints){
-		ToursListFragment f  = new ToursListFragment();
-		ArrayList<Map<String,Object>> tourNameAndStationsList = (ArrayList<Map<String, Object>>) allTourPointsMapToAllToursList(allTourPoints);
 
-		
-		Bundle args = new Bundle();
-		args.putSerializable("tours", tourNameAndStationsList);
-		f.setArguments(args);
-		return f;
+	private ArrayList<Map<String, Object>> getTourPoints() {
+		MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity().getBaseContext());
+		Map<Integer, List<TourPoint>> tourPoints = TourHelper.getAllTours(dbHelper
+				.getReadableDatabase());
+		dbHelper.close();
+		ArrayList<Map<String, Object>> tourNameAndStationsList = (ArrayList<Map<String, Object>>) allTourPointsMapToAllToursList(tourPoints);
+		return tourNameAndStationsList;
+
 	}
-	
-	public static List<Map<String, Object>> allTourPointsMapToAllToursList(Map<Integer, List<TourPoint>> allTourPoints){
-		ArrayList<Map<String,Object>> tourNameAndStationsList = new ArrayList<Map<String, Object>>();
-		
-		for(Entry<Integer,List<TourPoint>> tour : allTourPoints.entrySet()){
+
+	public static List<Map<String, Object>> allTourPointsMapToAllToursList(
+			Map<Integer, List<TourPoint>> allTourPoints) {
+		ArrayList<Map<String, Object>> tourNameAndStationsList = new ArrayList<Map<String, Object>>();
+
+		for (Entry<Integer, List<TourPoint>> tour : allTourPoints.entrySet()) {
 			Map<String, Object> tourNameAndStations = new HashMap<String, Object>();
-			List<TourPoint> tourPoints =  tour.getValue();
-			if(!tourPoints.isEmpty()){
+			List<TourPoint> tourPoints = tour.getValue();
+			if (!tourPoints.isEmpty()) {
 				tourNameAndStations.put(TOUR_NAME, tourPoints.get(0).getName());
-				tourNameAndStations.put(TOUR_ID,tourPoints.get(0).getTourId());
-				tourNameAndStations.put(TOUR_STATIONS,tourPoints.size());
+				tourNameAndStations.put(TOUR_ID, tourPoints.get(0).getTourId());
+				tourNameAndStations.put(TOUR_STATIONS,
+						Integer.toString(tourPoints.size()));
 				tourNameAndStationsList.add(tourNameAndStations);
 			}
 		}
-		
+
 		return tourNameAndStationsList;
+	}
+	
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		if(NfcAdapter.getDefaultAdapter(getActivity()) != null)
+			inflater.inflate(R.menu.tour_list, menu);
+		
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch(item.getItemId()){
+		case R.id.menu_item_import:
+			Intent intent = new Intent(getActivity(), ImportActivity.class);
+			startActivity(intent);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);	
+			
+		}
+		
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		// TODO Auto-generated method stub
-		
+	public void binClicked(int position) {
+
+		Map<String, Object> tour = (Map<String, Object>) mTours.getItem(position);
+		long tourId = (Long) tour.get(TOUR_ID);
+		MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity());
+		TourHelper.deleteTourById(dbHelper.getWritableDatabase(), tourId);
+//		Log.i("studientag", "on image button clickd " + Long.toString(tourId));
+
+		dbHelper.close();
+		initAdapter(getTourPoints());
+		setListAdapter(mTours);
+
 	}
+
+
 
 }

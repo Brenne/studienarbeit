@@ -54,7 +54,7 @@ public class LocationsFragment extends ListFragment {
 		if(location != null){
 			((LocationsActivity)getActivity()).setMarker(location);
 		}
-		getActivity().getIntent().putExtra("bulding", building);
+//		getActivity().getIntent().putExtra("bulding", building);
 		mCallback.onBuildingClicked(building);
 
 	}

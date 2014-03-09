@@ -5,7 +5,9 @@ import java.util.List;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import de.dhbw.studientag.TestData;
 import de.dhbw.studientag.model.Company;
 import de.dhbw.studientag.model.Subject;
@@ -67,9 +69,18 @@ public final class CompanyHelper {
 	    		COMPANY_ALL_COLUMNS, MySQLiteHelper.ID + " = " + id, null,
 	            null, null, null);
 	    cursor.moveToFirst();
-	    Company company = cursorToCompany(cursor);
-	    cursor.close();
+	    Company company = null;
+	    try{
+	    	 company = cursorToCompany(cursor);
+	    }catch(CursorIndexOutOfBoundsException cursorOutOfBoundEx){
+	    	Log.e("CompanyHelper", "getCompanyById propably not valid companyId given", cursorOutOfBoundEx);
+	    	
+	    }finally{
+	    	cursor.close();
+		  
+	    }
 	    return company;
+	    
 	}
 	
 	public static List<Company> getAllCompanies(SQLiteDatabase database){
@@ -119,6 +130,7 @@ public final class CompanyHelper {
 	
 	private static Company cursorToCompany(Cursor cursor){
 //		Log.d("id" ,cursor.getColumnNames().toString());
+		
 		Company company = new Company(
 				cursor.getInt(0),
 				cursor.getString(cursor.getColumnIndex(COMPANY_NAME)),

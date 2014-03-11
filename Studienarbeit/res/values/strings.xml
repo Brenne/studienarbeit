@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources >
 
-    <string name="app_name">Studientag DHBW Stuttgart</string>
+    <string name="app_name" translatable="false">Studientag DHBW Stuttgart</string>
     <string name="action_settings">Settings</string>
     <string name="label_faculties">Fakultäten</string>
     <string name="label_companies">Unternehmen</string>
@@ -54,5 +54,8 @@
     <string name="label_export">Tour exportieren</string>
     <string name="label_no_nfc_support">diese Funktion benötigt NFC</string>
     <string name="title_activity_location_spiele">LocationSpieleActivity</string>
+    <string name="label_show_location">Show Location</string>
+    <string name="label_mylocation">mein Ort</string>
+    <string name="label_btn_order_list">sortiere Lokationen</string>
 
 </resources>

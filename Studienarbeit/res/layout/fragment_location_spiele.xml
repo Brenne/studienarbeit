@@ -21,11 +21,11 @@
         android:layout_alignLeft="@+id/textView_location"
         android:layout_below="@+id/textView_location"
         android:onClick="showLocation"
-        android:text="Show Location" />
+        android:text="@string/label_show_location" />
 
     <ImageView
         android:id="@+id/imageView_location"
-        android:contentDescription="myLocation"
+        android:contentDescription="@string/label_mylocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/button_getLocation"
@@ -52,7 +52,7 @@
         android:layout_alignBottom="@+id/button_getLocation"
         android:layout_marginLeft="30dp"
         android:layout_toRightOf="@+id/button_getLocation"
-        android:text="Order List"
+        android:text="@string/label_btn_order_list"
         android:onClick="orderList" />
 
 </RelativeLayout>

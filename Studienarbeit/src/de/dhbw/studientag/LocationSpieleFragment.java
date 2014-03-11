@@ -20,7 +20,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
 import de.dhbw.studientag.dbHelpers.BuildingHelper;
 import de.dhbw.studientag.dbHelpers.MySQLiteHelper;

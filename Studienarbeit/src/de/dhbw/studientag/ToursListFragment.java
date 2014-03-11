@@ -171,14 +171,13 @@ public class ToursListFragment extends ListFragment implements
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch(item.getItemId()){
-		case R.id.menu_item_import:
+		int itemId = item.getItemId();
+		if (itemId == R.id.menu_item_import) {
 			Intent intent = new Intent(getActivity(), ImportActivity.class);
 			startActivity(intent);
 			return true;
-		default:
-			return super.onOptionsItemSelected(item);	
-			
+		} else {
+			return super.onOptionsItemSelected(item);
 		}
 		
 	}

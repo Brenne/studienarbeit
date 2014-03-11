@@ -84,23 +84,19 @@ public class CompanyActivity extends Activity {
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-	    // Handle presses on the action bar items
-	    switch (item.getItemId()) {
-	        case R.id.action_comment:
-	            Intent intent = new Intent(this, CommentActivity.class);
-	            intent.putExtra("company", company);
-	            startActivity(intent);
-	            return true;
-	            
-	        case R.id.action_addToTour:
-	        	DialogFragment toursDialog = SelectTourDialogFragment.newInstance(company);
-	        	
-	        	toursDialog.show(getFragmentManager(),"tours");
-	        	return true;
-
-	        default:
-	            return super.onOptionsItemSelected(item);
-	    }
+	    int itemId = item.getItemId();
+		if (itemId == R.id.action_comment) {
+			Intent intent = new Intent(this, CommentActivity.class);
+			intent.putExtra("company", company);
+			startActivity(intent);
+			return true;
+		} else if (itemId == R.id.action_addToTour) {
+			DialogFragment toursDialog = SelectTourDialogFragment.newInstance(company);
+			toursDialog.show(getFragmentManager(),"tours");
+			return true;
+		} else {
+			return super.onOptionsItemSelected(item);
+		}
 	}
 	
 	@Override

@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -34,64 +35,60 @@ public class LocationSpieleActivity extends Activity implements
 		GooglePlayServicesClient.ConnectionCallbacks,
 		GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 
-	
-	 // Milliseconds per second
-    private static final int MILLISECONDS_PER_SECOND = 1000;
-    // Update frequency in seconds
-    public static final int UPDATE_INTERVAL_IN_SECONDS = 5;
-    // Update frequency in milliseconds
-    private static final long UPDATE_INTERVAL =
-            MILLISECONDS_PER_SECOND * UPDATE_INTERVAL_IN_SECONDS;
-    // The fastest update frequency, in seconds
-    private static final int FASTEST_INTERVAL_IN_SECONDS = 1;
-    // A fast frequency ceiling in milliseconds
-    private static final long FASTEST_INTERVAL =
-            MILLISECONDS_PER_SECOND * FASTEST_INTERVAL_IN_SECONDS;
-    private static final int NUM_UPDATES = 5;
-    
-  
+	// Milliseconds per second
+	private static final int MILLISECONDS_PER_SECOND = 1000;
+	// Update frequency in seconds
+	public static final int UPDATE_INTERVAL_IN_SECONDS = 10;
+	// Update frequency in milliseconds
+	private static final long UPDATE_INTERVAL = MILLISECONDS_PER_SECOND
+			* UPDATE_INTERVAL_IN_SECONDS;
+	// The fastest update frequency, in seconds
+	private static final int FASTEST_INTERVAL_IN_SECONDS = 1;
+	// A fast frequency ceiling in milliseconds
+	private static final long FASTEST_INTERVAL = MILLISECONDS_PER_SECOND
+			* FASTEST_INTERVAL_IN_SECONDS;
+	private final String KEY_UPDATES_ON = "KEY_UPDATES_ON";
+
 	private LocationClient mLocationClient;
 	private Location mCurrentLocation;
 	boolean mUpdatesRequested;
 	// Define an object that holds accuracy and frequency parameters
-    LocationRequest mLocationRequest;
+	LocationRequest mLocationRequest;
 	private SharedPreferences mPrefs;
 	private Editor mEditor;
 	private LocationSpieleFragment mFragment;
-    
-    
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_location_spiele);
 		// Create the LocationRequest object
-        mLocationRequest = LocationRequest.create();
-        // Use high accuracy
-        mLocationRequest.setPriority(
-                LocationRequest.PRIORITY_HIGH_ACCURACY);
-        // Set the update interval to 5 seconds
-        mLocationRequest.setInterval(UPDATE_INTERVAL);
-        // Set the fastest update interval to 1 second
-        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
-		mLocationRequest.setNumUpdates(NUM_UPDATES);
-        // Open the shared preferences
-        mPrefs = getSharedPreferences("SharedPreferences",
-                Context.MODE_PRIVATE);
-        // Get a SharedPreferences editor
-        mEditor = mPrefs.edit();
-        /*
-         * Create a new location client, using the enclosing class to
-         * handle callbacks.
-         */
-		
+		mLocationRequest = LocationRequest.create();
+		// Use high accuracy
+		mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+		// Set the update interval to 5 seconds
+		mLocationRequest.setInterval(UPDATE_INTERVAL);
+		// Set the fastest update interval to 1 second
+		mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+
+		// mLocationRequest.setNumUpdates(NUM_UPDATES);
+		// Open the shared preferences
+		mPrefs = getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);
+		// Get a SharedPreferences editor
+		mEditor = mPrefs.edit();
+		/*
+		 * Create a new location client, using the enclosing class to handle
+		 * callbacks.
+		 */
+
 		mLocationClient = new LocationClient(this, this, this);
-		
+
 		mUpdatesRequested = true;
+		mEditor.putBoolean(KEY_UPDATES_ON, mUpdatesRequested).commit();
 		mFragment = new LocationSpieleFragment();
 		if (savedInstanceState == null) {
-			getFragmentManager().beginTransaction()
-					.add(R.id.container, mFragment).commit();
+			getFragmentManager().beginTransaction().add(R.id.container, mFragment)
+					.commit();
 		}
 	}
 
@@ -114,10 +111,12 @@ public class LocationSpieleActivity extends Activity implements
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
-	//Button showLocation
+
+	// Button showLocation
 	public void showLocation(View view) {
 		mCurrentLocation = mLocationClient.getLastLocation();
+		if (mCurrentLocation == null)
+			return;
 		Double lat = mCurrentLocation.getLatitude();
 		Double lon = mCurrentLocation.getLongitude();
 		Log.v("location", "lat " + lat.toString() + ", long " + lon.toString());
@@ -126,11 +125,11 @@ public class LocationSpieleActivity extends Activity implements
 
 	}
 
-	//Button orderList
-	public void orderList(View view){
+	// Button orderList
+	public void orderList(View view) {
 		mFragment.orderList(view);
 	}
-	
+
 	@Override
 	public Map<String, Float> getDistanceMap() {
 		Map<String, Location> locations = new HashMap<>();
@@ -153,54 +152,53 @@ public class LocationSpieleActivity extends Activity implements
 
 		return distance;
 	}
+
 	@Override
 	protected void onResume() {
 		super.onResume();
-	       /*
-         * Get any previous setting for location updates
-         * Gets "false" if an error occurs
-         */
-		final String KEY_UPDATES_ON ="KEY_UPDATES_ON";
-        if (mPrefs.contains(KEY_UPDATES_ON)) {
-            mUpdatesRequested =
-                    mPrefs.getBoolean(KEY_UPDATES_ON, false);
+		/*
+		 * Get any previous setting for location updates Gets "false" if an
+		 * error occurs
+		 */
 
-        // Otherwise, turn off location updates
-        } else {
-            mEditor.putBoolean(KEY_UPDATES_ON, false);
-            mEditor.commit();
-        }
+		if (mPrefs.contains(KEY_UPDATES_ON)) {
+			mUpdatesRequested = mPrefs.getBoolean(KEY_UPDATES_ON, false);
+
+			// Otherwise, turn off location updates
+		} else {
+			mEditor.putBoolean(KEY_UPDATES_ON, false);
+			mEditor.commit();
+		}
 	}
-	
+
 	@Override
 	protected void onStart() {
 		super.onStart();
 		mLocationClient.connect();
 
 	}
-	
+
 	@Override
 	protected void onPause() {
-		// TODO Auto-generated method stub
 		super.onPause();
+		mEditor.putBoolean(KEY_UPDATES_ON, mUpdatesRequested);
+		mEditor.commit();
 	}
 
 	@Override
 	protected void onStop() {
-	      // If the client is connected
-        if (mLocationClient.isConnected()) {
-            /*
-             * Remove location updates for a listener.
-             * The current Activity is the listener, so
-             * the argument is "this".
-             */
-            mLocationClient.removeLocationUpdates(this);
-        }
-        /*
-         * After disconnect() is called, the client is
-         * considered "dead".
-         */
-        mLocationClient.disconnect();
+		// If the client is connected
+		if (mLocationClient.isConnected()) {
+			/*
+			 * Remove location updates for a listener. The current Activity is
+			 * the listener, so the argument is "this".
+			 */
+			mLocationClient.removeLocationUpdates(this);
+		}
+		/*
+		 * After disconnect() is called, the client is considered "dead".
+		 */
+		mLocationClient.disconnect();
 		super.onStop();
 	}
 
@@ -209,16 +207,15 @@ public class LocationSpieleActivity extends Activity implements
 		// Report to the UI that the location was updated
 		String msg = "Updated Location: " + Double.toString(location.getLatitude()) + ","
 				+ Double.toString(location.getLongitude());
-	
+		Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
 		Log.v("location changed", msg);
-		mCurrentLocation=location;
+		mCurrentLocation = location;
 
 	}
 
 	// Location Google Play services from
 	// http://developer.android.com/training/location/retrieve-current.html
 
-	// Global constants
 	/*
 	 * Define a request code to send to Google Play services This code is
 	 * returned in Activity.onActivityResult
@@ -338,13 +335,20 @@ public class LocationSpieleActivity extends Activity implements
 	@Override
 	public void onConnected(Bundle connectionHint) {
 		if (mUpdatesRequested) {
-            mLocationClient.requestLocationUpdates(mLocationRequest, this);
-        }
-		if(mLocationClient.isConnected()){
-			mCurrentLocation=mLocationClient.getLastLocation();
+			Log.v("LocationSpieleActivity",
+					"updatesRequestet mLocationClient requestLocationUpdates");
+			mLocationClient.requestLocationUpdates(mLocationRequest, this);
 		}
-		((ImageView) findViewById(R.id.imageView_location))
-				.setColorFilter(android.graphics.Color.BLUE);
+		if (mLocationClient.isConnected()) {
+			((ImageView) findViewById(R.id.imageView_location))
+					.setColorFilter(android.graphics.Color.YELLOW);
+			mCurrentLocation = mLocationClient.getLastLocation();
+			if (mCurrentLocation != null) {
+				((ImageView) findViewById(R.id.imageView_location))
+						.setColorFilter(android.graphics.Color.BLUE);
+			}
+
+		}
 
 	}
 
@@ -355,7 +359,5 @@ public class LocationSpieleActivity extends Activity implements
 				.setColorFilter(android.graphics.Color.RED);
 
 	}
-	
-	
 
 }

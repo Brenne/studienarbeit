@@ -115,8 +115,8 @@ public class LocationsActivity extends Activity implements
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.menu_map:
+		int itemId = item.getItemId(); 
+		if(itemId== R.id.menu_map){
 			
 			FragmentTransaction transaction = getFragmentManager().beginTransaction();
 			Fragment mapFragment = getFragmentManager().findFragmentById(R.id.map);
@@ -140,8 +140,9 @@ public class LocationsActivity extends Activity implements
 				showMap = true;
 				return true;
 			}
-		default:
+		}else{
 			return super.onOptionsItemSelected(item);
+
 
 		}
 

@@ -8,7 +8,6 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
 import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.dbHelpers.TourHelper;
 import de.dhbw.studientag.model.Company;
@@ -52,7 +51,7 @@ public class TourActivity extends Activity implements
 	}
 
 	@Override
-	public void onTourSelected(Map<String, Object> tourPoint) {
+	public void onTourSelected(Map<?, ?> tourPoint) {
 		MySQLiteHelper dbHelper = new MySQLiteHelper(getBaseContext());
 		List<TourPoint> tourPoints = TourHelper.getTourPointListByTourId(
 				dbHelper.getReadableDatabase(),

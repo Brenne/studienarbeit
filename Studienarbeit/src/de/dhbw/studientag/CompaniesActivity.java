@@ -28,20 +28,13 @@ public class CompaniesActivity extends ListActivity {
 
 		List<Company> companies = getIntent().getParcelableArrayListExtra(
 				"companies");
-		// final SimpleCursorAdapter cursorAdapter = new SimpleCursorAdapter(
-		// this,
-		// android.R.layout.simple_list_item_1,
-		// companyDB.getCursor(companyDB.getReadableDatabase(),
-		// CompanyHelper.COMPANY_ALL_COLUMNS),
-		// new String[]{"name","plz"},
-		// new int[]{android.R.id.text1,
-		// android.R.id.text2},
-		// 0);
+
 		final ArrayAdapter<Company> adapter = new ArrayAdapter<Company>(this,
 				android.R.layout.simple_list_item_1, companies);
 
 		setListAdapter(adapter);
-
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		
 	}
 
 	@Override
@@ -53,7 +46,7 @@ public class CompaniesActivity extends ListActivity {
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		Company selectedCompany = (Company) getListAdapter().getItem(position);
 		Intent intent = new Intent(this, CompanyActivity.class);
-		intent.putExtra("company", selectedCompany);
+		intent.putExtra(CompanyActivity.COMPANY, selectedCompany);
 		startActivity(intent);
 
 	}

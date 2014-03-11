@@ -53,5 +53,6 @@
     <string name="room">Raum</string>
     <string name="label_export">Tour exportieren</string>
     <string name="label_no_nfc_support">diese Funktion benötigt NFC</string>
+    <string name="title_activity_location_spiele">LocationSpieleActivity</string>
 
 </resources>

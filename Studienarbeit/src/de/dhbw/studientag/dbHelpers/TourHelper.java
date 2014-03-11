@@ -58,7 +58,7 @@ public class TourHelper {
 		values.put(TOUR_POINT_COMPANY_ID, tourPoint.getCompany().getId());
 		values.put(TOUR_POINT_TOUR_ID, tourPoint.getTourId());
 		// TODO raw query mit position = SELECT max(position+1) WHERE
-		// tourid=tourId
+		
 		values.put(TOUR_POINT_POSITION, position);
 		long id = db.insert(TOUR_POINT_TABLE_NAME, null, values);
 
@@ -206,11 +206,8 @@ public class TourHelper {
 			long tourId = cursor.getLong(0);
 			deleteTourById(db, tourId);
 		}
-
-	
 		int count_rows =db.delete(TOUR_POINT_TABLE_NAME, MySQLiteHelper.ID+"="+Long.toString(tourPointId), null);
-
-			
+		
 		return count_rows;
 	}
 	

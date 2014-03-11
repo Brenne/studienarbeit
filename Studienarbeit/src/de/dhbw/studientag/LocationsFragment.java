@@ -60,9 +60,9 @@ public class LocationsFragment extends ListFragment {
 	}
 
 	@Override
-	public void onPause() {
-		// TODO Auto-generated method stub
-		super.onPause();
+	public void onResume() {
+		getActivity().setTitle(getString(R.string.title_activity_locations));
+		super.onResume();
 	}
 	
 	@Override

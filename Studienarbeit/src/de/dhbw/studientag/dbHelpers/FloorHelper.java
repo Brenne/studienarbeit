@@ -30,12 +30,6 @@ public final class FloorHelper  {
 			BuildingHelper.BUILDING_TABLE_NAME+"("+MySQLiteHelper.ID+")"+
 			")";
 	
-
-	
-	
-	
-
-
 	
 	protected static final void initFloors(Building building, SQLiteDatabase db){
 		for(Floor floor : building.getFloorList()){
@@ -46,15 +40,8 @@ public final class FloorHelper  {
 			long id = db.insert(FLOOR_TABLE_NAME, null, values);
 			floor.setId(id);
 			RoomHelper.initRooms(floor, db);
-	//		floor.setId(id);
-			//.initOfferedSubjects(building, db);
+	
 		}
-	}
-	public Cursor getCursor(SQLiteDatabase database, String[] columns){
-	    Cursor cursor = database.query(FLOOR_TABLE_NAME,
-	    		columns, null, null,
-	            null, null, FLOOR_NUM + " ASC");
-	    return cursor;
 	}
 	
 	public static Floor getFloorById(SQLiteDatabase database, long id){
@@ -63,10 +50,23 @@ public final class FloorHelper  {
 	            null, null, null);
 	    cursor.moveToFirst();
 	    Floor floor = cursorToFloor(cursor);
+	    floor.setRoomList(RoomHelper.getRoomsByFloorId(floor.getId(), database));
 	    cursor.close();
 	    return floor;
 	}
 	
+	public static Floor getFloorByRoomId(SQLiteDatabase db, long roomId){
+		String query = "SELECT * FROM "+FLOOR_TABLE_NAME+" f INNER JOIN "+RoomHelper.ROOM_TABLE_NAME+" r ON f."+MySQLiteHelper.ID+"=r."+
+				RoomHelper.ROOM_FLOOR+" AND r."+MySQLiteHelper.ID+"=?";
+		Cursor cursor = db.rawQuery(query, new String[]{Long.toString(roomId)});
+		cursor.moveToFirst();
+		Floor floor = cursorToFloor(cursor);
+	    floor.setRoomList(RoomHelper.getRoomsByFloorId(floor.getId(), db));
+	    cursor.close();
+	    return floor;
+		
+	}
+
 	public static List<Floor> getFloorsByBuildingId(long buildingId, SQLiteDatabase database){
 		List<Floor> floorList = new ArrayList<Floor>();
 		//SELECT * FROM Floor f INNER JOIN Building b ON f.buildingId=b._id AND b._id = ?
@@ -84,31 +84,31 @@ public final class FloorHelper  {
 	    cursor.close();
 		return floorList;
 	}
-	
-//	public static List<Company> getAllCompaniesBySubject(SQLiteDatabase database, Subject subject){
-//		List<Company> companies = new ArrayList<Company>();
-//		//Select name  from company c, subjects s WHERE s.companyId == c._id 
-//	    Cursor cursor = database.rawQuery("SELECT * " + 
-//		" FROM company c  INNER JOIN offeredsubjects os ON c._id=os.companyId AND os.subjectID=? ORDER BY c.name ASC", 
-//	    		new String[]{Long.toString(subject.getId())});
-//
-//	    cursor.moveToFirst();
-//	    while (!cursor.isAfterLast()) {
-//	      Company company = cursorToCompany(cursor);
-//	      company.setSubjectList(//.getOfferdSubjectsByCompanyId(company.getId(), database));
-//	      companies.add(company);
-//	      cursor.moveToNext();
-//	    }
-//	    // make sure to close the cursor
-//	    cursor.close();
-//		return companies;
-//		
-//	}
+	/**
+	 * 
+	 * @param db
+	 * @param floorId to check
+	 * @return true if the floor has at least one room which is occupied by at least one company, false otherwise
+	 */
+	public static boolean hasRoomsOccupiedRooms(SQLiteDatabase db, long floorId){
+		//SELECT count(*) FROM CompanyRoom cr INNER JOIN Room r ON r._id=cr.roomId AND r.floorId=floorId
+		boolean returnV=false;
+		String query = "SELECT * FROM "+CompanyRoomHelper.COMPANYROOM_TABLE_NAME+ " cr INNER JOIN "+
+				RoomHelper.ROOM_TABLE_NAME+" r ON r."+MySQLiteHelper.ID+"=cr."+CompanyRoomHelper.COMPANYROOM_ROOM_ID+ 
+				" AND r."+RoomHelper.ROOM_FLOOR+"="+Long.toString(floorId);
+		
+		Cursor cursor = db.rawQuery(query, null);
+		cursor.moveToFirst();
+		int rowCount = cursor.getCount();
+		cursor.close();
+		if(rowCount >= 1)
+			returnV = true;
+		return returnV;
+	}
 	
 
 	
 	private static Floor cursorToFloor(Cursor cursor){
-//		Log.d("id" ,cursor.getColumnNames().toString());
 		Floor floor = new Floor(
 				cursor.getLong(0),
 				cursor.getInt(cursor.getColumnIndex(FLOOR_NUM)),

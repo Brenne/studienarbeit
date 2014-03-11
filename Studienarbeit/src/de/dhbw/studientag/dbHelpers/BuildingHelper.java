@@ -51,6 +51,8 @@ public final class BuildingHelper {
 				BUILDING_ALL_COLUMNS, MySQLiteHelper.ID + " = " + id, null, null, null, null);
 		cursor.moveToFirst();
 		Building building = cursorToBuilding(cursor);
+		building.setFloorList(FloorHelper.getFloorsByBuildingId(
+				building.getId(), database));
 		cursor.close();
 		return building;
 	}
@@ -74,27 +76,20 @@ public final class BuildingHelper {
 		return buildings;
 	}
 
-	// public static List<Company> getAllCompaniesBySubject(SQLiteDatabase
-	// database, Subject subject){
-	// List<Company> companies = new ArrayList<Company>();
-	// //Select name from company c, subjects s WHERE s.companyId == c._id
-	// Cursor cursor = database.rawQuery("SELECT * " +
-	// " FROM company c  INNER JOIN offeredsubjects os ON c._id=os.companyId AND os.subjectID=? ORDER BY c.name ASC",
-	// new String[]{Long.toString(subject.getId())});
-	//
-	// cursor.moveToFirst();
-	// while (!cursor.isAfterLast()) {
-	// Company company = cursorToCompany(cursor);
-	// company.setSubjectList(//.getOfferdSubjectsByCompanyId(company.getId(),
-	// database));
-	// companies.add(company);
-	// cursor.moveToNext();
-	// }
-	// // make sure to close the cursor
-	// cursor.close();
-	// return companies;
-	//
-	// }
+	public static Building getBuildingByFloorId(SQLiteDatabase db, long floorId){
+		//SELECT * FROM Building b INNER JOIN Floor f ON b_id=f.buildingId
+		String query= "SELECT * FROM "+BUILDING_TABLE_NAME+ " b INNER JOIN "+
+				FloorHelper.FLOOR_TABLE_NAME+" f ON "+ " b."+MySQLiteHelper.ID+"=f."+FloorHelper.FLOOR_BUILDING_ID+ 
+				" AND f."+MySQLiteHelper.ID+"=?";
+		Cursor cursor = db.rawQuery(query, new String[]{Long.toString(floorId)});
+		cursor.moveToFirst();
+		Building building = cursorToBuilding(cursor);
+		building.setFloorList(FloorHelper.getFloorsByBuildingId(
+				building.getId(), db));
+		cursor.close();
+		return building;
+		
+	}
 
 	private static Building cursorToBuilding(Cursor cursor) {
 		// Log.d("id" ,cursor.getColumnNames().toString());

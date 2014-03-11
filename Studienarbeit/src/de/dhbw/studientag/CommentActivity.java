@@ -66,7 +66,6 @@ public class CommentActivity extends Activity {
 	}
 	@Override
 	protected void onPause() {
-		dbHelper.close();
 		
 		saveComment();
 		super.onPause();

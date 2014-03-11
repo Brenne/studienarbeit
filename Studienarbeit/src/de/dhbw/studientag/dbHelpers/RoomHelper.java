@@ -32,7 +32,7 @@ public class RoomHelper {
 			values.put(ROOM_FLOOR, floor.getId());
 			long roomId=db.insert(ROOM_TABLE_NAME, null, values);
 			room.setId(roomId);
-			//.initOfferedSubjects(building, db);
+			
 		}
 	}
 	
@@ -47,7 +47,8 @@ public class RoomHelper {
 		List<Room> roomList = new ArrayList<Room>();
 		
 		 Cursor cursor = database.rawQuery("SELECT * " + 
-					" FROM Room r  INNER JOIN  Floor f ON r.floorId=f._id AND f._id=? ", 
+					" FROM "+RoomHelper.ROOM_TABLE_NAME+" r  INNER JOIN "+FloorHelper.FLOOR_TABLE_NAME+" f ON r."
+					+ROOM_FLOOR+"=f."+MySQLiteHelper.ID+" AND f."+MySQLiteHelper.ID+"=? ", 
 				    		new String[]{Long.toString(floorId)});
 	    cursor.moveToFirst();
 	    while (!cursor.isAfterLast()) {

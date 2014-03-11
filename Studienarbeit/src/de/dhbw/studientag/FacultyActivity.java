@@ -33,13 +33,13 @@ public class FacultyActivity extends ListActivity {
 	@Override
 	protected void onListItemClick(android.widget.ListView l, android.view.View v, int position, long id) {
 		Subject selectedSubject = (Subject) getListAdapter().getItem(position);
-		startCompaniesActivityWithSubject(selectedSubject, this);
+		startActivity(getCompanyiesActivityIntentBySubject(selectedSubject, this));
 
 	}
 	
-	public static void startCompaniesActivityWithSubject(Subject subject, Context context){
+	public static Intent getCompanyiesActivityIntentBySubject(Subject subject, Context context){
 		Intent intent = new Intent(context, CompaniesActivity.class);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
 		MySQLiteHelper mysqlHelper = new MySQLiteHelper(context);
 		ArrayList<? extends Parcelable> companies = (ArrayList<? extends Parcelable>) 
 				CompanyHelper.getAllCompaniesBySubject(mysqlHelper.getReadableDatabase(), subject);
@@ -47,7 +47,8 @@ public class FacultyActivity extends ListActivity {
 		
 		intent.putExtra("title", subject.getName());
 		mysqlHelper.close();
-		context.startActivity(intent);
+		return intent;
+		
 	}
 
 

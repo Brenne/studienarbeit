@@ -29,6 +29,7 @@ public class MainActivity extends ListActivity {
 		list.add(getString(R.string.title_activity_locations));
 		list.add(getString(R.string.label_comments));
 		list.add(getString(R.string.title_activity_tour));
+		list.add(getString(R.string.title_activity_location_spiele));
 	
 		
 		final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -43,7 +44,10 @@ public class MainActivity extends ListActivity {
 			android.view.View v, int position, long id) {
 
 		String selected = (String) getListAdapter().getItem(position);
-
+		
+		//TODO switch case for selected
+		
+	
 		if (selected.equals(getString(R.string.label_companies))) {
 			Intent intent = new Intent(this, CompaniesActivity.class);
 
@@ -67,7 +71,10 @@ public class MainActivity extends ListActivity {
 		} else if(selected.equals(getString(R.string.title_activity_tour))){
 			Intent intent = new Intent(this, TourActivity.class);
 			startActivity(intent);
-		} 
+		} else if(selected.equals(getString(R.string.title_activity_location_spiele))){
+			Intent intent = new Intent(this, LocationSpieleActivity.class);
+			startActivity(intent);
+		}
 
 	}
 

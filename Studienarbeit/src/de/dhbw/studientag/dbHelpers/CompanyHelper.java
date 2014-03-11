@@ -72,6 +72,7 @@ public final class CompanyHelper {
 	    Company company = null;
 	    try{
 	    	 company = cursorToCompany(cursor);
+	    	 company.setSubjectList(OfferedSubjectsHelper.getOfferdSubjectsByCompanyId(id, database));
 	    }catch(CursorIndexOutOfBoundsException cursorOutOfBoundEx){
 	    	Log.e("CompanyHelper", "getCompanyById propably not valid companyId given", cursorOutOfBoundEx);
 	    	

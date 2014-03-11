@@ -66,7 +66,7 @@ public class TourPointFragment extends ListFragment implements
 //		company = getArguments().getParcelable(COMPANY);
 		// tourPoints = getArguments().getParcelableArrayList("tourPoints");
 		initAdapter();
-		adapter.setOnBinClickListener(this);
+		
 		if (company != null) {
 			
 			if (newTour) {
@@ -230,9 +230,8 @@ public class TourPointFragment extends ListFragment implements
 		}
 		MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity());
 		TourHelper.deleteTourPointById(dbHelper.getWritableDatabase(), tourPointId);
-		//if there are no more TourPoints in this tour also delete the tour
 		if(data.isEmpty()){
-//			TourHelper.deleteTourById(dbHelper.getWritableDatabase(), tourId);
+
 			getActivity().onBackPressed();
 		}else{
 			initAdapter();
@@ -264,7 +263,6 @@ public class TourPointFragment extends ListFragment implements
 	    mShareActionProvider = (ShareActionProvider) item.getActionProvider();
 		Intent sendIntent = new Intent();
 		sendIntent.setAction(Intent.ACTION_SEND);
-//		sendIntent.putExtra(Intent.EXTRA_TEXT, tourPoints.get(0).getName()+":"+getCompanyIdsOfTour());
 		sendIntent.putExtra(Intent.EXTRA_TEXT, getShareMessage());
 		sendIntent.setType(ImportActivity.MIME_TEXT_PLAIN);
 		setShareIntent(sendIntent);
@@ -302,11 +300,25 @@ public class TourPointFragment extends ListFragment implements
 		return shareMessage.toString();
 	}
 	
+//	private void calculateTourPointsDependendOnCurPosition(){
+//	    LocationManager locManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);         
+//
+//	    locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000L,500.0f, locationListener);
+//	    Location location = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//
+//	    double latitude=0;
+//	    double longitude=0;
+//	    latitude = location.getLatitude();
+//	    longitude = location.getLongitude();
+//	}
+	
 	// Call to update the share intent
 	private void setShareIntent(Intent shareIntent) {
 	    if (mShareActionProvider != null) {
 	        mShareActionProvider.setShareIntent(shareIntent);
 	    }
 	}
+	
+
 
 }

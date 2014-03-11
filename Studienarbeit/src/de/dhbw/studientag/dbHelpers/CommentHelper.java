@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import de.dhbw.studientag.CommentsActivity;
+
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
@@ -14,7 +16,7 @@ public class CommentHelper {
 
 	private static final String COMMENT_TABLE_NAME = "Comment";
 	private static final String COMMENT_COMPANY_ID = "companyId";
-	private static final String COMMENT_MESSAGE = "message";
+	public static final String COMMENT_MESSAGE = "message";
 
 	private static final String[] COMMENT_ALL_COLUMNS = { MySQLiteHelper.ID,
 			COMMENT_COMPANY_ID, COMMENT_MESSAGE };
@@ -84,8 +86,8 @@ public class CommentHelper {
 			long companyId = cursor.getLong(cursor.getColumnIndex(COMMENT_COMPANY_ID));
 			String message = cursor.getString(cursor.getColumnIndex(COMMENT_MESSAGE));
 			message = shortenMessage(message);
-			comment.put("company", CompanyHelper.getCompanyById(db, companyId));
-			comment.put("message", message);
+			comment.put(CommentsActivity.COMPANY_KEY, CompanyHelper.getCompanyById(db, companyId));
+			comment.put(COMMENT_MESSAGE, message);
 			comments.add(comment);
 			cursor.moveToNext();
 		}

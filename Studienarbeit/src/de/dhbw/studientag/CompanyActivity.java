@@ -23,13 +23,14 @@ public class CompanyActivity extends Activity {
 
 	private Company company;
 	private MySQLiteHelper dbHelper = new MySQLiteHelper(this);
+	protected static final String COMPANY ="company";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_company);
 		setTitle(getString(R.string.label_companyProfile));
-		company = (Company) getIntent().getParcelableExtra("company");
+		company = (Company) getIntent().getParcelableExtra(COMPANY);
 
 		TextView companyName = (TextView) findViewById(R.id.textView_companyName);
 		TextView companyWWW  = (TextView) findViewById(R.id.textView_companyWWW);
@@ -44,7 +45,7 @@ public class CompanyActivity extends Activity {
 		CompanyLocation companyLocation = CompanyRoomHelper.getLocationByCompanyId(company.getId(), dbHelper.getReadableDatabase());
 		dbHelper.close();
 		companyRoom.setText(companyLocation.getRoom().getRoomNo());
-		companyBld.setText(companyLocation.getBuilding().getShortName());
+		companyBld.setText(companyLocation.getBuilding().getFullName());
 		final ListView offeredSubjects = (ListView) findViewById(R.id.listView_companyOfferedSubjects);
 		final ArrayAdapter<Subject> adapter = new ArrayAdapter<Subject>(this,android.R.layout.simple_list_item_1, 
 				company.getSubjectList());
@@ -55,10 +56,12 @@ public class CompanyActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				final Subject subject = (Subject) offeredSubjects.getAdapter().getItem(position);
-				FacultyActivity.startCompaniesActivityWithSubject(subject, getApplicationContext());
+				startActivity(FacultyActivity.getCompanyiesActivityIntentBySubject(subject, getApplicationContext()));
 			}
 			
 		});
+		
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 
 	@Override

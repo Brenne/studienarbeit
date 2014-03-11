@@ -1,5 +1,6 @@
 package de.dhbw.studientag;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,7 +8,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.res.Configuration;
 import android.graphics.PorterDuff.Mode;
 import android.os.Bundle;
 import android.view.Menu;
@@ -24,19 +24,31 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import de.dhbw.studientag.model.Building;
 import de.dhbw.studientag.model.Floor;
+import de.dhbw.studientag.model.Room;
 
 public class LocationsActivity extends Activity implements
 		LocationsFragment.OnBuildingSelectedListener,
-		BuildingFragment.OnFloorSelectedListener {
+		BuildingFragment.OnFloorSelectedListener,
+		FloorFragment.OnRoomSelectedListener{
 
 	private GoogleMap mMap;
 	private boolean showMap = true;
 	private int topFragmentContainerHeight;
 	private LocationsFragment locationsFragment;
+
 	private static final String LOCATIONS_FRAGMENT="locationsFragment";
 
-	private final Map<String, LatLng> LOCATIONS = new HashMap<String, LatLng>();
-
+	public static final Map<String, LatLng> LOCATIONS;
+	static{
+		Map<String, LatLng> locationsMap = new HashMap<String, LatLng>();
+		locationsMap.put("RB41", new LatLng(48.773536, 9.170902));
+		locationsMap.put("J58", new LatLng(48.785111, 9.173414));
+		locationsMap.put("J56", new LatLng(48.784607, 9.174141));
+		locationsMap.put("P50", new LatLng(48.773298, 9.170553));
+		LOCATIONS = Collections.unmodifiableMap(locationsMap);
+	}
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -53,11 +65,14 @@ public class LocationsActivity extends Activity implements
 
 		setContentView(R.layout.activity_locations);
 		setUpMapIfNeeded();
-		initLocations();
+		
 
 		FrameLayout fragmentContainerTop = (FrameLayout) findViewById(R.id.fragmentContainer);
 		topFragmentContainerHeight = ((LayoutParams) fragmentContainerTop
 				.getLayoutParams()).height;
+		
+		
+		
 
 	}
 
@@ -81,18 +96,10 @@ public class LocationsActivity extends Activity implements
 		mMap.addMarker(new MarkerOptions().position(position).title("Marker"));
 	}
 
-	private final void initLocations() {
-		if (LOCATIONS.isEmpty()) {
-			this.LOCATIONS.put("RB41", new LatLng(48.773536, 9.170902));
-			this.LOCATIONS.put("J58", new LatLng(48.785111, 9.173414));
-			this.LOCATIONS.put("J56", new LatLng(48.784607, 9.174141));
-			this.LOCATIONS.put("P50", new LatLng(48.773298, 9.170553));
-		}
 
-	}
 
 	public Map<String, LatLng> getLocations() {
-		return this.LOCATIONS;
+		return LocationsActivity.LOCATIONS;
 	}
 
 	@Override
@@ -104,11 +111,13 @@ public class LocationsActivity extends Activity implements
 				.setColorFilter(android.graphics.Color.GREEN, Mode.MULTIPLY);
 		return true;
 	}
-
+	
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menu_map:
+			
 			FragmentTransaction transaction = getFragmentManager().beginTransaction();
 			Fragment mapFragment = getFragmentManager().findFragmentById(R.id.map);
 			FrameLayout fragmentContainerTop = (FrameLayout) findViewById(R.id.fragmentContainer);
@@ -164,4 +173,15 @@ public class LocationsActivity extends Activity implements
 
 	}
 
+	@Override
+	public void onRoomSelected(Room room, Floor floor) {
+		RoomFragment roomFragment = RoomFragment.newInstance(room, floor);
+		FragmentTransaction transaction = getFragmentManager().beginTransaction();
+		transaction.replace(R.id.fragmentContainer, roomFragment);
+		transaction.addToBackStack(null);
+		transaction.commit();
+		
+	}
+	
+	
 }

@@ -15,10 +15,11 @@ public final class MySQLiteHelper extends SQLiteOpenHelper {
 	public static boolean init = false;
 	
 	
+	
 	public MySQLiteHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 		this.context = context;
-		if(!init){
+		if(!init && context != null){
 			new TestData(context.getAssets());
 			init=true;
 		}

@@ -12,7 +12,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.dbHelpers.TourHelper;
 import de.dhbw.studientag.model.Company;
@@ -43,7 +42,7 @@ public class SelectTourDialogFragment extends DialogFragment {
 						} else {
 							MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity()
 									.getBaseContext());
-							long tourId = (Long) ((Map<String, Object>) adapter
+							long tourId = (Long) ((Map<?, ?>) adapter
 									.getItem(which)).get(ToursListFragment.TOUR_ID);
 							TourPoint tourPoint = new TourPoint(tourId, company);
 							TourHelper.insertTourPoint(dbHelper.getWritableDatabase(),

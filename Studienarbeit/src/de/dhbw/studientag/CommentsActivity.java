@@ -16,7 +16,7 @@ import de.dhbw.studientag.model.Company;
 
 public class CommentsActivity extends ListActivity {
 
-	private final static String COMPANY_KEY = "company";
+	public final static String COMPANY_KEY = "company";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +68,7 @@ public class CommentsActivity extends ListActivity {
 		List<Map<String, Object>> comments = CommentHelper.getAllComments(dbHelper.getReadableDatabase());
 		
 		SimpleAdapter adapter = new SimpleAdapter(this, comments, android.R.layout.simple_list_item_2, 
-				new String[] {COMPANY_KEY, "message"}, 
+				new String[] {COMPANY_KEY, CommentHelper.COMMENT_MESSAGE}, 
 				new int[]{android.R.id.text1, android.R.id.text2});
 		setListAdapter(adapter);
 		dbHelper.close();

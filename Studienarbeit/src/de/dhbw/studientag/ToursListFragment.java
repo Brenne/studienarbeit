@@ -102,7 +102,7 @@ public class ToursListFragment extends ListFragment implements
 //		Log.i("studientag", "onListItemClick pos " + Integer.toString(position) + " id "
 //				+ Long.toString(id));
 		if (mTourListener != null) {
-			Map<String, Object> tourPoint = (Map<String, Object>) l
+			Map<?, ?> tourPoint = (Map<?, ?>) l
 					.getItemAtPosition(position);
 			mTourListener.onTourSelected(tourPoint);
 		}
@@ -130,7 +130,7 @@ public class ToursListFragment extends ListFragment implements
 	 * >Communicating with Other Fragments</a> for more information.
 	 */
 	public interface OnTourSelectedListener {
-		public void onTourSelected(Map<String, Object> tourPoint);
+		public void onTourSelected(Map<?, ?> tourPoint);
 	}
 
 	private ArrayList<Map<String, Object>> getTourPoints() {
@@ -186,7 +186,7 @@ public class ToursListFragment extends ListFragment implements
 	@Override
 	public void binClicked(int position) {
 
-		Map<String, Object> tour = (Map<String, Object>) mTours.getItem(position);
+		Map<?, ?> tour = (Map<?, ?>) mTours.getItem(position);
 		long tourId = (Long) tour.get(TOUR_ID);
 		MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity());
 		TourHelper.deleteTourById(dbHelper.getWritableDatabase(), tourId);

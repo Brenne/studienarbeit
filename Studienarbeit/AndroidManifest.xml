@@ -45,7 +45,8 @@
             android:name="de.dhbw.studientag.CompaniesActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/label_companies"
-            android:launchMode="singleTop" >
+            android:launchMode="singleTop"
+            android:parentActivityName="de.dhbw.studientag.MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -56,15 +57,16 @@
         </activity>
         <activity
             android:name="de.dhbw.studientag.CompanyActivity"
-            android:label="@string/title_activity_company" >
+            android:label="@string/title_activity_company"
+            android:parentActivityName="de.dhbw.studientag.CompaniesActivity" >
         </activity>
         <activity
             android:name="de.dhbw.studientag.FacultyActivity"
-            android:label="@string/title_activity_faculty" >
+            android:label="@string/title_activity_faculty"
+            android:parentActivityName="de.dhbw.studientag.MainActivity" >
         </activity>
         <activity
             android:name="de.dhbw.studientag.LocationsActivity"
-           
             android:label="@string/title_activity_locations" >
         </activity>
         <activity
@@ -90,6 +92,10 @@
         <activity
             android:name="de.dhbw.studientag.ImportActivity"
             android:label="@string/label_import_tour" >
+        </activity>
+        <activity
+            android:name="de.dhbw.studientag.LocationSpieleActivity"
+            android:label="@string/title_activity_location_spiele" >
         </activity>
     </application>
 

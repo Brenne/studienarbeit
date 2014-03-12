@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import de.dhbw.studientag.dbHelpers.BuildingHelper;
-import de.dhbw.studientag.dbHelpers.CompanyRoomHelper;
+import de.dhbw.studientag.dbHelpers.CompanyLocationHelper;
 import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.model.Building;
 import de.dhbw.studientag.model.Company;
@@ -28,7 +28,7 @@ public class RoomFragment extends ListFragment {
 		super.onCreate(savedInstanceState);
 		room = getArguments().getParcelable(ROOM);
 		MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity());
-		List<Company> companies = CompanyRoomHelper.getCompaniesByRoomId(
+		List<Company> companies = CompanyLocationHelper.getCompaniesByRoomId(
 				dbHelper.getReadableDatabase(), room.getId());
 		floor =getArguments().getParcelable(FloorFragment.FLOOR);
 		building = BuildingHelper.getBuildingByFloorId(dbHelper.getReadableDatabase(), floor.getId());

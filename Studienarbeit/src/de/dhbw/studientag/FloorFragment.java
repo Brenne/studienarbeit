@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import de.dhbw.studientag.dbHelpers.BuildingHelper;
-import de.dhbw.studientag.dbHelpers.CompanyRoomHelper;
+import de.dhbw.studientag.dbHelpers.CompanyLocationHelper;
 import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.model.Building;
 import de.dhbw.studientag.model.Company;
@@ -35,7 +35,7 @@ public class FloorFragment extends ListFragment {
 		Iterator<Room> iterator = rooms.iterator();
 		while(iterator.hasNext()){
 			Room room = iterator.next();
-			List<Company> companies = CompanyRoomHelper.getCompaniesByRoomId(
+			List<Company> companies = CompanyLocationHelper.getCompaniesByRoomId(
 					dbHelper.getReadableDatabase(), room.getId());
 			if(companies.isEmpty()){
 				iterator.remove();

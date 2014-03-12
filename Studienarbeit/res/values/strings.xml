@@ -57,5 +57,6 @@
     <string name="label_show_location">Show Location</string>
     <string name="label_mylocation">mein Ort</string>
     <string name="label_btn_order_list">sortiere Lokationen</string>
+    <string name="label_calc_best_way">beste Tour berechnen</string>
 
 </resources>

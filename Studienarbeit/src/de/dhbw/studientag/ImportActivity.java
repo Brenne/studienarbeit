@@ -182,9 +182,9 @@ public class ImportActivity extends Activity {
 					Company company = CompanyHelper.getCompanyById(
 							dbHelper.getReadableDatabase(), companyIdL);
 					if (company != null) {
-						TourPoint tourPoint = new TourPoint(tourId, company);
+						TourPoint tourPoint = new TourPoint(company);
 						TourHelper.insertTourPoint(dbHelper.getWritableDatabase(),
-								tourPoint);
+								tourPoint, tourId);
 					}else{
 						Log.e("ImportActivity", "no company found by valid company Id");
 						return false;

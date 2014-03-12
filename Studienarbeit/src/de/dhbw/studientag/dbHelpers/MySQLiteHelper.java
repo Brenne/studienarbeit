@@ -36,7 +36,7 @@ public final class MySQLiteHelper extends SQLiteOpenHelper {
 		db.execSQL(FloorHelper.FLOOR_TABLE_CREATE);
 		db.execSQL(BuildingHelper.BUILDING_TABLE_CREATE);
 		db.execSQL(RoomHelper.ROOM_TABLE_CREATE);
-		db.execSQL(CompanyRoomHelper.COMPANYRROOM_TABLE_CREATE);
+		db.execSQL(CompanyLocationHelper.COMPANYRROOM_TABLE_CREATE);
 		db.execSQL(CommentHelper.COMMENT_TABLE_CREATE);
 		db.execSQL(TourHelper.TOUR_TABLE_CREATE);
 		db.execSQL(TourHelper.TOUR_POINT_TABLE_CREATE);
@@ -46,7 +46,7 @@ public final class MySQLiteHelper extends SQLiteOpenHelper {
 		SubjectsHelper.initSubjects(db);
 		CompanyHelper.initCompanies(db);
 		BuildingHelper.initBuildings(db);
-		CompanyRoomHelper.init(db);
+		CompanyLocationHelper.init(db);
 		
 
 	}

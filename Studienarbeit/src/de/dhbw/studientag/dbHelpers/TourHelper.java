@@ -1,11 +1,8 @@
 package de.dhbw.studientag.dbHelpers;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
@@ -13,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 import de.dhbw.studientag.model.Company;
+import de.dhbw.studientag.model.Tour;
 import de.dhbw.studientag.model.TourPoint;
 
 public class TourHelper {
@@ -38,6 +36,7 @@ public class TourHelper {
 			+ ") ON CONFLICT REPLACE, " + "UNIQUE(" + TOUR_POINT_TOUR_ID + ", "
 			+ TOUR_POINT_POSITION + " ) ON CONFLICT REPLACE" + ")";
 
+	private final static String[] TOUR_ALL_COLUMNS ={MySQLiteHelper.ID, TOUR_NAME};
 	private final static String[] TOUR_POINT_ALL_COLUMNS = { MySQLiteHelper.ID,
 			TOUR_POINT_COMPANY_ID, TOUR_POINT_POSITION, TOUR_POINT_TOUR_ID };
 
@@ -48,15 +47,15 @@ public class TourHelper {
 		return id;
 	}
 
-	public static long insertTourPoint(SQLiteDatabase db, TourPoint tourPoint) {
-		if (tourPoint.getCompany() == null || tourPoint.getTourId() == 0) {
+	public static long insertTourPoint(SQLiteDatabase db, TourPoint tourPoint, long tourId) {
+		if (tourPoint.getCompany() == null || tourId == 0) {
 			Log.d("studientag", "cannot Insert TourPoint no valid companyId or no tourId");
 		}
 
 		ContentValues values = new ContentValues();
-		int position = getNewTourPointPosition(db, tourPoint.getTourId());
+		int position = getNewTourPointPosition(db, tourId);
 		values.put(TOUR_POINT_COMPANY_ID, tourPoint.getCompany().getId());
-		values.put(TOUR_POINT_TOUR_ID, tourPoint.getTourId());
+		values.put(TOUR_POINT_TOUR_ID,tourId);
 		// TODO raw query mit position = SELECT max(position+1) WHERE
 		
 		values.put(TOUR_POINT_POSITION, position);
@@ -87,37 +86,20 @@ public class TourHelper {
 		}
 	}
 
-	@SuppressLint("UseSparseArrays")
-	// SparseArrays can not parameterized with <Integer,List<TourPoint>>
-	public static Map<Integer, List<TourPoint>> getAllTours(SQLiteDatabase db) {
-		Map<Integer, List<TourPoint>> allTourPoints = new LinkedHashMap<Integer, List<TourPoint>>();
-
-		String orderBy=  TOUR_POINT_TOUR_ID + " ASC";
-		String query = myQueryBuilder(null, orderBy);
-		Cursor cursor = db.rawQuery(query, null);
-		int tourId = 0;
-		int newTourId = 0;
-		List<TourPoint> tourPoints = new ArrayList<TourPoint>();
+	
+	public static List<Tour> getAllTours(SQLiteDatabase db) {
+		List<Tour> tourList = new ArrayList<Tour>();
+		
+		Cursor cursor = db.query(TOUR_TABLE_NAME, TOUR_ALL_COLUMNS, null, null, null, null, null);
 		cursor.moveToFirst();
-		while (!cursor.isAfterLast()) {
-			TourPoint tourPoint = cursorToTourPoint(cursor, db);
-			try {
-				newTourId = (int) tourPoint.getTourId();
-			} catch (ClassCastException e) {
-				Log.d("studientag", "Class Cast Exception tourId no Integer");
-			}
-			if (newTourId != tourId) {
-				tourPoints = new ArrayList<TourPoint>();
-			}
-			tourPoints.add(tourPoint);
-			if (newTourId != tourId)
-				allTourPoints.put(newTourId, tourPoints);
-			tourId = newTourId;
+		while(!cursor.isAfterLast()){
+			Tour tour = cursorToTour(db, cursor);
+			tourList.add(tour);
 			cursor.moveToNext();
 		}
 		cursor.close();
 
-		return allTourPoints;
+		return tourList;
 	}
 
 	public static List<String> getTourNames(SQLiteDatabase db) {
@@ -135,14 +117,21 @@ public class TourHelper {
 		int companyId = cursor.getInt(cursor.getColumnIndex(TOUR_POINT_COMPANY_ID));
 		Company company = CompanyHelper.getCompanyById(db, companyId);
 		int position = cursor.getInt(cursor.getColumnIndex(TOUR_POINT_POSITION));
-		int colIndex = cursor.getColumnIndex(TOUR_POINT_TOUR_ID);
-		int tourId = cursor.getInt(colIndex);
 		long tourPointId = cursor.getLong(cursor.getColumnIndex(TOUR_POINT_ID));
-		String tourName = cursor.getString(cursor.getColumnIndex(TOUR_NAME));
-		TourPoint tourPoint = new TourPoint(tourName, tourId, company, position);
+		TourPoint tourPoint = new TourPoint(company, position);
 		tourPoint.setId(tourPointId);
 		return tourPoint;
 	}
+	
+	private static Tour cursorToTour(SQLiteDatabase db, Cursor cursor){
+		long tourId = cursor.getLong(cursor.getColumnIndex(MySQLiteHelper.ID));
+		String tourName = cursor.getString(cursor.getColumnIndex(TOUR_NAME));
+		Tour tour = new Tour(tourId,tourName);
+		tour.setTourPointList(getTourPointListByTourId(db, tour.getId()));
+		return tour;
+		
+	}
+	
 
 	private static int getNewTourPointPosition(SQLiteDatabase db, long tourId) {
 		Cursor cursor = db.query(TOUR_POINT_TABLE_NAME, new String[] { "max("
@@ -158,7 +147,13 @@ public class TourHelper {
 		List<TourPoint> tourPointList = new ArrayList<TourPoint>();
 		String where = TOUR_POINT_TOUR_ID + "=" + Long.toString(tourId);
 		String orderBy = TOUR_POINT_POSITION + " ASC";
-		String query=myQueryBuilder(where, orderBy);
+		
+		String query = SQLiteQueryBuilder.buildQueryString(true, TOUR_POINT_TABLE_NAME
+				+ " INNER JOIN " + TOUR_TABLE_NAME + " ON " + TOUR_TABLE_NAME + "."
+				+ MySQLiteHelper.ID + "=" + TOUR_POINT_TABLE_NAME + "."
+				+ TOUR_POINT_TOUR_ID, new String[] { TOUR_POINT_COMPANY_ID,
+				TOUR_POINT_POSITION, TOUR_POINT_TABLE_NAME+"."+MySQLiteHelper.ID+" AS "+TOUR_POINT_ID }, where, null, null, orderBy,
+				null);
 		Cursor cursor = db.rawQuery(query, null);
 		cursor.moveToFirst();
 		while (!cursor.isAfterLast()) {
@@ -178,17 +173,7 @@ public class TourHelper {
 			return true;
 	}
 
-	private static String myQueryBuilder(String where, String orderBy){
-	
-		String query = SQLiteQueryBuilder.buildQueryString(true, TOUR_POINT_TABLE_NAME
-				+ " INNER JOIN " + TOUR_TABLE_NAME + " ON " + TOUR_TABLE_NAME + "."
-				+ MySQLiteHelper.ID + "=" + TOUR_POINT_TABLE_NAME + "."
-				+ TOUR_POINT_TOUR_ID, new String[] { TOUR_NAME, TOUR_POINT_COMPANY_ID,
-				TOUR_POINT_POSITION, TOUR_POINT_TOUR_ID, TOUR_POINT_TABLE_NAME+"."+MySQLiteHelper.ID+" AS "+TOUR_POINT_ID }, where, null, null, orderBy,
-				null);
-		
-		return query;
-	}
+
 	
 	public static void deleteTourById(SQLiteDatabase db, long tourId){
 		db.delete(TOUR_TABLE_NAME, MySQLiteHelper.ID+"="+Long.toString(tourId), null);
@@ -228,6 +213,12 @@ public class TourHelper {
 		}
 		//more than Integer.MAY_VALUE entries in table
 		return tourName+" changeme";
+	}
+	
+	public static void updatePositionByTourPointId(SQLiteDatabase db, long tourPointId, int newPosition){
+		ContentValues values = new ContentValues();
+		values.put(TOUR_POINT_POSITION, newPosition);
+		db.update(TOUR_POINT_TABLE_NAME, values, MySQLiteHelper.ID+"="+Long.toString(tourPointId), null);
 	}
 	
 	public static boolean isCompanyInTour(SQLiteDatabase db, long companyId, long tourId){

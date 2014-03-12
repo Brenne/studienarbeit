@@ -18,7 +18,7 @@ public class Company implements Parcelable{
 	private String city;
 	private String website;
 	private ArrayList<Subject> subjectList = new ArrayList<Subject>();
-
+	private Location location;
 	
 	
 	public Company(long id, String fullName, String street, String city, String plz){
@@ -74,6 +74,14 @@ public class Company implements Parcelable{
 		this.subjectList = subjectList;
 	}
 
+	public Location getLocation() {
+		return location;
+	}
+
+	public void setLocation(Location location) {
+		this.location = location;
+	}
+
 	@Override
 	public String toString() {
 		return this.getName();
@@ -93,6 +101,7 @@ public class Company implements Parcelable{
 		dest.writeString(plz);
 		dest.writeString(website);
 		dest.writeTypedList(subjectList);
+		dest.writeParcelable(location, flags);
 		
 	}
 	
@@ -100,6 +109,7 @@ public class Company implements Parcelable{
 		this(source.readLong(), source.readString(), source.readString(), 
 				source.readString(), source.readString(), source.readString());
 		source.readTypedList(subjectList, Subject.CREATOR);
+		this.setLocation((Location) source.readParcelable(Location.class.getClassLoader()));
 		
 	}
 	

@@ -71,8 +71,7 @@ public final class CompanyHelper {
 	    cursor.moveToFirst();
 	    Company company = null;
 	    try{
-	    	 company = cursorToCompany(cursor);
-	    	 company.setSubjectList(OfferedSubjectsHelper.getOfferdSubjectsByCompanyId(id, database));
+	    	 company = cursorToCompany(database, cursor);
 	    }catch(CursorIndexOutOfBoundsException cursorOutOfBoundEx){
 	    	Log.e("CompanyHelper", "getCompanyById propably not valid companyId given", cursorOutOfBoundEx);
 	    	
@@ -91,8 +90,7 @@ public final class CompanyHelper {
 
 	    cursor.moveToFirst();
 	    while (!cursor.isAfterLast()) {
-	      Company company = cursorToCompany(cursor);
-	      company.setSubjectList(OfferedSubjectsHelper.getOfferdSubjectsByCompanyId(company.getId(), database));
+	      Company company = cursorToCompany(database,cursor);
 	      companies.add(company);
 	      cursor.moveToNext();
 	    }
@@ -110,8 +108,8 @@ public final class CompanyHelper {
 
 	    cursor.moveToFirst();
 	    while (!cursor.isAfterLast()) {
-	      Company company = cursorToCompany(cursor);
-	      company.setSubjectList(OfferedSubjectsHelper.getOfferdSubjectsByCompanyId(company.getId(), database));
+	      Company company = cursorToCompany(database, cursor);
+	      
 	      companies.add(company);
 	      cursor.moveToNext();
 	    }
@@ -129,7 +127,7 @@ public final class CompanyHelper {
 		return companyNames;
 	}
 	
-	private static Company cursorToCompany(Cursor cursor){
+	private static Company cursorToCompany(SQLiteDatabase db, Cursor cursor){
 //		Log.d("id" ,cursor.getColumnNames().toString());
 		
 		Company company = new Company(
@@ -139,6 +137,8 @@ public final class CompanyHelper {
 				cursor.getString(cursor.getColumnIndex(COMPANY_CITY)),
 				cursor.getString(cursor.getColumnIndex(COMPANY_PLZ)),
 				cursor.getString(cursor.getColumnIndex(COMPANY_WEBSITE)));
+		company.setSubjectList(OfferedSubjectsHelper.getOfferdSubjectsByCompanyId(company.getId(), db));
+		company.setLocation(CompanyLocationHelper.getLocationByCompanyId(company.getId(), db));
 		return company;
 				
 	}

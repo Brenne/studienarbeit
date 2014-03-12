@@ -5,29 +5,18 @@ import android.os.Parcelable;
 
 public class TourPoint implements Parcelable{
 
-	private long tourId;
+	
 	private long id;
-	private String tourName;
 	private Company company;
 	private int position;
 	
-	public TourPoint(String tourName, long tourId, Company company, int position){
-		this(tourId, company);
-		this.tourName=tourName;
+	public TourPoint(Company company, int position){
+		this(company);
 		this.position=position;
 	}
 	
-	public TourPoint(long tourId, Company company){
-		this.tourId=tourId;
+	public TourPoint( Company company){
 		this.company=company;
-	}
-
-	public long getTourId() {
-		return tourId;
-	}
-	
-	public void setTourId(long tourId){
-		this.tourId=tourId;
 	}
 
 	public long getId() {
@@ -38,13 +27,6 @@ public class TourPoint implements Parcelable{
 		this.id = id;
 	}
 
-	public String getName() {
-		return tourName;
-	}
-	
-	public void setName(String name){
-		this.tourName=name;
-	}
 
 	public Company getCompany() {
 		return company;
@@ -54,9 +36,13 @@ public class TourPoint implements Parcelable{
 		return position;
 	}
 	
+	public void setPosition(int position){
+		this.position=position;
+	}
+	
 	@Override
 	public String toString() {
-		return this.getName();
+		return this.company.toString();
 	}
 
 	@Override
@@ -66,8 +52,6 @@ public class TourPoint implements Parcelable{
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeString(tourName);
-		dest.writeLong(tourId);
 		dest.writeParcelable(company, 0);
 		dest.writeInt(position);
 	
@@ -75,7 +59,7 @@ public class TourPoint implements Parcelable{
 	}
 
 	private TourPoint(Parcel source) {
-		this( source.readString(), source.readLong(), (Company) source.readParcelable(Company.class.getClassLoader()), source.readInt());
+		this( (Company) source.readParcelable(Company.class.getClassLoader()), source.readInt());
 
 	}
 

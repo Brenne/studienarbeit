@@ -1,32 +1,27 @@
 package de.dhbw.studientag;
 
-import java.util.List;
-import java.util.Map;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import de.dhbw.studientag.model.Tour;
+import de.dhbw.studientag.model.TourPoint;
 
-public class MyAdapterWithBin extends SimpleAdapter {
+public class TourPointAdapter extends ArrayAdapter<TourPoint> {
 
 	private OnBinClicked mBinClicked;
 	private final Context context;
-	private final List<? extends Map<String, ?>> data;
-	private final String[] from;
-
-	public MyAdapterWithBin(Context context, List<? extends Map<String, ?>> data,
-			String[] from) {
-		super(context, data, R.layout.tour_list_item, from, new int[] {
-				R.id.tourItemFirstLine, R.id.tourItemSecondLine });
+	private final Tour mTour;
+	
+	public TourPointAdapter(Context context, Tour tour) {
+		super(context, R.layout.tour_list_item, tour.getTourPointList());
 		this.context = context;
-		this.data = data;
-		this.from = from;
-
+		this.mTour = tour;
+		
 	}
 
 	@Override
@@ -37,8 +32,8 @@ public class MyAdapterWithBin extends SimpleAdapter {
 		TextView tvCompanyName = (TextView) rowView.findViewById(R.id.tourItemFirstLine);
 		TextView tvCompanLocation = (TextView) rowView
 				.findViewById(R.id.tourItemSecondLine);
-		tvCompanyName.setText((CharSequence) data.get(position).get(from[0]));
-		tvCompanLocation.setText((CharSequence) data.get(position).get(from[1]));
+		tvCompanyName.setText((CharSequence) mTour.getTourPointList().get(position).getCompany().getName());
+		tvCompanLocation.setText((CharSequence) mTour.getTourPointList().get(position).getCompany().getLocation().getBuilding().getFullName());
 
 		ImageButton imageButton = (ImageButton) rowView.findViewById(R.id.tourItemDelete);
 		imageButton.setOnClickListener(new OnClickListener() {
@@ -52,9 +47,6 @@ public class MyAdapterWithBin extends SimpleAdapter {
 		return rowView;
 	}
 
-	public interface OnBinClicked {
-		public void binClicked(int tourId);
-	}
 
 	public void setOnBinClickListener(OnBinClicked binClicked) {
 		this.mBinClicked = binClicked;

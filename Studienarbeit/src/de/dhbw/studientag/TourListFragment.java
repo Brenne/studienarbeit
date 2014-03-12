@@ -1,10 +1,6 @@
 package de.dhbw.studientag;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import android.app.Activity;
 import android.app.ListFragment;
@@ -20,7 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.dbHelpers.TourHelper;
-import de.dhbw.studientag.model.TourPoint;
+import de.dhbw.studientag.model.Tour;
 
 /**
  * A fragment representing a list of Items.
@@ -31,8 +27,8 @@ import de.dhbw.studientag.model.TourPoint;
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-public class ToursListFragment extends ListFragment implements
-		MyAdapterWithBin.OnBinClicked {
+public class TourListFragment extends ListFragment implements
+		OnBinClicked {
 
 	private OnTourSelectedListener mTourListener;
 	protected static final String TOUR_NAME = "tourName";
@@ -43,13 +39,13 @@ public class ToursListFragment extends ListFragment implements
 	 * The Adapter which will be used to populate the ListView/GridView with
 	 * Views.
 	 */
-	private MyAdapterWithBin mTours;
+	private TourAdapter mTourAdapter;
 
 	/**
 	 * Mandatory empty constructor for the fragment manager to instantiate the
 	 * fragment (e.g. upon screen orientation changes).
 	 */
-	public ToursListFragment() {
+	public TourListFragment() {
 	}
 
 	@Override
@@ -59,11 +55,10 @@ public class ToursListFragment extends ListFragment implements
 
 	}
 
-	private void initAdapter(List<Map<String, Object>> tourPoints) {
-		mTours = new MyAdapterWithBin(getActivity().getBaseContext(), tourPoints,
-				new String[] { TOUR_NAME, TOUR_STATIONS });
-		mTours.notifyDataSetChanged();
-		mTours.setOnBinClickListener(this);
+	private void initAdapter(List<Tour> tourList) {
+		mTourAdapter = new TourAdapter(getActivity(),  tourList);
+		mTourAdapter.notifyDataSetChanged();
+		mTourAdapter.setOnBinClickListener(this);
 
 	}
 
@@ -74,7 +69,7 @@ public class ToursListFragment extends ListFragment implements
 				.inflate(R.layout.fragment_tourfragmentlist, container, false);
 
 		// Set the adapter
-		setListAdapter(mTours);
+		setListAdapter(mTourAdapter);
 
 		return view;
 	}
@@ -102,9 +97,8 @@ public class ToursListFragment extends ListFragment implements
 //		Log.i("studientag", "onListItemClick pos " + Integer.toString(position) + " id "
 //				+ Long.toString(id));
 		if (mTourListener != null) {
-			Map<?, ?> tourPoint = (Map<?, ?>) l
-					.getItemAtPosition(position);
-			mTourListener.onTourSelected(tourPoint);
+			Tour tour = (Tour) l.getItemAtPosition(position);
+			mTourListener.onTourSelected(tour);
 		}
 
 		super.onListItemClick(l, v, position, id);
@@ -114,8 +108,8 @@ public class ToursListFragment extends ListFragment implements
 	@Override
 	public void onResume() {
 
-		initAdapter(getTourPoints());
-		setListAdapter(mTours);
+		initAdapter(getTourList());
+		setListAdapter(mTourAdapter);
 
 		super.onResume();
 	}
@@ -130,37 +124,36 @@ public class ToursListFragment extends ListFragment implements
 	 * >Communicating with Other Fragments</a> for more information.
 	 */
 	public interface OnTourSelectedListener {
-		public void onTourSelected(Map<?, ?> tourPoint);
+		public void onTourSelected(Tour tour);
 	}
 
-	private ArrayList<Map<String, Object>> getTourPoints() {
-		MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity().getBaseContext());
-		Map<Integer, List<TourPoint>> tourPoints = TourHelper.getAllTours(dbHelper
+	private List<Tour> getTourList() {
+		MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity());
+		List<Tour> tourList= TourHelper.getAllTours(dbHelper
 				.getReadableDatabase());
 		dbHelper.close();
-		ArrayList<Map<String, Object>> tourNameAndStationsList = (ArrayList<Map<String, Object>>) allTourPointsMapToAllToursList(tourPoints);
-		return tourNameAndStationsList;
+		return tourList;
 
 	}
 
-	public static List<Map<String, Object>> allTourPointsMapToAllToursList(
-			Map<Integer, List<TourPoint>> allTourPoints) {
-		ArrayList<Map<String, Object>> tourNameAndStationsList = new ArrayList<Map<String, Object>>();
-
-		for (Entry<Integer, List<TourPoint>> tour : allTourPoints.entrySet()) {
-			Map<String, Object> tourNameAndStations = new HashMap<String, Object>();
-			List<TourPoint> tourPoints = tour.getValue();
-			if (!tourPoints.isEmpty()) {
-				tourNameAndStations.put(TOUR_NAME, tourPoints.get(0).getName());
-				tourNameAndStations.put(TOUR_ID, tourPoints.get(0).getTourId());
-				tourNameAndStations.put(TOUR_STATIONS,
-						Integer.toString(tourPoints.size()));
-				tourNameAndStationsList.add(tourNameAndStations);
-			}
-		}
-
-		return tourNameAndStationsList;
-	}
+//	public static List<Map<String, Object>> allTourPointsMapToAllToursList(
+//			Map<Integer, List<TourPoint>> allTourPoints) {
+//		ArrayList<Map<String, Object>> tourNameAndStationsList = new ArrayList<Map<String, Object>>();
+//
+//		for (Entry<Integer, List<TourPoint>> tour : allTourPoints.entrySet()) {
+//			Map<String, Object> tourNameAndStations = new HashMap<String, Object>();
+//			List<TourPoint> tourPoints = tour.getValue();
+//			if (!tourPoints.isEmpty()) {
+//				tourNameAndStations.put(TOUR_NAME, tourPoints.get(0).getName());
+//				tourNameAndStations.put(TOUR_ID, tourPoints.get(0).getTourId());
+//				tourNameAndStations.put(TOUR_STATIONS,
+//						Integer.toString(tourPoints.size()));
+//				tourNameAndStationsList.add(tourNameAndStations);
+//			}
+//		}
+//
+//		return tourNameAndStationsList;
+//	}
 	
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -185,15 +178,14 @@ public class ToursListFragment extends ListFragment implements
 	@Override
 	public void binClicked(int position) {
 
-		Map<?, ?> tour = (Map<?, ?>) mTours.getItem(position);
-		long tourId = (Long) tour.get(TOUR_ID);
+		Tour tour = (Tour) mTourAdapter.getItem(position);
 		MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity());
-		TourHelper.deleteTourById(dbHelper.getWritableDatabase(), tourId);
+		TourHelper.deleteTourById(dbHelper.getWritableDatabase(), tour.getId());
 //		Log.i("studientag", "on image button clickd " + Long.toString(tourId));
 
 		dbHelper.close();
-		initAdapter(getTourPoints());
-		setListAdapter(mTours);
+		initAdapter(getTourList());
+		setListAdapter(mTourAdapter);
 
 	}
 

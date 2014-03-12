@@ -7,15 +7,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import android.content.res.AssetManager;
 import android.util.Log;
-import android.util.Pair;
 import au.com.bytecode.opencsv.CSVReader;
 
 import com.google.gson.Gson;
@@ -23,9 +20,9 @@ import com.google.gson.reflect.TypeToken;
 
 import de.dhbw.studientag.model.Building;
 import de.dhbw.studientag.model.Company;
-import de.dhbw.studientag.model.CompanyLocation;
 import de.dhbw.studientag.model.Faculty;
 import de.dhbw.studientag.model.Floor;
+import de.dhbw.studientag.model.Location;
 import de.dhbw.studientag.model.Room;
 import de.dhbw.studientag.model.Subject;
 
@@ -35,8 +32,7 @@ public final class TestData {
 	private static ArrayList<Company> companies = new ArrayList<Company>();
 	private static ArrayList<Subject> subjects = new ArrayList<Subject>();
 	private static List<Building> buildings = new ArrayList<Building>();
-	private static Map<String, Pair<Room, Building>> buildingMap = new HashMap<String, Pair<Room,Building>>();
-	private static List<CompanyLocation> companyLocations = new ArrayList<CompanyLocation>();
+	private static List<Location> locationList = new ArrayList<Location>();
 
 	private static final short COMPANY_NAME = 0;
 //	private static final short COMPANY_SHORT_NAME = 1;
@@ -50,6 +46,7 @@ public final class TestData {
 	private static final short COMPANY_ROOM = 16;
 
 	public TestData(AssetManager assets) {
+		Log.d(TAG,"TestData constructor");
 		initBuildingList(assets);
 		try {
 			// Read faculty subject mapping
@@ -76,17 +73,10 @@ public final class TestData {
 						nextLine[COMPANY_STREET], nextLine[COMPANY_CITY],
 						nextLine[COMPANY_PLZ], nextLine[COMPANY_WWW]);
 				company.setSubjectList(companyOfferedSubjects);
-				Pair<Room, Building> pair = buildingMap.get(nextLine[COMPANY_ROOM]);
-				if(pair.second.getShortName().equalsIgnoreCase(nextLine[COMPANY_BUILDING])){
-					CompanyLocation companyLocation = new CompanyLocation(company, pair.second, pair.first);
-					companyLocations.add(companyLocation);
-				}else{
-					Log.w("studientag","Building "+pair.second.getFullName() + " has no room "+ pair.first.getRoomNo());
-				}
-				
-				
-				
-				
+				String companyRoomName = nextLine[COMPANY_ROOM];
+				String companyBuildingName = nextLine[COMPANY_BUILDING];
+				company.setLocation(getLocationBy(companyBuildingName, companyRoomName));
+
 				TestData.companies.add(company);
 
 			}
@@ -120,26 +110,45 @@ public final class TestData {
 			final List<Building> buildingList = new Gson().fromJson(buf.toString(),
 					listType);
 			TestData.buildings = buildingList;
-			initBuildingMap(buildingList);
+			setLocationList(buildingList);
 		} catch (IOException e) {
 			Log.e(TAG,"Error in initBuldings could not open assets",e);
 		}
 	}
 	
-	private void initBuildingMap(List<Building> buildingList){
-		Map<String, Pair<Room, Building>> buildingMap = new HashMap<String,Pair<Room,Building>>();
+	private void setLocationList(List<Building> buildingList){
+		List<Location> locationList = new ArrayList<Location>();
 		for(Building building : buildingList){
 			for(Floor floor : building.getFloorList()){
 				for(Room room : floor.getRoomList()){
-					Pair<Room, Building> pair = new Pair<Room, Building>(room, building);
-					buildingMap.put(room.getRoomNo(), pair);
+					Location location = new Location(building, floor, room);
+					locationList.add(location);
 				}
 				
 			}
 			
 		}
 		
-		TestData.buildingMap= buildingMap;
+		TestData.locationList=locationList;
+	}
+	
+	private Location getLocationBy(String buildingShortName, String roomName){
+		for(Location location : TestData.locationList){
+			if(location.getBuilding().getShortName().equalsIgnoreCase(buildingShortName)){
+				for(Floor floor : location.getBuilding().getFloorList()){
+					for(Room room : floor.getRoomList()){
+						if(room.getRoomNo().equalsIgnoreCase(roomName)){
+							Location returnLocation = new Location(location.getBuilding(), floor, room);
+							return returnLocation;
+						}		
+					}	
+				}
+				Log.e(TAG, "no "+roomName+" found in building "+buildingShortName);
+				return null;
+			}
+		}
+		Log.e(TAG, "no "+buildingShortName+" found");
+		return null;
 	}
 
 	public static ArrayList<Company> getCompanies() {
@@ -192,9 +201,7 @@ public final class TestData {
 
 	
 	
-	public static List<CompanyLocation> getCompanyLocation(){
-		return companyLocations;
-	}
+
 	
 
 

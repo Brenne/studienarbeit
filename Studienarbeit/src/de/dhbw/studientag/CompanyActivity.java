@@ -13,10 +13,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import de.dhbw.studientag.dbHelpers.CommentHelper;
-import de.dhbw.studientag.dbHelpers.CompanyRoomHelper;
 import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.model.Company;
-import de.dhbw.studientag.model.CompanyLocation;
 import de.dhbw.studientag.model.Subject;
 
 public class CompanyActivity extends Activity {
@@ -42,10 +40,9 @@ public class CompanyActivity extends Activity {
 		companyWWW.setText(company.getWebiste());
 		companyWWW.setMovementMethod(LinkMovementMethod.getInstance());
 		companyCity.setText(company.getPlz() + " " +company.getCity());
-		CompanyLocation companyLocation = CompanyRoomHelper.getLocationByCompanyId(company.getId(), dbHelper.getReadableDatabase());
 		dbHelper.close();
-		companyRoom.setText(companyLocation.getRoom().getRoomNo());
-		companyBld.setText(companyLocation.getBuilding().getFullName());
+		companyRoom.setText(company.getLocation().getRoom().getRoomNo());
+		companyBld.setText(company.getLocation().getBuilding().getFullName());
 		final ListView offeredSubjects = (ListView) findViewById(R.id.listView_companyOfferedSubjects);
 		final ArrayAdapter<Subject> adapter = new ArrayAdapter<Subject>(this,android.R.layout.simple_list_item_1, 
 				company.getSubjectList());

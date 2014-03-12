@@ -15,11 +15,6 @@ import android.content.SharedPreferences.Editor;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -30,8 +25,8 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.model.LatLng;
 
-public class LocationSpieleActivity extends Activity implements
-		LocationSpieleFragment.MyDistanceListener,
+public abstract class LocationServiceActivity extends Activity implements
+		
 		GooglePlayServicesClient.ConnectionCallbacks,
 		GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 
@@ -47,21 +42,21 @@ public class LocationSpieleActivity extends Activity implements
 	// A fast frequency ceiling in milliseconds
 	private static final long FASTEST_INTERVAL = MILLISECONDS_PER_SECOND
 			* FASTEST_INTERVAL_IN_SECONDS;
-	private final String KEY_UPDATES_ON = "KEY_UPDATES_ON";
+	private static final String KEY_UPDATES_ON = "KEY_UPDATES_ON";
+	private static final String TAG ="LocationServiceActivity";
 
-	private LocationClient mLocationClient;
-	private Location mCurrentLocation;
+	protected LocationClient mLocationClient;
+	protected Location mCurrentLocation;
 	boolean mUpdatesRequested;
 	// Define an object that holds accuracy and frequency parameters
-	LocationRequest mLocationRequest;
+	protected LocationRequest mLocationRequest;
 	private SharedPreferences mPrefs;
 	private Editor mEditor;
-	private LocationSpieleFragment mFragment;
+	
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_location_spiele);
+	
+	
+	public void  initLocationService(){
 		// Create the LocationRequest object
 		mLocationRequest = LocationRequest.create();
 		// Use high accuracy
@@ -83,60 +78,17 @@ public class LocationSpieleActivity extends Activity implements
 
 		mLocationClient = new LocationClient(this, this, this);
 
-		mUpdatesRequested = true;
-		mEditor.putBoolean(KEY_UPDATES_ON, mUpdatesRequested).commit();
-		mFragment = new LocationSpieleFragment();
-		if (savedInstanceState == null) {
-			getFragmentManager().beginTransaction().add(R.id.container, mFragment)
-					.commit();
-		}
+		mUpdatesRequested = false;
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
 
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.location_spiele, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
-
-	// Button showLocation
-	public void showLocation(View view) {
-		mCurrentLocation = mLocationClient.getLastLocation();
-		if (mCurrentLocation == null)
-			return;
-		Double lat = mCurrentLocation.getLatitude();
-		Double lon = mCurrentLocation.getLongitude();
-		Log.v("location", "lat " + lat.toString() + ", long " + lon.toString());
-		((TextView) findViewById(R.id.textView_location)).setText("lat " + lat.toString()
-				+ ", long " + lon.toString());
-
-	}
-
-	// Button orderList
-	public void orderList(View view) {
-		mFragment.orderList(view);
-	}
-
-	@Override
+	
 	public Map<String, Float> getDistanceMap() {
 		Map<String, Location> locations = new HashMap<>();
 		Map<String, Float> distance = new HashMap<String, Float>();
 
 		if (mCurrentLocation == null) {
-			Log.v("locationSpiele", "curLocation is null");
+			Log.v(TAG, "curLocation is null");
 		} else {
 			for (Entry<String, LatLng> entry : LocationsActivity.LOCATIONS.entrySet()) {
 				Location location = new Location(entry.getKey());
@@ -208,7 +160,7 @@ public class LocationSpieleActivity extends Activity implements
 		String msg = "Updated Location: " + Double.toString(location.getLatitude()) + ","
 				+ Double.toString(location.getLongitude());
 		Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-		Log.v("location changed", msg);
+		Log.v(TAG, msg);
 		mCurrentLocation = location;
 
 	}
@@ -276,7 +228,7 @@ public class LocationSpieleActivity extends Activity implements
 		// If Google Play services is available
 		if (ConnectionResult.SUCCESS == resultCode) {
 			// In debug mode, log the status
-			Log.d("Location Updates", "Google Play services is available.");
+			Log.d(TAG, "Google Play services is available.");
 			// Continue
 			return true;
 			// Google Play services was not available for some reason
@@ -335,28 +287,25 @@ public class LocationSpieleActivity extends Activity implements
 	@Override
 	public void onConnected(Bundle connectionHint) {
 		if (mUpdatesRequested) {
-			Log.v("LocationSpieleActivity",
+			Log.v(TAG,
 					"updatesRequestet mLocationClient requestLocationUpdates");
 			mLocationClient.requestLocationUpdates(mLocationRequest, this);
 		}
 		if (mLocationClient.isConnected()) {
-			((ImageView) findViewById(R.id.imageView_location))
-					.setColorFilter(android.graphics.Color.YELLOW);
+			
 			mCurrentLocation = mLocationClient.getLastLocation();
-			if (mCurrentLocation != null) {
-				((ImageView) findViewById(R.id.imageView_location))
-						.setColorFilter(android.graphics.Color.BLUE);
-			}
-
+			
 		}
+		
+		//TODO color menu icon blue
+		
 
 	}
 
 	@Override
 	public void onDisconnected() {
 		// Display the connection status
-		((ImageView) findViewById(R.id.imageView_location))
-				.setColorFilter(android.graphics.Color.RED);
+		//TODO color menu icon red
 
 	}
 

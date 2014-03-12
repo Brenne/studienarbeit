@@ -1,8 +1,7 @@
 package de.dhbw.studientag;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -12,15 +11,19 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
+import android.util.Pair;
 import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.dbHelpers.TourHelper;
 import de.dhbw.studientag.model.Company;
+import de.dhbw.studientag.model.Tour;
 import de.dhbw.studientag.model.TourPoint;
 
-public class SelectTourDialogFragment extends DialogFragment {
+public class SelectTourDialogFragment extends DialogFragment implements OnBinClicked{
 
 	private Company company;
-	private MyDialogAdapter adapter;
+	private SelectTourDialogAdapter adapter;
+	private List<Tour> mTourList  = new ArrayList<Tour>();
 	protected static final String COMPANY_IN_TOUR = "companyInTour";
 
 	@Override
@@ -42,11 +45,10 @@ public class SelectTourDialogFragment extends DialogFragment {
 						} else {
 							MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity()
 									.getBaseContext());
-							long tourId = (Long) ((Map<?, ?>) adapter
-									.getItem(which)).get(ToursListFragment.TOUR_ID);
-							TourPoint tourPoint = new TourPoint(tourId, company);
+							long tourId = (Long) ((Tour)adapter.getItem(which)).getId();
+							TourPoint tourPoint = new TourPoint(company);
 							TourHelper.insertTourPoint(dbHelper.getWritableDatabase(),
-									tourPoint);
+									tourPoint, tourId);
 							dbHelper.close();
 						}
 
@@ -57,36 +59,26 @@ public class SelectTourDialogFragment extends DialogFragment {
 
 	@Override
 	public void onAttach(Activity activity) {
+		//the boolean is true if the company is in this tour
+		List<Pair<Boolean,Tour>> pTourList = new ArrayList<Pair<Boolean,Tour>>();
 		MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity().getBaseContext());
-		List<Map<String, Object>> allToursList = ToursListFragment
-				.allTourPointsMapToAllToursList(TourHelper.getAllTours(dbHelper
+		mTourList = (TourHelper.getAllTours(dbHelper
 						.getReadableDatabase()));
 		SQLiteDatabase db = dbHelper.getReadableDatabase();
-		for (Map<String, Object> tour : allToursList) {
-			long tourId = (Long) tour.get(ToursListFragment.TOUR_ID);
-
-			if (TourHelper.isCompanyInTour(db, company.getId(), tourId)) {
-				List<TourPoint> tourPoints = TourHelper.getTourPointListByTourId(db,
-						tourId);
-				for (TourPoint tourPoint : tourPoints) {
-					if (tourPoint.getCompany().getId() == company.getId()) {
-						tour.put(TourPointFragment.TOUR_POINT_ID, tourPoint.getId());
-						break;
-					}
-				}
-				tour.put(COMPANY_IN_TOUR, true);
-			} else {
-				tour.put(COMPANY_IN_TOUR, false);
-			}
+		for (Tour tour : mTourList) {
+			long tourId = tour.getId();
+		
+			boolean isCompanyInTour= TourHelper.isCompanyInTour(db, company.getId(), tourId);
+			Pair<Boolean,Tour>	pair = new Pair<Boolean, Tour>(isCompanyInTour, tour);
+			pTourList.add(pair);
 		}
-		HashMap<String, Object> firstEntry = new HashMap<String, Object>();
-		firstEntry.put(ToursListFragment.TOUR_NAME,
-				getString(R.string.label_create_new_Tour));
-		allToursList.add(0, firstEntry);
-		adapter = new MyDialogAdapter(activity, allToursList, R.layout.dialog_list,
-				new String[] { ToursListFragment.TOUR_NAME, COMPANY_IN_TOUR });
 		db.close();
 		dbHelper.close();
+		Tour dummyTour = new Tour(getString(R.string.label_create_new_Tour));
+		Pair<Boolean,Tour> firstEntry = new Pair<Boolean, Tour>(false,dummyTour);
+		pTourList.add(0, firstEntry);
+		adapter = new SelectTourDialogAdapter(activity, pTourList);
+		adapter.setOnBinClickListener(this);
 		super.onAttach(activity);
 	}
 
@@ -94,6 +86,30 @@ public class SelectTourDialogFragment extends DialogFragment {
 		SelectTourDialogFragment frag = new SelectTourDialogFragment();
 		frag.company = company;
 		return frag;
+	}
+
+	@Override
+	public void binClicked(int position) {
+		Tour tour = mTourList.get(--position);
+		TourPoint tourPoint = getTourPointBy(tour, company);
+		if(tourPoint != null){
+			MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity());
+			TourHelper.deleteTourPointById(dbHelper.getWritableDatabase(), tourPoint.getId());
+			dbHelper.close();
+		}else{
+			Log.w("SelectTourDialogFragment", "delete Company from tour but company not in tour");
+		}
+		
+	}
+	
+	//each company is only one time in a tour get this tourPoint
+	private TourPoint getTourPointBy(Tour tour, Company company){
+		
+		for(TourPoint tourPoint: tour.getTourPointList()){
+			if(tourPoint.getCompany().getId()== company.getId())
+				return tourPoint;
+		}
+		return null;
 	}
 
 }

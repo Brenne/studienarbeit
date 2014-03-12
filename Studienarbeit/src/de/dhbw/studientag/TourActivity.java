@@ -1,20 +1,14 @@
 package de.dhbw.studientag;
 
-import java.util.List;
-import java.util.Map;
-
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.view.Menu;
-import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
-import de.dhbw.studientag.dbHelpers.TourHelper;
 import de.dhbw.studientag.model.Company;
-import de.dhbw.studientag.model.TourPoint;
+import de.dhbw.studientag.model.Tour;
 
-public class TourActivity extends Activity implements
-		ToursListFragment.OnTourSelectedListener {
+public class TourActivity extends LocationServiceActivity implements
+		TourListFragment.OnTourSelectedListener ,
+		TourFragment.MyDistanceListener{
 	
 	protected static final String COMPANY = "company";
 	protected static final String NEW_TOUR = "newTour";
@@ -22,16 +16,18 @@ public class TourActivity extends Activity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		//init LocationService
+		initLocationService();
 		setContentView(R.layout.activity_tour);
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
 		Company company = getIntent().getParcelableExtra(COMPANY);
 		Fragment fragment;
 		if (company != null) {
 			boolean newTour = getIntent().getBooleanExtra(NEW_TOUR, false);
-			fragment = TourPointFragment.newTour(company, newTour);
+			fragment = TourFragment.newTour(company, newTour);
 		} else {
 
-			fragment = new ToursListFragment();
+			fragment = new TourListFragment();
 
 		}
 
@@ -41,24 +37,12 @@ public class TourActivity extends Activity implements
 
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		
-		
-
-		return true;
-	}
 
 	@Override
-	public void onTourSelected(Map<?, ?> tourPoint) {
-		MySQLiteHelper dbHelper = new MySQLiteHelper(getBaseContext());
-		List<TourPoint> tourPoints = TourHelper.getTourPointListByTourId(
-				dbHelper.getReadableDatabase(),
-				(Long) tourPoint.get(ToursListFragment.TOUR_ID));
-		dbHelper.close();
-		TourPointFragment fragment = TourPointFragment
-				.getInitializedFragement(tourPoints);
+	public void onTourSelected(Tour tour) {
+
+		TourFragment fragment = TourFragment
+				.getInitializedFragement(tour);
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
 		transaction.replace(R.id.toursFragmentContainer, fragment);
 		transaction.addToBackStack(null);
@@ -66,5 +50,7 @@ public class TourActivity extends Activity implements
 		
 
 	}
+	
+
 
 }

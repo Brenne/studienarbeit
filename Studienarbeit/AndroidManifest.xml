@@ -95,7 +95,7 @@
             android:label="@string/label_import_tour" >
         </activity>
         <activity
-            android:name="de.dhbw.studientag.LocationSpieleActivity"
+            android:name="de.dhbw.studientag.LocationServiceActivity"
             android:label="@string/title_activity_location_spiele" >
         </activity>
     </application>

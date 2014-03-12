@@ -93,8 +93,8 @@ public final class FloorHelper  {
 	public static boolean hasRoomsOccupiedRooms(SQLiteDatabase db, long floorId){
 		//SELECT count(*) FROM CompanyRoom cr INNER JOIN Room r ON r._id=cr.roomId AND r.floorId=floorId
 		boolean returnV=false;
-		String query = "SELECT * FROM "+CompanyRoomHelper.COMPANYROOM_TABLE_NAME+ " cr INNER JOIN "+
-				RoomHelper.ROOM_TABLE_NAME+" r ON r."+MySQLiteHelper.ID+"=cr."+CompanyRoomHelper.COMPANYROOM_ROOM_ID+ 
+		String query = "SELECT * FROM "+CompanyLocationHelper.COMPANYROOM_TABLE_NAME+ " cr INNER JOIN "+
+				RoomHelper.ROOM_TABLE_NAME+" r ON r."+MySQLiteHelper.ID+"=cr."+CompanyLocationHelper.COMPANYROOM_ROOM_ID+ 
 				" AND r."+RoomHelper.ROOM_FLOOR+"="+Long.toString(floorId);
 		
 		Cursor cursor = db.rawQuery(query, null);

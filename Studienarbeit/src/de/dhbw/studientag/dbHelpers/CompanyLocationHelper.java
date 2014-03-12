@@ -10,10 +10,11 @@ import android.util.Log;
 import de.dhbw.studientag.TestData;
 import de.dhbw.studientag.model.Building;
 import de.dhbw.studientag.model.Company;
-import de.dhbw.studientag.model.CompanyLocation;
+import de.dhbw.studientag.model.Floor;
+import de.dhbw.studientag.model.Location;
 import de.dhbw.studientag.model.Room;
 
-public class CompanyRoomHelper {
+public class CompanyLocationHelper {
 
 	protected static final String COMPANYROOM_TABLE_NAME = "CompanyRoom";
 	protected static final String COMPANYROOM_COMPANY_ID = "companyId";
@@ -29,16 +30,20 @@ public class CompanyRoomHelper {
 			+ RoomHelper.ROOM_TABLE_NAME + "(" + MySQLiteHelper.ID + ")" + ")";
 
 	protected static void init(SQLiteDatabase db) {
-		List<CompanyLocation> companyLocations = TestData.getCompanyLocation();
-		for (CompanyLocation companyLocation : companyLocations) {
+		List<Company> companyList = TestData.getCompanies();
+		for (Company company : companyList) {
 
-			String companyName = companyLocation.getCompany().getName();
-			String companyBld = companyLocation.getBuilding().getShortName();
-			String companyRoom = companyLocation.getRoom().getRoomNo();
+			String companyName = company.getName();
+			String companyBld = company.getLocation().getBuilding().getShortName();
+			String companyRoom = company.getLocation().getRoom().getRoomNo();
 			// SELECT c._id, r._id FROM Company c, Room r, Floor f, Building b
 			// WHERE
 			// c.name=? AND r.number=? AND r.floorId=f._id AND f.buildingId =
 			// b._id AND b.shortName=?
+			
+			//TODO check query, maybe change to INNER JOIN;
+			
+			//fetch company id and room id from db because the ids are not in TestData
 			String query = "SELECT c." + MySQLiteHelper.ID + " AS "
 					+ COMPANYROOM_COMPANY_ID + ", r." + MySQLiteHelper.ID + " AS "
 					+ COMPANYROOM_ROOM_ID + " FROM " + CompanyHelper.COMPANY_TABLE_NAME
@@ -69,11 +74,11 @@ public class CompanyRoomHelper {
 
 	}
 
-	public static CompanyLocation getLocationByCompanyId(long id, SQLiteDatabase db) {
+	public static Location getLocationByCompanyId(long companyId, SQLiteDatabase db) {
 		final String BUILDING_ID = "BuildingId";
 		final String COMPANY_ID = "CompanyId";
 		final String ROOM_ID = "RoomId";
-
+		//TODO remove company table from select statement
 		String query = "SELECT  b." + MySQLiteHelper.ID + "" + " AS " + BUILDING_ID
 				+ ", r." + MySQLiteHelper.ID + " AS " + ROOM_ID + ", c."
 				+ MySQLiteHelper.ID + " AS " + COMPANY_ID + " FROM "
@@ -87,21 +92,21 @@ public class CompanyRoomHelper {
 				+ FloorHelper.FLOOR_BUILDING_ID + "=b." + MySQLiteHelper.ID + " AND "
 				+ "c." + MySQLiteHelper.ID + "=?";
 
-		Cursor cursor = db.rawQuery(query, new String[] { Long.toString(id) });
+		Cursor cursor = db.rawQuery(query, new String[] { Long.toString(companyId) });
 
 		if (cursor.getCount() >= 1) {
 			cursor.moveToFirst();
-			Company company = CompanyHelper.getCompanyById(db,
-					cursor.getLong(cursor.getColumnIndex(COMPANY_ID)));
+			
 			Building building = BuildingHelper.getBuildingById(db,
 					cursor.getLong(cursor.getColumnIndex(BUILDING_ID)));
 			Room room = RoomHelper.getRoomById(
 					cursor.getLong(cursor.getColumnIndex(ROOM_ID)), db);
-			CompanyLocation companyLocation = new CompanyLocation(company, building, room);
+			Floor floor = FloorHelper.getFloorByRoomId(db, room.getId());
+			Location location = new Location(building, floor, room);
 
 			cursor.close();
 			// map<Company,
-			return companyLocation;
+			return location;
 
 		} else {
 			// if this happens there is more than one company with the same id

@@ -33,7 +33,9 @@ public class TourPointAdapter extends ArrayAdapter<TourPoint> {
 		TextView tvCompanLocation = (TextView) rowView
 				.findViewById(R.id.tourItemSecondLine);
 		tvCompanyName.setText((CharSequence) mTour.getTourPointList().get(position).getCompany().getName());
-		tvCompanLocation.setText((CharSequence) mTour.getTourPointList().get(position).getCompany().getLocation().getBuilding().getFullName());
+		String tourPointBuilding =  mTour.getTourPointList().get(position).getCompany().getLocation().getBuilding().getFullName();
+		String tourPointRoom     =  mTour.getTourPointList().get(position).getCompany().getLocation().getRoom().getRoomNo();
+		tvCompanLocation.setText(tourPointBuilding+", "+getContext().getString(R.string.room)+" "+tourPointRoom);
 
 		ImageButton imageButton = (ImageButton) rowView.findViewById(R.id.tourItemDelete);
 		imageButton.setOnClickListener(new OnClickListener() {

@@ -3,6 +3,7 @@ package de.dhbw.studientag.dbHelpers;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 import de.dhbw.studientag.TestData;
 
 public final class MySQLiteHelper extends SQLiteOpenHelper {
@@ -20,6 +21,7 @@ public final class MySQLiteHelper extends SQLiteOpenHelper {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 		this.context = context;
 		if(!init && context != null){
+			Log.v("MySQLHelper","new testdata");
 			new TestData(context.getAssets());
 			init=true;
 		}
@@ -41,13 +43,10 @@ public final class MySQLiteHelper extends SQLiteOpenHelper {
 		db.execSQL(TourHelper.TOUR_TABLE_CREATE);
 		db.execSQL(TourHelper.TOUR_POINT_TABLE_CREATE);
 		
-		
-		
 		SubjectsHelper.initSubjects(db);
 		CompanyHelper.initCompanies(db);
 		BuildingHelper.initBuildings(db);
 		CompanyLocationHelper.init(db);
-		
 
 	}
 

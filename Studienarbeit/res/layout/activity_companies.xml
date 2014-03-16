@@ -10,15 +10,11 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".CompaniesActivity" >
 
-    <ListView
-        android:id="@android:id/list"
+    <FrameLayout
+        android:id="@+id/companies_fragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:listSelector="@drawable/list_selector">
-        
-        
-    </ListView>
+        android:layout_height="match_parent" >
 
-
+    </FrameLayout>
 
 </LinearLayout>

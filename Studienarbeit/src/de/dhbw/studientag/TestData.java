@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -46,7 +47,7 @@ public final class TestData {
 	private static final short COMPANY_ROOM = 16;
 
 	public TestData(AssetManager assets) {
-		Log.d(TAG,"TestData constructor");
+		Log.v(TAG,"TestData constructor");
 		initBuildingList(assets);
 		try {
 			// Read faculty subject mapping
@@ -176,7 +177,8 @@ public final class TestData {
 	private static ArrayList<Subject> getSubjectList(String subjects) {
 		String[] subjectNames = subjects.split(",");
 		ArrayList<Subject> subjectList = new ArrayList<Subject>();
-		ArrayList<Subject> allSubjects = new ArrayList<Subject>(TestData.subjects);
+		//use LinkedList because better to remove objects than ArrayList
+		LinkedList<Subject> allSubjects = new LinkedList<Subject>(TestData.subjects);
 		for (String subjectName : subjectNames) {
 			Iterator<Subject> i = allSubjects.iterator();
 			while (i.hasNext()) {

@@ -1,22 +1,25 @@
 package de.dhbw.studientag;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentFilter.MalformedMimeTypeException;
+import android.nfc.FormatException;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
+import android.nfc.TagLostException;
 import android.nfc.tech.Ndef;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -28,31 +31,31 @@ import de.dhbw.studientag.dbHelpers.TourHelper;
 import de.dhbw.studientag.model.Company;
 import de.dhbw.studientag.model.TourPoint;
 
-public class ImportActivity extends Activity {
+public class NfcActivity extends Activity {
 
 	private NfcAdapter myNfcAdapter;
 	public static final String MIME_TEXT_PLAIN = "text/plain";
-
-	public static ImportActivity newInstance(String param1, String param2) {
-		ImportActivity fragment = new ImportActivity();
-
-		return fragment;
-	}
-
-	public ImportActivity() {
+	private static final String TAG = "NFC Im-/Export";
+	protected static final String EXPORT = "ExportTour";
+	
+	public NfcActivity() {
 		// Required empty public constructor
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		if (getIntent().hasExtra(EXPORT)) {
+			Log.v(TAG, "intent has Export");
+			setTitle(R.string.title_export_tour);
+		}
 		setContentView(R.layout.activity_import);
 		myNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 		TextView mTextView = (TextView) findViewById(R.id.textView_importActivity_large);
 		if (myNfcAdapter == null) {
 			// Stop here, we definitely need NFC
-			Toast.makeText(this, getString(R.string.label_no_nfc_support), Toast.LENGTH_LONG)
-					.show();
+			Toast.makeText(this, getString(R.string.label_no_nfc_support),
+					Toast.LENGTH_LONG).show();
 			finish();
 			return;
 
@@ -65,7 +68,7 @@ public class ImportActivity extends Activity {
 			progressBar.setVisibility(View.INVISIBLE);
 		} else {
 			mTextView.setText(getString(R.string.label_nfc_enabled));
-			
+
 			waitForTag.setText(getString(R.string.label_wait_for_Tag));
 		}
 
@@ -82,36 +85,70 @@ public class ImportActivity extends Activity {
 		 * In our case this method gets called, when the user attaches a Tag to
 		 * the device.
 		 */
+		if(getIntent().hasExtra(EXPORT)){
+			intent.putExtra(EXPORT, getIntent().getStringExtra(EXPORT));
+		}
 		handleIntent(intent);
 	}
 
 	private void handleIntent(Intent intent) {
 		String action = intent.getAction();
-		if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)) {
-
-			String type = intent.getType();
-			if (MIME_TEXT_PLAIN.equals(type)) {
-
-				Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-				new NdefReaderTask().execute(tag);
-
-			} else {
-				Log.d("ImportActivity", "Wrong mime type: " + type);
+		
+		String type = intent.getType();
+		Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+		if (intent.hasExtra(EXPORT)) {
+			String exportString = getIntent().getStringExtra(EXPORT);
+			if (writeTextToNfcTag(tag, exportString)) {
+				Toast.makeText(this,
+						getString(R.string.label_tour_export_successfull),
+						Toast.LENGTH_LONG).show();
+				Intent tourActivity = new Intent(this,
+						TourActivity.class);
+				startActivity(tourActivity);
+			}else{
+				Toast.makeText(this,
+						getString(R.string.label_write_to_nfc_fail),
+						Toast.LENGTH_LONG).show();
 			}
-		} else if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)) {
 
-			// In case we would still use the Tech Discovered Intent
-			Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-			String[] techList = tag.getTechList();
-			String searchedTech = Ndef.class.getName();
+		} else if (MIME_TEXT_PLAIN.equals(type)
+				&& NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)) {
 
-			for (String tech : techList) {
-				if (searchedTech.equals(tech)) {
-					new NdefReaderTask().execute(tag);
-					break;
-				}
-			}
+			new NdefReaderTask().execute(tag);
+
+		} else {
+			Log.d(TAG, "Wrong mime type: " + type);
 		}
+
+	}
+
+	private boolean writeTextToNfcTag(Tag tag, String message) {
+		Ndef ndef = Ndef.get(tag);
+		NdefMessage newNdefMessage = new NdefMessage(createTextRecord(message,
+				Locale.GERMAN, true));
+		if (ndef == null) {
+			return false;
+		}
+		try {
+			ndef.connect();
+			if(ndef.isWritable()){
+				ndef.writeNdefMessage(newNdefMessage);
+				return true;
+			}else{
+				Log.e(TAG, "tag is not writable");
+				return false;
+			}
+			
+
+		} catch (TagLostException tagLostEx) {
+			Log.i(TAG, "tag removed while writing");
+			return false;
+
+		} catch (IOException | FormatException e) {
+			Log.e(TAG, "could not write to tag", e);
+			return false;
+		}
+
 	}
 
 	@Override
@@ -132,7 +169,7 @@ public class ImportActivity extends Activity {
 	}
 
 	public static void setupForegroundDispatch(final Activity activity, NfcAdapter adapter) {
-		final Intent intent = new Intent(activity.getApplicationContext(),
+		final Intent intent = new Intent(activity,
 				activity.getClass());
 		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
@@ -140,16 +177,25 @@ public class ImportActivity extends Activity {
 				activity.getApplicationContext(), 0, intent, 0);
 
 		IntentFilter[] filters = new IntentFilter[1];
-		String[][] techList = new String[][] {};
-
-		// Notice that this is the same filter as in our manifest.
 		filters[0] = new IntentFilter();
-		filters[0].addAction(NfcAdapter.ACTION_NDEF_DISCOVERED);
-		filters[0].addCategory(Intent.CATEGORY_DEFAULT);
-		try {
-			filters[0].addDataType(MIME_TEXT_PLAIN);
-		} catch (MalformedMimeTypeException e) {
-			throw new RuntimeException("Check your mime type.");
+	
+		
+		String[][] techList = new String[][]{};
+
+		
+		//if we import from a tag it should meet some requirements
+		if (!activity.getIntent().hasExtra(EXPORT)) {
+			Log.v(TAG,"setup filters for import");
+			filters[0].addCategory(Intent.CATEGORY_DEFAULT);
+			filters[0].addAction(NfcAdapter.ACTION_NDEF_DISCOVERED);
+			try {
+				filters[0].addDataType(MIME_TEXT_PLAIN);
+			} catch (MalformedMimeTypeException e) {
+				throw new RuntimeException("Check your mime type.");
+			}
+		}else{
+			Log.v(TAG,"setup export tech filter");
+			techList = new String[][] { new String[] { Ndef.class.getName() } };
 		}
 
 		adapter.enableForegroundDispatch(activity, pendingIntent, filters, techList);
@@ -157,12 +203,6 @@ public class ImportActivity extends Activity {
 
 	public static void stopForegroundDispatch(final Activity activity, NfcAdapter adapter) {
 		adapter.disableForegroundDispatch(activity);
-	}
-
-	@Override
-	public View onCreateView(String name, Context context, AttributeSet attrs) {
-		// TODO Auto-generated method stub
-		return super.onCreateView(name, context, attrs);
 	}
 
 	private boolean processCompanyTourList(String rawData) {
@@ -185,14 +225,14 @@ public class ImportActivity extends Activity {
 						TourPoint tourPoint = new TourPoint(company);
 						TourHelper.insertTourPoint(dbHelper.getWritableDatabase(),
 								tourPoint, tourId);
-					}else{
-						Log.e("ImportActivity", "no company found by valid company Id");
+					} else {
+						Log.e(TAG, "no company found by valid company Id");
 						return false;
 					}
-					
+
 				}
 			} catch (NumberFormatException nfEx) {
-				Log.e("ImportActivity", "companyId could not parsed to Long", nfEx);
+				Log.e(TAG, "companyId could not parsed to Long", nfEx);
 				TourHelper.deleteTourById(dbHelper.getWritableDatabase(), tourId);
 				return false;
 			} finally {
@@ -200,10 +240,27 @@ public class ImportActivity extends Activity {
 			}
 			return true;
 		} catch (ArrayIndexOutOfBoundsException ex) {
-			Log.e("ImportActivity", "wrong seperator", ex);
+			Log.e(TAG, "wrong seperator", ex);
 			return false;
 		}
-		
+
+	}
+
+	private NdefRecord createTextRecord(String payload, Locale locale,
+			boolean encodeInUtf8) {
+		byte[] langBytes = locale.getLanguage().getBytes(Charset.forName("US-ASCII"));
+		Charset utfEncoding = encodeInUtf8 ? Charset.forName("UTF-8") : Charset
+				.forName("UTF-16");
+		byte[] textBytes = payload.getBytes(utfEncoding);
+		int utfBit = encodeInUtf8 ? 0 : (1 << 7);
+		char status = (char) (utfBit + langBytes.length);
+		byte[] data = new byte[1 + langBytes.length + textBytes.length];
+		data[0] = (byte) status;
+		System.arraycopy(langBytes, 0, data, 1, langBytes.length);
+		System.arraycopy(textBytes, 0, data, 1 + langBytes.length, textBytes.length);
+		NdefRecord record = new NdefRecord(NdefRecord.TNF_WELL_KNOWN,
+				NdefRecord.RTD_TEXT, new byte[0], data);
+		return record;
 	}
 
 	private class NdefReaderTask extends AsyncTask<Tag, Void, String> {
@@ -213,6 +270,7 @@ public class ImportActivity extends Activity {
 			Tag tag = params[0];
 
 			Ndef ndef = Ndef.get(tag);
+
 			if (ndef == null) {
 				// NDEF is not supported by this Tag.
 				return null;
@@ -221,13 +279,14 @@ public class ImportActivity extends Activity {
 			NdefMessage ndefMessage = ndef.getCachedNdefMessage();
 
 			NdefRecord[] records = ndefMessage.getRecords();
+
 			for (NdefRecord ndefRecord : records) {
 				if (ndefRecord.getTnf() == NdefRecord.TNF_WELL_KNOWN
 						&& Arrays.equals(ndefRecord.getType(), NdefRecord.RTD_TEXT)) {
 					try {
 						return readText(ndefRecord);
 					} catch (UnsupportedEncodingException e) {
-						Log.e("importActivty", "Unsupported Encoding", e);
+						Log.e(TAG, "Unsupported Encoding", e);
 					}
 				}
 			}
@@ -266,14 +325,21 @@ public class ImportActivity extends Activity {
 		@Override
 		protected void onPostExecute(String result) {
 			if (result != null) {
-				Log.v("ImportActivity", "Read content: " + result);
+				Log.v(TAG, "Read content: " + result);
 			}
-			if(processCompanyTourList(result)){
-				Toast.makeText(getApplicationContext(), "Tour erfolgreich importiert", Toast.LENGTH_LONG).show();
+			if (processCompanyTourList(result)) {
+				Toast.makeText(getApplicationContext(),
+						getString(R.string.label_tour_import_successfull),
+						Toast.LENGTH_LONG).show();
 				Intent intent = new Intent(getApplicationContext(), TourActivity.class);
 				startActivity(intent);
+			} else {
+				Toast.makeText(getApplicationContext(),
+						R.string.label_tour_import_fail, Toast.LENGTH_LONG)
+						.show();
 			}
 		}
+
 	}
 
 }

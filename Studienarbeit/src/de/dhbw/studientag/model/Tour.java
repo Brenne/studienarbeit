@@ -25,6 +25,10 @@ public class Tour implements Parcelable {
 	public Tour(String name){
 		this.name = name;
 	}
+	
+	public Tour(Tour tour){
+		this(tour.id, tour.name, tour.tourPointList);
+	}
 
 	public long getId() {
 		return id;

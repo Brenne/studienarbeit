@@ -73,7 +73,7 @@ public class CompanyActivity extends Activity {
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		MenuItem comment = menu.findItem(R.id.action_comment);
 		
-		if(CommentHelper.commentsForCompanyExist(company.getId(), dbHelper.getReadableDatabase() ))
+		if(CommentHelper.commentForCompanyExist(company.getId(), dbHelper.getReadableDatabase() ))
 			comment.setIcon(android.R.drawable.ic_input_get);
 		dbHelper.close();
 		return super.onPrepareOptionsMenu(menu);
@@ -84,7 +84,7 @@ public class CompanyActivity extends Activity {
 	    int itemId = item.getItemId();
 		if (itemId == R.id.action_comment) {
 			Intent intent = new Intent(this, CommentActivity.class);
-			intent.putExtra("company", company);
+			intent.putExtra(COMPANY, company);
 			startActivity(intent);
 			return true;
 		} else if (itemId == R.id.action_addToTour) {

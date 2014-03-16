@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import de.dhbw.studientag.dbHelpers.BuildingHelper;
 import de.dhbw.studientag.dbHelpers.CompanyHelper;
 import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
+import de.dhbw.studientag.model.Company;
 
 public class MainActivity extends ListActivity {
 
@@ -28,7 +29,7 @@ public class MainActivity extends ListActivity {
 		list.add(getString(R.string.label_faculties));
 		list.add(getString(R.string.title_activity_locations));
 		list.add(getString(R.string.label_comments));
-		list.add(getString(R.string.title_activity_tour));
+		list.add(getString(R.string.title_activity_tours));
 		
 	
 		
@@ -50,9 +51,9 @@ public class MainActivity extends ListActivity {
 		if (selected.equals(getString(R.string.label_companies))) {
 			Intent intent = new Intent(this, CompaniesActivity.class);
 
-			ArrayList<? extends Parcelable> companies = (ArrayList<? extends Parcelable>) CompanyHelper
+			ArrayList<Company> companies = (ArrayList<Company>) CompanyHelper
 					.getAllCompanies(dbHelper.getReadableDatabase());
-			intent.putParcelableArrayListExtra("companies", companies);
+			intent.putParcelableArrayListExtra(CompaniesActivity.COMPANIES, companies);
 
 			startActivity(intent);
 		} else if (selected.equals(getString(R.string.label_faculties))) {
@@ -67,7 +68,7 @@ public class MainActivity extends ListActivity {
 		} else if (selected.equals(getString(R.string.label_comments))){
 			Intent intent = new Intent(this, CommentsActivity.class);
 			startActivity(intent);
-		} else if(selected.equals(getString(R.string.title_activity_tour))){
+		} else if(selected.equals(getString(R.string.title_activity_tours))){
 			Intent intent = new Intent(this, TourActivity.class);
 			startActivity(intent);
 		}

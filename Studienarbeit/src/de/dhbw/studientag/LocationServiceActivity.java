@@ -26,8 +26,8 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.model.LatLng;
 
 public abstract class LocationServiceActivity extends Activity implements
-		
-		GooglePlayServicesClient.ConnectionCallbacks,
+
+GooglePlayServicesClient.ConnectionCallbacks,
 		GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 
 	// Milliseconds per second
@@ -43,7 +43,7 @@ public abstract class LocationServiceActivity extends Activity implements
 	private static final long FASTEST_INTERVAL = MILLISECONDS_PER_SECOND
 			* FASTEST_INTERVAL_IN_SECONDS;
 	private static final String KEY_UPDATES_ON = "KEY_UPDATES_ON";
-	private static final String TAG ="LocationServiceActivity";
+	private static final String TAG = "LocationServiceActivity";
 
 	protected LocationClient mLocationClient;
 	protected Location mCurrentLocation;
@@ -52,11 +52,8 @@ public abstract class LocationServiceActivity extends Activity implements
 	protected LocationRequest mLocationRequest;
 	private SharedPreferences mPrefs;
 	private Editor mEditor;
-	
 
-	
-	
-	public void  initLocationService(){
+	public void initLocationService() {
 		// Create the LocationRequest object
 		mLocationRequest = LocationRequest.create();
 		// Use high accuracy
@@ -77,14 +74,11 @@ public abstract class LocationServiceActivity extends Activity implements
 		 */
 
 		mLocationClient = new LocationClient(this, this, this);
-
 		mUpdatesRequested = false;
 	}
 
-
-	
 	public Map<String, Float> getDistanceMap() {
-		Map<String, Location> locations = new HashMap<>();
+
 		Map<String, Float> distance = new HashMap<String, Float>();
 
 		if (mCurrentLocation == null) {
@@ -94,7 +88,6 @@ public abstract class LocationServiceActivity extends Activity implements
 				Location location = new Location(entry.getKey());
 				location.setLatitude(entry.getValue().latitude);
 				location.setLongitude(entry.getValue().longitude);
-				locations.put(entry.getKey(), location);
 
 				float fDistance = location.distanceTo(mCurrentLocation);
 				distance.put(entry.getKey(), fDistance);
@@ -286,26 +279,20 @@ public abstract class LocationServiceActivity extends Activity implements
 
 	@Override
 	public void onConnected(Bundle connectionHint) {
-		if (mUpdatesRequested) {
-			Log.v(TAG,
-					"updatesRequestet mLocationClient requestLocationUpdates");
+		mCurrentLocation = mLocationClient.getLastLocation();
+		if (mUpdatesRequested || mCurrentLocation == null) {
+			Log.v(TAG, "updatesRequestet mLocationClient requestLocationUpdates");
 			mLocationClient.requestLocationUpdates(mLocationRequest, this);
 		}
-		if (mLocationClient.isConnected()) {
-			
-			mCurrentLocation = mLocationClient.getLastLocation();
-			
-		}
-		
-		//TODO color menu icon blue
-		
+
+		// TODO color menu icon blue
 
 	}
 
 	@Override
 	public void onDisconnected() {
 		// Display the connection status
-		//TODO color menu icon red
+		// TODO color menu icon red
 
 	}
 

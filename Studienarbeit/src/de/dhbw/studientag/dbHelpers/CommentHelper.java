@@ -33,7 +33,7 @@ public class CommentHelper {
 		ContentValues values = new ContentValues();
 		values.put(COMMENT_COMPANY_ID, companyId);
 		values.put(COMMENT_MESSAGE, message);
-		if (CommentHelper.commentsForCompanyExist(companyId, db))
+		if (CommentHelper.commentForCompanyExist(companyId, db))
 			db.update(COMMENT_TABLE_NAME, values, COMMENT_COMPANY_ID + "=?",
 					new String[] { Long.toString(companyId) });
 		else
@@ -59,7 +59,7 @@ public class CommentHelper {
 		return message;
 	}
 
-	public static boolean commentsForCompanyExist(long companyId,
+	public static boolean commentForCompanyExist(long companyId,
 			SQLiteDatabase db) {
 		long comments = DatabaseUtils.queryNumEntries(db, COMMENT_TABLE_NAME,
 				COMMENT_COMPANY_ID + "=" + companyId);
@@ -98,6 +98,7 @@ public class CommentHelper {
 	
 	private static String shortenMessage(String message){
 		final int LIMIT = 100;
+		message = message.replace("\n", " ").replace("\r", " ");
 		if(message.length()<LIMIT){
 			return message;
 		}else{

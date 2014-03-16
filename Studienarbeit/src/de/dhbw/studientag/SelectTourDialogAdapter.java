@@ -41,12 +41,14 @@ public class SelectTourDialogAdapter extends ArrayAdapter<Tour> {
 				@Override
 				public void onClick(View v) {
 					mBinClicked.binClicked(position);
+					//remove bin icon
 					((ViewManager)v.getParent()).removeView(v);
 
 				}
 			});
 
 		} else {
+			//no bin icon if company not in tour
 			((ViewManager) delete.getParent()).removeView(delete);
 		}
 		return row;

@@ -29,21 +29,11 @@ public class SelectFacultyDialogFragment extends DialogFragment {
 		            			   getSubjectsByFaculty(mySQLiteHelper.getReadableDatabase(),faculty));
 		            	   mySQLiteHelper.close();
 		            	   startActivity(intent);
-
-		            	   
-		            	   
-		            	   
+	   
 		           }
 		    });
 		    return builder.create();
-		
-		
-		
-		
-	}
-	
-	
-	
 
+	}
 
 }

@@ -42,12 +42,6 @@ public final class SubjectsHelper  {
 		db.insert(SUBJECTS_TABLE_NAME, null, values);
 				
 	}
-	public Cursor getCursor(SQLiteDatabase database, String[] columns){
-	    Cursor cursor = database.query(SUBJECTS_TABLE_NAME,
-	    		columns, null, null,
-	            null, null, SUBJECT_NAME + " ASC");
-	    return cursor;
-	}
 	
 	public static Subject getSubjectById(SQLiteDatabase database, long id){
 	    Cursor cursor = database.query(SUBJECTS_TABLE_NAME,
@@ -82,15 +76,15 @@ public final class SubjectsHelper  {
 		return subjects;
 	}
 	
-	public List<Subject> getAllSubjects(SQLiteDatabase database){
-	    Cursor cursor = database.query(SUBJECTS_TABLE_NAME,
-		        SUBJECT_ALL_COLUMNS, null, null, null, null, null);
-
-	    List<Subject> subjects = cursorToSubjectList(cursor);
-	    // make sure to close the cursor
-	    cursor.close();
-		return subjects;
-	}
+//	public List<Subject> getAllSubjects(SQLiteDatabase database){
+//	    Cursor cursor = database.query(SUBJECTS_TABLE_NAME,
+//		        SUBJECT_ALL_COLUMNS, null, null, null, null, null);
+//
+//	    List<Subject> subjects = cursorToSubjectList(cursor);
+//	    // make sure to close the cursor
+//	    cursor.close();
+//		return subjects;
+//	}
 	
 
 	
@@ -115,8 +109,6 @@ public final class SubjectsHelper  {
 	    }
 	    return subjects;
 	}
-
-
 
 
 }

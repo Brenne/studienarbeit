@@ -1,6 +1,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
- 
+  <item
+        android:id="@+id/menu_save_comment"
+        android:icon="@android:drawable/ic_menu_save"
+        android:showAsAction="always"
+        android:title="@string/label_save_comment"/>
+  
+    <item
+        android:id="@+id/menu_delete_comment"
+        android:icon="@android:drawable/ic_menu_delete"
+        android:showAsAction="ifRoom"
+        android:title="@string/label_delete_comment"/>
 
 
 </menu>

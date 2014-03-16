@@ -36,7 +36,7 @@ public class TourAdapter extends ArrayAdapter<Tour> {
 		TextView tourCountStations = (TextView) rowView
 				.findViewById(R.id.tourItemSecondLine);
 		tourName.setText(tourList.get(position).getName());
-		tourCountStations.setText(Integer.toString(tourStations));
+		tourCountStations.setText(getContext().getString(R.string.label_stations)+" "+Integer.toString(tourStations));
 
 		ImageButton imageButton = (ImageButton) rowView.findViewById(R.id.tourItemDelete);
 		imageButton.setOnClickListener(new OnClickListener() {

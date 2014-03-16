@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -59,6 +60,9 @@ public class SelectTourDialogFragment extends DialogFragment implements OnBinCli
 
 	@Override
 	public void onAttach(Activity activity) {
+		if(getArguments().containsKey(CompanyActivity.COMPANY)){
+			company = getArguments().getParcelable(CompanyActivity.COMPANY);
+		}
 		//the boolean is true if the company is in this tour
 		List<Pair<Boolean,Tour>> pTourList = new ArrayList<Pair<Boolean,Tour>>();
 		MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity().getBaseContext());
@@ -84,7 +88,9 @@ public class SelectTourDialogFragment extends DialogFragment implements OnBinCli
 
 	public static SelectTourDialogFragment newInstance(Company company) {
 		SelectTourDialogFragment frag = new SelectTourDialogFragment();
-		frag.company = company;
+		Bundle args = new Bundle();
+		args.putParcelable(CompanyActivity.COMPANY,company);
+		frag.setArguments(args);
 		return frag;
 	}
 
@@ -96,6 +102,16 @@ public class SelectTourDialogFragment extends DialogFragment implements OnBinCli
 			MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity());
 			TourHelper.deleteTourPointById(dbHelper.getWritableDatabase(), tourPoint.getId());
 			dbHelper.close();
+			tour.getTourPointList().remove(tourPoint);
+			int size = tour.getTourPointList().size();
+			if(size==0){
+				Fragment tourFragment = getFragmentManager().findFragmentByTag(TourActivity.TAG_TOUR_FRAGMENT);
+				if(tourFragment != null)
+					Log.v("SelectTourDialogFragment","tourFragment not null");
+				this.dismiss();
+				getFragmentManager().popBackStack();
+				
+			}
 		}else{
 			Log.w("SelectTourDialogFragment", "delete Company from tour but company not in tour");
 		}

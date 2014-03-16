@@ -5,7 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.view.Menu;
-import android.view.View;
+import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -46,13 +46,25 @@ public class CommentActivity extends Activity {
 		return true;
 	}
 	
-
-	public void saveComment(View view){
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int itemId = item.getItemId();
+		if(itemId == R.id.menu_save_comment){
+			saveComment();
+			finish();
+			return true;
+		}else if(itemId == R.id.menu_delete_comment){
+			comment.setText("");
+			saveComment();
+			finish();
+			return true;
+		}else{
+			return super.onOptionsItemSelected(item);
+		}
 		
-		saveComment();
-		finish();
 	}
-	
+
+
 	public void saveComment(){
 		Editable message = comment.getText();
 //		Log.i("Save Comment",message.toString());

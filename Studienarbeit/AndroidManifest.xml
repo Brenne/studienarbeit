@@ -2,11 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.dhbw.studientag"
     android:versionCode="1"
-    android:versionName="1.0"
-    >
+    android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="14"
+        android:minSdkVersion="16"
         android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -87,11 +86,18 @@
         <activity
             android:name="de.dhbw.studientag.TourActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="@string/title_activity_tour"
+            android:label="@string/title_activity_tours"
             android:parentActivityName="de.dhbw.studientag.MainActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable_info" />
         </activity>
         <activity
-            android:name="de.dhbw.studientag.ImportActivity"
+            android:name="de.dhbw.studientag.NfcActivity"
             android:label="@string/label_import_tour" >
         </activity>
         <activity

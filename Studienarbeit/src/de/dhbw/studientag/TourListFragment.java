@@ -27,8 +27,7 @@ import de.dhbw.studientag.model.Tour;
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-public class TourListFragment extends ListFragment implements
-		OnBinClicked {
+public class TourListFragment extends ListFragment implements OnBinClicked {
 
 	private OnTourSelectedListener mTourListener;
 	protected static final String TOUR_NAME = "tourName";
@@ -56,7 +55,7 @@ public class TourListFragment extends ListFragment implements
 	}
 
 	private void initAdapter(List<Tour> tourList) {
-		mTourAdapter = new TourAdapter(getActivity(),  tourList);
+		mTourAdapter = new TourAdapter(getActivity(), tourList);
 		mTourAdapter.notifyDataSetChanged();
 		mTourAdapter.setOnBinClickListener(this);
 
@@ -94,23 +93,22 @@ public class TourListFragment extends ListFragment implements
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 
-//		Log.i("studientag", "onListItemClick pos " + Integer.toString(position) + " id "
-//				+ Long.toString(id));
+		// Log.i("studientag", "onListItemClick pos " +
+		// Integer.toString(position) + " id "
+		// + Long.toString(id));
 		if (mTourListener != null) {
 			Tour tour = (Tour) l.getItemAtPosition(position);
 			mTourListener.onTourSelected(tour);
 		}
-
 		super.onListItemClick(l, v, position, id);
-
 	}
 
 	@Override
 	public void onResume() {
-
 		initAdapter(getTourList());
 		setListAdapter(mTourAdapter);
-
+		getActivity().setTitle(R.string.title_activity_tours);
+		
 		super.onResume();
 	}
 
@@ -129,50 +127,30 @@ public class TourListFragment extends ListFragment implements
 
 	private List<Tour> getTourList() {
 		MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity());
-		List<Tour> tourList= TourHelper.getAllTours(dbHelper
-				.getReadableDatabase());
+		List<Tour> tourList = TourHelper.getAllTours(dbHelper.getReadableDatabase());
 		dbHelper.close();
 		return tourList;
 
 	}
 
-//	public static List<Map<String, Object>> allTourPointsMapToAllToursList(
-//			Map<Integer, List<TourPoint>> allTourPoints) {
-//		ArrayList<Map<String, Object>> tourNameAndStationsList = new ArrayList<Map<String, Object>>();
-//
-//		for (Entry<Integer, List<TourPoint>> tour : allTourPoints.entrySet()) {
-//			Map<String, Object> tourNameAndStations = new HashMap<String, Object>();
-//			List<TourPoint> tourPoints = tour.getValue();
-//			if (!tourPoints.isEmpty()) {
-//				tourNameAndStations.put(TOUR_NAME, tourPoints.get(0).getName());
-//				tourNameAndStations.put(TOUR_ID, tourPoints.get(0).getTourId());
-//				tourNameAndStations.put(TOUR_STATIONS,
-//						Integer.toString(tourPoints.size()));
-//				tourNameAndStationsList.add(tourNameAndStations);
-//			}
-//		}
-//
-//		return tourNameAndStationsList;
-//	}
-	
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		if(NfcAdapter.getDefaultAdapter(getActivity()) != null)
+		if (NfcAdapter.getDefaultAdapter(getActivity()) != null)
 			inflater.inflate(R.menu.tour_list, menu);
-		
+
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int itemId = item.getItemId();
 		if (itemId == R.id.menu_item_import) {
-			Intent intent = new Intent(getActivity(), ImportActivity.class);
+			Intent intent = new Intent(getActivity(), NfcActivity.class);
 			startActivity(intent);
 			return true;
 		} else {
 			return super.onOptionsItemSelected(item);
 		}
-		
+
 	}
 
 	@Override
@@ -181,14 +159,13 @@ public class TourListFragment extends ListFragment implements
 		Tour tour = (Tour) mTourAdapter.getItem(position);
 		MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity());
 		TourHelper.deleteTourById(dbHelper.getWritableDatabase(), tour.getId());
-//		Log.i("studientag", "on image button clickd " + Long.toString(tourId));
+		// Log.i("studientag", "on image button clickd " +
+		// Long.toString(tourId));
 
 		dbHelper.close();
 		initAdapter(getTourList());
 		setListAdapter(mTourAdapter);
 
 	}
-
-
 
 }

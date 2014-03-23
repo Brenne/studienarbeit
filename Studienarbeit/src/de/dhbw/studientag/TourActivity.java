@@ -119,6 +119,8 @@ public class TourActivity extends LocationServiceActivity implements
 		transaction.commit();
 		super.onBackPressed();
 	}
+
+	
 	
 	
 }

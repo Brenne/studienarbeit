@@ -37,7 +37,9 @@ public class LocationsActivity extends Activity implements
 	private LocationsFragment locationsFragment;
 
 	private static final String LOCATIONS_FRAGMENT="locationsFragment";
-
+	/**
+	 * key is building shortname and value is LatLng position of the building
+	 */
 	public static final Map<String, LatLng> LOCATIONS;
 	static{
 		Map<String, LatLng> locationsMap = new HashMap<String, LatLng>();

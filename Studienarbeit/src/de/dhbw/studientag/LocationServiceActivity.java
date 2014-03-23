@@ -1,6 +1,7 @@
 package de.dhbw.studientag;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -24,6 +25,9 @@ import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.model.LatLng;
+
+import de.dhbw.studientag.model.Building;
+import de.dhbw.studientag.model.TourPoint;
 
 public abstract class LocationServiceActivity extends Activity implements
 
@@ -97,6 +101,40 @@ GooglePlayServicesClient.ConnectionCallbacks,
 
 		return distance;
 	}
+	
+	private float distanceBetween(Building buildingA, Building buildingB){
+		float [] distance = {0} ;
+		Location locA = new Location(buildingA.getShortName());
+		locA.setLatitude(LocationsActivity.LOCATIONS.get(buildingA.getShortName()).latitude);
+		locA.setLongitude(LocationsActivity.LOCATIONS.get(buildingA.getShortName()).longitude);
+		Location locB = new Location(buildingB.getShortName());
+		locB.setLatitude(LocationsActivity.LOCATIONS.get(buildingB.getShortName()).latitude);
+		locB.setLongitude(LocationsActivity.LOCATIONS.get(buildingB.getShortName()).longitude);
+		
+		Location.distanceBetween(locA.getLatitude(), locA.getLongitude(), locB.getLatitude(), locB.getLongitude(), distance);
+		return distance[0];
+		
+	}
+	
+	public float calcDistance(List<Building> buildings){
+		float distance = 0;
+		for(int i=0; i<buildings.size(); i++){
+			if(i==0){
+				Map<String, Float> distanceMap = getDistanceMap();
+				distance+=distanceMap.get(buildings.get(0).getShortName());
+			}else{
+				Building prevTourPoint = buildings.get(i-1);
+				Building thisTourPoint = buildings.get(i);
+				if(prevTourPoint.getId()!=thisTourPoint.getId()){
+					distance+= distanceBetween(prevTourPoint, thisTourPoint);
+				}
+			}
+		}
+		Log.v(TAG, "Buildinglist distance : "+Float.toString(distance));
+		return distance;
+	}
+	
+	
 
 	@Override
 	protected void onResume() {

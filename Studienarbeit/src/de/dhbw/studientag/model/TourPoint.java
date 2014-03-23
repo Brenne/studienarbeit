@@ -3,7 +3,7 @@ package de.dhbw.studientag.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class TourPoint implements Parcelable{
+public class TourPoint implements Parcelable, Comparable<TourPoint>{
 
 	
 	private long id;
@@ -72,5 +72,26 @@ public class TourPoint implements Parcelable{
 			return new TourPoint[size];
 		}
 	};
+
+	@Override
+	public int compareTo(TourPoint another)  {
+		if(another.getCompany().getLocation().getBuilding().getId()!= this.getCompany().getLocation().getBuilding().getId()){
+			System.err.println("Can not compare TourPoints of different buildings");
+			throw new ClassCastException();
+		}else{
+			long anotherFloorNumber = another.getCompany().getLocation().getFloor().getNumber();
+			long thisFloorNumber = this.getCompany().getLocation().getFloor().getNumber();
+			if(anotherFloorNumber<thisFloorNumber){
+				return 1;
+			}else if(anotherFloorNumber==thisFloorNumber){
+				return 0;
+			}else{
+				return -1;
+			}
+		}
+		
+	}
+
+
 	
 }

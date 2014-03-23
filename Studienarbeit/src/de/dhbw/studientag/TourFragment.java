@@ -3,15 +3,18 @@ package de.dhbw.studientag;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 
 import android.app.Activity;
-import android.app.FragmentTransaction;
 import android.app.ListFragment;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -28,6 +31,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ShareActionProvider;
+import android.widget.Toast;
 import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.dbHelpers.TourHelper;
 import de.dhbw.studientag.model.Building;
@@ -285,44 +289,55 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 	}
 
 	private void orderList() {
-		ListView lv = getListView();
-		if (lv != null) {
-			Map<String, Float> distance = sortByValue(mListener.getDistanceMap());
-			ArrayList<TourPoint> newTourPointList = new ArrayList<TourPoint>();
 
-			initAdapter();
-			List<TourPoint> tourPointList = new LinkedList<TourPoint>(
-					mTour.getTourPointList());
-
-			for (Entry<String, Float> entry : distance.entrySet()) {
-				Iterator<TourPoint> iterator = tourPointList.iterator();
-				Log.v("distance", entry.getKey() + " " + entry.getValue());
-				while (iterator.hasNext()) {
-					TourPoint tourPoint = iterator.next();
-					if (tourPoint.getCompany().getLocation().getBuilding().getShortName()
-							.equals(entry.getKey())) {
-						newTourPointList.add(tourPoint);
-						iterator.remove();
-
-					}
-				}
-
-			}
-			newTourPointList = orderFloors(newTourPointList);
-
-			// check if no tourPoint got Lost
-			if (mTour.getTourPointList().size() == newTourPointList.size()) {
-				mTour.setTourPointList(newTourPointList);
-				mAdapter.clear();
-				initAdapter();
-				makePositionsPersistent();
-
-			} else {
-				Log.w(TAG, "error in order list check code");
-			}
+		ArrayList<TourPoint> newTourPointList = new ArrayList<TourPoint>();
+		Permutations<Building> buildingPermutations = new Permutations<Building>(
+				getUniqueBuildings(mTour.getTourPointList()));
+		TreeMap<Float, List<Building>> tourLength = new TreeMap<>();
+		while(buildingPermutations.hasNext()) {
+			List<Building> buildings = buildingPermutations.next();
+			tourLength.put(mListener.calcDistance(buildings), buildings);
 
 		}
+		Log.v(TAG, "shortest tourLength: "+Float.toString(tourLength.firstEntry().getKey()));
+		for(Building building : tourLength.firstEntry().getValue()){
+			for(TourPoint tourPoint: mTour.getTourPointList()){
+				if(tourPoint.getCompany().getLocation().getBuilding().getId()== building.getId()){
+					newTourPointList.add(tourPoint);
+				}
+			}
+		}
+		
+		
 
+		newTourPointList = orderFloors(newTourPointList);
+
+		// check if no tourPoint got Lost
+		if (mTour.getTourPointList().size() == newTourPointList.size()) {
+			mTour.setTourPointList(newTourPointList);
+			mAdapter.clear();
+			initAdapter();
+			makePositionsPersistent();
+
+		} else {
+			Log.e(TAG, "error in order list check code");
+			
+		}
+
+	}
+	
+	private List<Building> getUniqueBuildings(List<TourPoint> tourPoints){
+		HashMap<Long,Building> buildingMap = new HashMap<Long,Building>(4);
+		List<Building> buildingList = new ArrayList<Building>();
+		for(TourPoint tourPoint : tourPoints){
+			Building building = tourPoint.getCompany().getLocation().getBuilding();
+			buildingMap.put(building.getId(), building);
+		}
+		for(Entry<Long,Building> building : buildingMap.entrySet()){
+			buildingList.add(building.getValue());
+		}
+		return buildingList;
+		
 	}
 
 	/**
@@ -335,26 +350,54 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 	 *         building
 	 */
 	private ArrayList<TourPoint> orderFloors(List<TourPoint> tourPointList) {
-		Building building = tourPointList.get(0).getCompany().getLocation().getBuilding();
+		Building building = new Building(-1, "dummy", "dummy");
+		ArrayList<TourPoint> tempList = new ArrayList<TourPoint>();
 		ArrayList<TourPoint> returnList = new ArrayList<TourPoint>();
-		int i = 0;
-		for (TourPoint tourPoint : tourPointList) {
+		for(TourPoint tourPoint : tourPointList){
+			
 			if (tourPoint.getCompany().getLocation().getBuilding().getId() != building
-					.getId()) {
-				i = returnList.size();
+			.getId()) {
+				if(!tempList.isEmpty()){
+					try{
+						Collections.sort(tempList);
+					}catch(ClassCastException ex){
+						Log.e(TAG, "porpably tried to compare TourPoints of different buildings", ex);
+						Toast.makeText(getActivity(), R.string.error_on_tour_sort, Toast.LENGTH_SHORT).show();
+					}
+					returnList.addAll(tempList);
+					tempList.clear();
+				}
+							
 				building = tourPoint.getCompany().getLocation().getBuilding();
 			}
-			if (returnList.size() > i
-					&& returnList.get(i) != null
-					&& returnList.get(i).getCompany().getLocation().getFloor()
-							.getNumber() < tourPoint.getCompany().getLocation()
-							.getFloor().getNumber()) {
-				returnList.add(i + 1, tourPoint);
-			} else {
-				returnList.add(i, tourPoint);
-			}
+			tempList.add(tourPoint);	
+			
 		}
+		Collections.sort(tempList);
+		returnList.addAll(tempList);
+		
+//		int i = 0;
+//		
+//		for (TourPoint tourPoint : tourPointList) {
+//			//if new building
+//			if (tourPoint.getCompany().getLocation().getBuilding().getId() != building
+//					.getId()) {
+//				i = returnList.size();
+//				building = tourPoint.getCompany().getLocation().getBuilding();
+//			}
+//			if (returnList.size() > i
+//					&& returnList.get(i) != null
+//					&& returnList.get(i).getCompany().getLocation().getFloor()
+//							.getNumber() < tourPoint.getCompany().getLocation()
+//							.getFloor().getNumber()) {
+//				returnList.add(returnList.size(), tourPoint);
+//			} else {
+//				returnList.add(i, tourPoint);
+//			}
+//			
+//		}
 		return returnList;
+		
 	}
 
 	private void makePositionsPersistent() {
@@ -370,21 +413,21 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 		db.close();
 	}
 
-	public static Map<String, Float> sortByValue(Map<String, Float> map) {
-		List<Map.Entry<String, Float>> list = new LinkedList<Map.Entry<String, Float>>(
-				map.entrySet());
-		Collections.sort(list, new Comparator<Map.Entry<String, Float>>() {
-			public int compare(Map.Entry<String, Float> o1, Map.Entry<String, Float> o2) {
-				return (o1.getValue()).compareTo(o2.getValue());
-			}
-		});
-
-		Map<String, Float> result = new LinkedHashMap<String, Float>();
-		for (Map.Entry<String, Float> entry : list) {
-			result.put(entry.getKey(), entry.getValue());
-		}
-		return result;
-	}
+//	public static Map<String, Float> sortByValue(Map<String, Float> map) {
+//		List<Map.Entry<String, Float>> list = new LinkedList<Map.Entry<String, Float>>(
+//				map.entrySet());
+//		Collections.sort(list, new Comparator<Map.Entry<String, Float>>() {
+//			public int compare(Map.Entry<String, Float> o1, Map.Entry<String, Float> o2) {
+//				return (o1.getValue()).compareTo(o2.getValue());
+//			}
+//		});
+//
+//		Map<String, Float> result = new LinkedHashMap<String, Float>();
+//		for (Map.Entry<String, Float> entry : list) {
+//			result.put(entry.getKey(), entry.getValue());
+//		}
+//		return result;
+//	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -445,7 +488,7 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 	}
 
 	public interface MyDistanceListener {
-		public Map<String, Float> getDistanceMap();
+		public float calcDistance(List<Building> buildings);
 	}
 
 	public interface OnTourPointAddListener {

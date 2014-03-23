@@ -71,7 +71,7 @@ public class CommentHelper {
 	/**
 	 * 
 	 * @param db
-	 * @return List of Map<String,Object>. Each map has to entries one key is "company" the other
+	 * @return List of Map<String,Object>. Each map has two entries one key is "company" the other
 	 * "message"
 	 */
 	public static List<Map<String, Object>> getAllComments(SQLiteDatabase db){
@@ -98,6 +98,7 @@ public class CommentHelper {
 	
 	private static String shortenMessage(String message){
 		final int LIMIT = 100;
+		//remove line breaks:
 		message = message.replace("\n", " ").replace("\r", " ");
 		if(message.length()<LIMIT){
 			return message;

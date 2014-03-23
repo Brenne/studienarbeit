@@ -68,6 +68,7 @@
     <string name="label_write_to_nfc_fail">Schreiben fehlgeschlagen</string>
     <string name="label_tour_import_fail">Tour Import fehlgeschlagen. Korrupter Tag?</string>
     <string name="title_export_tour">Tour Exportieren</string>
+    <string name="error_on_tour_sort">Erstelle die Tour bitte neu</string>
 
 
 </resources>

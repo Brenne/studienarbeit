@@ -34,8 +34,7 @@ public class TourHelper {
 			+ CompanyHelper.COMPANY_TABLE_NAME + "(" + MySQLiteHelper.ID + "), "
 			+ TOUR_POINT_POSITION + " integer not null, " + "UNIQUE("
 			+ TOUR_POINT_TOUR_ID + ", " + TOUR_POINT_COMPANY_ID
-			+ ") ON CONFLICT ROLLBACK, " + "UNIQUE(" + TOUR_POINT_TOUR_ID + ", "
-			+ TOUR_POINT_POSITION + " ) ON CONFLICT REPLACE" + ")";
+			+ ") ON CONFLICT ROLLBACK "  + ")";
 
 	private final static String[] TOUR_ALL_COLUMNS = { MySQLiteHelper.ID, TOUR_NAME };
 	private final static String[] TOUR_POINT_ALL_COLUMNS = { MySQLiteHelper.ID,

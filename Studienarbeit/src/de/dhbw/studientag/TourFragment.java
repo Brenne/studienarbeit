@@ -2,16 +2,10 @@ package de.dhbw.studientag;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 
 import android.app.Activity;
@@ -375,33 +369,11 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 		}
 		Collections.sort(tempList);
 		returnList.addAll(tempList);
-		
-//		int i = 0;
-//		
-//		for (TourPoint tourPoint : tourPointList) {
-//			//if new building
-//			if (tourPoint.getCompany().getLocation().getBuilding().getId() != building
-//					.getId()) {
-//				i = returnList.size();
-//				building = tourPoint.getCompany().getLocation().getBuilding();
-//			}
-//			if (returnList.size() > i
-//					&& returnList.get(i) != null
-//					&& returnList.get(i).getCompany().getLocation().getFloor()
-//							.getNumber() < tourPoint.getCompany().getLocation()
-//							.getFloor().getNumber()) {
-//				returnList.add(returnList.size(), tourPoint);
-//			} else {
-//				returnList.add(i, tourPoint);
-//			}
-//			
-//		}
+
 		return returnList;
-		
 	}
 
 	private void makePositionsPersistent() {
-
 		int i = 1;
 		SQLiteDatabase db = new MySQLiteHelper(getActivity()).getReadableDatabase();
 		for (TourPoint tourPoint : mTour.getTourPointList()) {
@@ -413,21 +385,6 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 		db.close();
 	}
 
-//	public static Map<String, Float> sortByValue(Map<String, Float> map) {
-//		List<Map.Entry<String, Float>> list = new LinkedList<Map.Entry<String, Float>>(
-//				map.entrySet());
-//		Collections.sort(list, new Comparator<Map.Entry<String, Float>>() {
-//			public int compare(Map.Entry<String, Float> o1, Map.Entry<String, Float> o2) {
-//				return (o1.getValue()).compareTo(o2.getValue());
-//			}
-//		});
-//
-//		Map<String, Float> result = new LinkedHashMap<String, Float>();
-//		for (Map.Entry<String, Float> entry : list) {
-//			result.put(entry.getKey(), entry.getValue());
-//		}
-//		return result;
-//	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -480,7 +437,6 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 
 	}
 
-	// Call to update the share intent
 	private void setShareIntent(Intent shareIntent) {
 		if (mShareActionProvider != null) {
 			mShareActionProvider.setShareIntent(shareIntent);

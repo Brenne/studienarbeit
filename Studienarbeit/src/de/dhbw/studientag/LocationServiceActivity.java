@@ -27,7 +27,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.model.LatLng;
 
 import de.dhbw.studientag.model.Building;
-import de.dhbw.studientag.model.TourPoint;
 
 public abstract class LocationServiceActivity extends Activity implements
 

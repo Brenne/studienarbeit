@@ -406,7 +406,7 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 		SQLiteDatabase db = new MySQLiteHelper(getActivity()).getReadableDatabase();
 		for (TourPoint tourPoint : mTour.getTourPointList()) {
 			tourPoint.setPosition(i);
-			TourHelper.updatePositionByTourPointId(db, tourPoint.getId(), i);
+			TourHelper.updatePosition(db, tourPoint);
 			i++;
 
 		}

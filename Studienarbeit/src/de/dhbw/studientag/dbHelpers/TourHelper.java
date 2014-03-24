@@ -242,12 +242,11 @@ public class TourHelper {
 		return tourName + " changeme";
 	}
 
-	public static void updatePositionByTourPointId(SQLiteDatabase db, long tourPointId,
-			int newPosition) {
+	public static void updatePosition(SQLiteDatabase db, TourPoint tourPoint) {
 		ContentValues values = new ContentValues();
-		values.put(TOUR_POINT_POSITION, newPosition);
+		values.put(TOUR_POINT_POSITION, tourPoint.getPosition());
 		db.update(TOUR_POINT_TABLE_NAME, values,
-				MySQLiteHelper.ID + "=" + Long.toString(tourPointId), null);
+				MySQLiteHelper.ID + "=" + Long.toString(tourPoint.getId()), null);
 	}
 
 	public static boolean isCompanyInTour(SQLiteDatabase db, long companyId, long tourId) {

@@ -1,4 +1,4 @@
-package de.dhbw.studientag;
+package de.dhbw.studientag.tours;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -25,13 +25,16 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import de.dhbw.studientag.LocationServiceActivity;
+import de.dhbw.studientag.R;
 import de.dhbw.studientag.dbHelpers.CompanyHelper;
 import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.dbHelpers.TourHelper;
 import de.dhbw.studientag.model.Company;
+import de.dhbw.studientag.model.Tour;
 import de.dhbw.studientag.model.TourPoint;
 
-public class NfcActivity extends Activity {
+public class NfcActivity extends LocationServiceActivity {
 
 	private NfcAdapter myNfcAdapter;
 	public static final String MIME_TEXT_PLAIN = "text/plain";
@@ -44,11 +47,16 @@ public class NfcActivity extends Activity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		initLocationService();
 		super.onCreate(savedInstanceState);
 		if (getIntent().hasExtra(EXPORT)) {
 			Log.v(TAG, "intent has Export");
 			setTitle(R.string.title_export_tour);
+		}else{
+			requestUpdates(true);
+			
 		}
+		
 		setContentView(R.layout.activity_import);
 		myNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 		TextView mTextView = (TextView) findViewById(R.id.textView_importActivity_large);
@@ -87,6 +95,8 @@ public class NfcActivity extends Activity {
 		 */
 		if(getIntent().hasExtra(EXPORT)){
 			intent.putExtra(EXPORT, getIntent().getStringExtra(EXPORT));
+		}else{
+			requestUpdates(true);
 		}
 		handleIntent(intent);
 	}
@@ -121,7 +131,8 @@ public class NfcActivity extends Activity {
 		}
 
 	}
-
+	
+	//	Export
 	private boolean writeTextToNfcTag(Tag tag, String message) {
 		Ndef ndef = Ndef.get(tag);
 		NdefMessage newNdefMessage = new NdefMessage(createTextRecord(message,
@@ -158,6 +169,7 @@ public class NfcActivity extends Activity {
 		 * thrown as well.
 		 */
 		stopForegroundDispatch(this, myNfcAdapter);
+		requestUpdates(false);
 
 		super.onPause();
 	}
@@ -215,6 +227,7 @@ public class NfcActivity extends Activity {
 			tourName = TourHelper.getFreeTourName(dbHelper.getReadableDatabase(),
 					tourName);
 			long tourId = TourHelper.insertTour(dbHelper.getWritableDatabase(), tourName);
+			Tour importTour = new Tour(tourId, tourName);
 			try {
 				for (String companyId : companyIds) {
 
@@ -223,18 +236,23 @@ public class NfcActivity extends Activity {
 							dbHelper.getReadableDatabase(), companyIdL);
 					if (company != null) {
 						TourPoint tourPoint = new TourPoint(company);
-						TourHelper.insertTourPoint(dbHelper.getWritableDatabase(),
+						long tourPointId = TourHelper.insertTourPoint(dbHelper.getWritableDatabase(),
 								tourPoint, tourId);
+						tourPoint.setId(tourPointId);
+						importTour.addTourPoint(tourPoint);
 					} else {
 						Log.e(TAG, "no company found by valid company Id");
 						return false;
 					}
 
 				}
+				BestTourController bestTour = new BestTourController(mCurrentLocation, this, importTour.getTourPointList());
+				bestTour.getBestTourPointList();
 			} catch (NumberFormatException nfEx) {
 				Log.e(TAG, "companyId could not parsed to Long", nfEx);
 				TourHelper.deleteTourById(dbHelper.getWritableDatabase(), tourId);
 				return false;
+			
 			} finally {
 				dbHelper.close();
 			}

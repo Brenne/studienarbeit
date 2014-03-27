@@ -1,26 +1,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-	<item
-	    android:id="@+id/menu_item_start_tour"
-	    android:title="@string/label_calc_best_way"
-	    android:icon="@android:drawable/stat_notify_sync"
-	    android:showAsAction="ifRoom"/>
-	<item
-	    android:id="@+id/menu_item_add_tourPoint"
-	    android:title="@string/label_add_company"
-	    android:icon="@android:drawable/ic_menu_add"
-	    android:showAsAction="always" />
-	    
-  
+
     <item
-            android:id="@+id/menu_item_share"
-            android:showAsAction="always"
-            android:title="@string/label_share"
-            android:actionProviderClass=
-                "android.widget.ShareActionProvider" />
+        android:id="@+id/menu_item_start_tour"
+        android:icon="@android:drawable/stat_notify_sync"
+        android:showAsAction="ifRoom"
+        android:title="@string/label_calc_best_way"/>
+    <item
+        android:id="@+id/menu_item_add_tourPoint"
+        android:icon="@android:drawable/ic_menu_add"
+        android:showAsAction="always"
+        android:title="@string/label_add_company"/>
+    <item
+        android:id="@+id/menu_item_share"
+        android:actionProviderClass="android.widget.ShareActionProvider"
+        android:showAsAction="always"
+        android:title="@string/label_share"/>
     <item
         android:id="@+id/menu_item_export"
         android:showAsAction="never"
-        android:title="@string/label_export"
-         />
+        android:title="@string/label_export"/>
 
 </menu>

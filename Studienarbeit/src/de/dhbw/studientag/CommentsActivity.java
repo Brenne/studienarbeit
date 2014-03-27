@@ -1,50 +1,29 @@
 package de.dhbw.studientag;
 
-import java.util.List;
-import java.util.Map;
+import java.util.ArrayList;
 
-import android.app.ListActivity;
+import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.View;
-import android.widget.ListView;
-import android.widget.SimpleAdapter;
-import de.dhbw.studientag.dbHelpers.CommentHelper;
+import de.dhbw.studientag.dbHelpers.CompanyHelper;
 import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.model.Company;
 
-public class CommentsActivity extends ListActivity {
+public class CommentsActivity extends Activity implements
+		CompaniesFragment.OnCompanySelectedLitener, CommentsFragment.OnCommentAddListener {
 
-	public final static String COMPANY_KEY = "company";
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_comments);
 		// Show the Up button in the action bar.
 		setupActionBar();
-		
-		setListAdapter();
-	}
-	
-	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
-		Map<?, ?> selectedComment =  (Map<?, ?>) getListAdapter().getItem(position);
-		if(selectedComment.containsKey(COMPANY_KEY)){
-			Company selectedCompany = (Company) selectedComment.get(COMPANY_KEY);
-			Intent intent = new Intent(this, CommentActivity.class);
-			intent.putExtra(COMPANY_KEY, selectedCompany);
-			startActivity(intent);
-		}
+		FragmentTransaction transaction = getFragmentManager().beginTransaction();
+		CommentsFragment commentsFragment = new CommentsFragment();
+		transaction.add(R.id.comments_fragment_container, commentsFragment).commit();
 
-	}
-	
-	@Override
-	protected void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-		setListAdapter();
 	}
 
 	/**
@@ -57,23 +36,29 @@ public class CommentsActivity extends ListActivity {
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.comments, menu);
-		return true;
-	}
-	
-	private void setListAdapter(){
-		MySQLiteHelper dbHelper = new MySQLiteHelper(this);
-		List<Map<String, Object>> comments = CommentHelper.getAllComments(dbHelper.getReadableDatabase());
-		
-		SimpleAdapter adapter = new SimpleAdapter(this, comments, android.R.layout.simple_list_item_2, 
-				new String[] {COMPANY_KEY, CommentHelper.COMMENT_MESSAGE}, 
-				new int[]{android.R.id.text1, android.R.id.text2});
-		setListAdapter(adapter);
-		dbHelper.close();
+	public void onCompanySelected(Company company) {
+		getFragmentManager().popBackStack();
+
+		Intent intent = new Intent(this, CommentActivity.class);
+		intent.putExtra(CompanyActivity.COMPANY, company);
+		startActivity(intent);
+
 	}
 
+	@Override
+	public void addComment() {
 
+		FragmentTransaction transaction = getFragmentManager().beginTransaction();
+		SQLiteDatabase db = new MySQLiteHelper(this).getReadableDatabase();
+		ArrayList<Company> companyList = (ArrayList<Company>) CompanyHelper
+				.getAllCompanies(db);
+		db.close();
+		CompaniesFragment companiesFragment = CompaniesFragment
+				.newCompaniesFragmentInstance(companyList);
+		transaction.addToBackStack(null);
+		transaction.replace(R.id.comments_fragment_container, companiesFragment,
+				CompanyActivity.COMPANY).commit();
+
+	}
 
 }

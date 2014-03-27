@@ -1,4 +1,4 @@
-package de.dhbw.studientag;
+package de.dhbw.studientag.tours;
 
 import java.util.ArrayList;
 import java.util.List;

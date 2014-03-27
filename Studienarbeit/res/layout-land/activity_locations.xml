@@ -27,14 +27,14 @@
         android:layout_weight=".6"
         android:layout_height="match_parent" >
 
-        <fragment
+         <fragment
             android:id="@+id/map"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             class="com.google.android.gms.maps.MapFragment"
             map:cameraTargetLat="48.773536"
             map:cameraTargetLng="9.170902"
-            map:cameraZoom="16" />
+            map:cameraZoom="16" /> 
     </FrameLayout>
 
 </LinearLayout>

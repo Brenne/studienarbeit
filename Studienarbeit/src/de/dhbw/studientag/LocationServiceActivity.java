@@ -1,9 +1,6 @@
 package de.dhbw.studientag;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -16,7 +13,6 @@ import android.content.SharedPreferences.Editor;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -24,9 +20,9 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.maps.model.LatLng;
 
-import de.dhbw.studientag.model.Building;
+import de.dhbw.studientag.model.TourPoint;
+import de.dhbw.studientag.tours.BestTourController;
 
 public abstract class LocationServiceActivity extends Activity implements
 
@@ -45,8 +41,9 @@ GooglePlayServicesClient.ConnectionCallbacks,
 	// A fast frequency ceiling in milliseconds
 	private static final long FASTEST_INTERVAL = MILLISECONDS_PER_SECOND
 			* FASTEST_INTERVAL_IN_SECONDS;
-	private static final String KEY_UPDATES_ON = "KEY_UPDATES_ON";
+	public static final String KEY_UPDATES_ON = "KEY_UPDATES_ON";
 	private static final String TAG = "LocationServiceActivity";
+	private static final int NUM_UPDATES = 5;
 
 	protected LocationClient mLocationClient;
 	protected Location mCurrentLocation;
@@ -65,8 +62,8 @@ GooglePlayServicesClient.ConnectionCallbacks,
 		mLocationRequest.setInterval(UPDATE_INTERVAL);
 		// Set the fastest update interval to 1 second
 		mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
-
-		// mLocationRequest.setNumUpdates(NUM_UPDATES);
+				
+		mLocationRequest.setNumUpdates(NUM_UPDATES);
 		// Open the shared preferences
 		mPrefs = getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);
 		// Get a SharedPreferences editor
@@ -77,63 +74,23 @@ GooglePlayServicesClient.ConnectionCallbacks,
 		 */
 
 		mLocationClient = new LocationClient(this, this, this);
-		mUpdatesRequested = false;
+		mUpdatesRequested = true;
 	}
 
-	public Map<String, Float> getDistanceMap() {
-
-		Map<String, Float> distance = new HashMap<String, Float>();
-
-		if (mCurrentLocation == null) {
-			Log.v(TAG, "curLocation is null");
-		} else {
-			for (Entry<String, LatLng> entry : LocationsActivity.LOCATIONS.entrySet()) {
-				Location location = new Location(entry.getKey());
-				location.setLatitude(entry.getValue().latitude);
-				location.setLongitude(entry.getValue().longitude);
-
-				float fDistance = location.distanceTo(mCurrentLocation);
-				distance.put(entry.getKey(), fDistance);
-			}
-
-		}
-
-		return distance;
-	}
 	
-	private float distanceBetween(Building buildingA, Building buildingB){
-		float [] distance = {0} ;
-		Location locA = new Location(buildingA.getShortName());
-		locA.setLatitude(LocationsActivity.LOCATIONS.get(buildingA.getShortName()).latitude);
-		locA.setLongitude(LocationsActivity.LOCATIONS.get(buildingA.getShortName()).longitude);
-		Location locB = new Location(buildingB.getShortName());
-		locB.setLatitude(LocationsActivity.LOCATIONS.get(buildingB.getShortName()).latitude);
-		locB.setLongitude(LocationsActivity.LOCATIONS.get(buildingB.getShortName()).longitude);
+	
+	public void requestUpdates(boolean on_off){
 		
-		Location.distanceBetween(locA.getLatitude(), locA.getLongitude(), locB.getLatitude(), locB.getLongitude(), distance);
-		return distance[0];
-		
-	}
-	
-	public float calcDistance(List<Building> buildings){
-		float distance = 0;
-		for(int i=0; i<buildings.size(); i++){
-			if(i==0){
-				Map<String, Float> distanceMap = getDistanceMap();
-				distance+=distanceMap.get(buildings.get(0).getShortName());
-			}else{
-				Building prevTourPoint = buildings.get(i-1);
-				Building thisTourPoint = buildings.get(i);
-				if(prevTourPoint.getId()!=thisTourPoint.getId()){
-					distance+= distanceBetween(prevTourPoint, thisTourPoint);
-				}
+		if(on_off){
+			mEditor.putBoolean(KEY_UPDATES_ON, true).apply();
+			if(mLocationClient.isConnected()){
+				mLocationClient.requestLocationUpdates(mLocationRequest, this);
 			}
+		}else if(!on_off){
+			mEditor.putBoolean(KEY_UPDATES_ON, false).apply();
+			mLocationClient.removeLocationUpdates(this);
 		}
-		Log.v(TAG, "Buildinglist distance : "+Float.toString(distance));
-		return distance;
 	}
-	
-	
 
 	@Override
 	protected void onResume() {
@@ -160,12 +117,7 @@ GooglePlayServicesClient.ConnectionCallbacks,
 
 	}
 
-	@Override
-	protected void onPause() {
-		super.onPause();
-		mEditor.putBoolean(KEY_UPDATES_ON, mUpdatesRequested);
-		mEditor.commit();
-	}
+
 
 	@Override
 	protected void onStop() {
@@ -189,10 +141,16 @@ GooglePlayServicesClient.ConnectionCallbacks,
 		// Report to the UI that the location was updated
 		String msg = "Updated Location: " + Double.toString(location.getLatitude()) + ","
 				+ Double.toString(location.getLongitude());
-		Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-		Log.v(TAG, msg);
+		
+		Log.d(TAG, msg);
 		mCurrentLocation = location;
 
+	}
+	
+	public List<TourPoint> bestTourPointList(List<TourPoint> tourPoints) {
+		BestTourController bestTour = new BestTourController(mCurrentLocation, this, tourPoints);
+		return bestTour.getBestTourPointList();
+		
 	}
 
 	// Location Google Play services from
@@ -320,6 +278,7 @@ GooglePlayServicesClient.ConnectionCallbacks,
 		if (mUpdatesRequested || mCurrentLocation == null) {
 			Log.v(TAG, "updatesRequestet mLocationClient requestLocationUpdates");
 			mLocationClient.requestLocationUpdates(mLocationRequest, this);
+			
 		}
 
 		// TODO color menu icon blue

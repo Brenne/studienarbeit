@@ -76,6 +76,7 @@
         <activity
             android:name="de.dhbw.studientag.CommentsActivity"
             android:label="@string/title_activity_comments"
+             android:configChanges="keyboardHidden|orientation|screenSize"
             android:parentActivityName="de.dhbw.studientag.CommentActivity" >
         </activity>
 
@@ -84,7 +85,7 @@
             android:value="AIzaSyDjmL3MzcSsS9Z993FNe91GRMYG2XUmefo" />
 
         <activity
-            android:name="de.dhbw.studientag.TourActivity"
+            android:name="de.dhbw.studientag.tours.TourActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_tours"
             android:parentActivityName="de.dhbw.studientag.MainActivity" >
@@ -97,7 +98,7 @@
                 android:resource="@xml/searchable_info" />
         </activity>
         <activity
-            android:name="de.dhbw.studientag.NfcActivity"
+            android:name="de.dhbw.studientag.tours.NfcActivity"
             android:label="@string/label_import_tour" >
         </activity>
         <activity

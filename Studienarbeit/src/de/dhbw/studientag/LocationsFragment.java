@@ -52,7 +52,7 @@ public class LocationsFragment extends ListFragment {
 		Map<String,LatLng> locations = ((LocationsActivity)getActivity()).getLocations();
 		LatLng location = locations.get(building.getShortName());
 		if(location != null){
-			((LocationsActivity)getActivity()).setMarker(location);
+			((LocationsActivity)getActivity()).setMarker(location, building.getFullName());
 		}
 //		getActivity().getIntent().putExtra("bulding", building);
 		mCallback.onBuildingClicked(building);

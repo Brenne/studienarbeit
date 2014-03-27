@@ -1,4 +1,4 @@
-package de.dhbw.studientag;
+package de.dhbw.studientag.tours;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -7,8 +7,12 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.ListFragment;
 import android.os.Bundle;
+import de.dhbw.studientag.CompaniesFragment;
+import de.dhbw.studientag.LocationServiceActivity;
+import de.dhbw.studientag.R;
 import de.dhbw.studientag.dbHelpers.CompanyHelper;
 import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
+import de.dhbw.studientag.dbHelpers.TourHelper;
 import de.dhbw.studientag.model.Company;
 import de.dhbw.studientag.model.Tour;
 import de.dhbw.studientag.model.TourPoint;
@@ -56,7 +60,7 @@ public class TourActivity extends LocationServiceActivity implements
 		TourFragment fragment = TourFragment.getInitializedFragement(tour);
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
 		transaction.replace(R.id.toursFragmentContainer, fragment, TAG_TOUR_FRAGMENT);
-		transaction.addToBackStack(null);
+		transaction.addToBackStack(TAG_TOUR_FRAGMENT);
 		transaction.commit();
 
 	}
@@ -82,6 +86,7 @@ public class TourActivity extends LocationServiceActivity implements
 		ListFragment companiesFragment = CompaniesFragment
 				.newCompaniesFragmentInstance(allCompanies);
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
+		transaction.addToBackStack(null);
 		transaction.replace(R.id.toursFragmentContainer, companiesFragment,
 				TAG_COMPANIES_FRAGMENT).commit();
 		setTitle(getString(R.string.label_add_company) + " " + mTour.getName());
@@ -91,36 +96,19 @@ public class TourActivity extends LocationServiceActivity implements
 	@Override
 	public void onCompanySelected(Company company) {
 		if (mTour != null) {
-			TourFragment fragment = TourFragment.getInitializedFragement(mTour, company);
 
-			FragmentTransaction transaction = getFragmentManager().beginTransaction();
-			Fragment companiesFragment = getFragmentManager().findFragmentByTag(
-					TAG_COMPANIES_FRAGMENT);
-
-			transaction.remove(companiesFragment);
-			transaction.replace(R.id.toursFragmentContainer, fragment, TAG_TOUR_FRAGMENT);
-
-			transaction.commit();
+			long tourId = mTour.getId();
+			MySQLiteHelper dbHelper = new MySQLiteHelper(this);
+			TourPoint tourPoint = new TourPoint(company);
+			tourPoint.setId(TourHelper.insertTourPoint(
+					dbHelper.getWritableDatabase(), tourPoint, tourId));
+			mTour.addTourPoint(tourPoint);
+			dbHelper.close();
+			getFragmentManager().popBackStack();
+			getFragmentManager().popBackStack(TAG_TOUR_FRAGMENT, 0);
 		}
 
 	}
-
-	@Override
-	public void onBackPressed() {
-		final TourFragment tourFragment = (TourFragment) getFragmentManager()
-				.findFragmentByTag(TAG_TOUR_FRAGMENT);
-		final CompaniesFragment companyFragment = (CompaniesFragment) getFragmentManager()
-				.findFragmentByTag(TAG_COMPANIES_FRAGMENT);
-		FragmentTransaction transaction = getFragmentManager().beginTransaction();
-		if (tourFragment != null)
-			transaction.remove(tourFragment);
-		if (companyFragment != null)
-			transaction.remove(companyFragment);
-		transaction.commit();
-		super.onBackPressed();
-	}
-
-	
 	
 	
 }

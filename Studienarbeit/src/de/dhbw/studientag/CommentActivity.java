@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
@@ -24,7 +25,7 @@ public class CommentActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_comment);
 		comment = (EditText) findViewById(R.id.editText_comment);
-		company =(Company) getIntent().getParcelableExtra("company");
+		company =(Company) getIntent().getParcelableExtra(CompanyActivity.COMPANY);
 		
 		TextView companyName = (TextView) findViewById(R.id.textView_commentCompanyName);
 		companyName.setText(company.getName());
@@ -49,17 +50,19 @@ public class CommentActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int itemId = item.getItemId();
-		if(itemId == R.id.menu_save_comment){
+		switch(itemId){
+		case R.id.menu_save_comment:
 			saveComment();
 			finish();
 			return true;
-		}else if(itemId == R.id.menu_delete_comment){
+		case R.id.menu_delete_comment:
 			comment.setText("");
 			saveComment();
 			finish();
 			return true;
-		}else{
+		default:
 			return super.onOptionsItemSelected(item);
+				
 		}
 		
 	}
@@ -67,7 +70,7 @@ public class CommentActivity extends Activity {
 
 	public void saveComment(){
 		Editable message = comment.getText();
-//		Log.i("Save Comment",message.toString());
+		Log.d("Save Comment",message.toString());
 		if(message.length()>0)
 			CommentHelper.insertComment(company.getId(), message.toString(), dbHelper.getWritableDatabase());
 		else
@@ -76,15 +79,12 @@ public class CommentActivity extends Activity {
 		imm.hideSoftInputFromWindow(comment.getWindowToken(), 0);
 		dbHelper.close();
 	}
+	
 	@Override
 	protected void onPause() {
 		
 		saveComment();
 		super.onPause();
 	}
-	
-
-	
-
 
 }

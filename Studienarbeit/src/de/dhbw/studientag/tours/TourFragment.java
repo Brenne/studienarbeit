@@ -1,12 +1,7 @@
-package de.dhbw.studientag;
+package de.dhbw.studientag.tours;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import android.app.Activity;
 import android.app.ListFragment;
@@ -25,7 +20,9 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ShareActionProvider;
-import android.widget.Toast;
+import de.dhbw.studientag.CompanyActivity;
+import de.dhbw.studientag.OnBinClicked;
+import de.dhbw.studientag.R;
 import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.dbHelpers.TourHelper;
 import de.dhbw.studientag.model.Building;
@@ -35,14 +32,7 @@ import de.dhbw.studientag.model.Room;
 import de.dhbw.studientag.model.Tour;
 import de.dhbw.studientag.model.TourPoint;
 
-/**
- * A simple {@link android.support.v4.app.Fragment} subclass. Activities that
- * contain this fragment must implement the
- * {@link TourFragment.OnFloorSelectedListener} interface to handle interaction
- * events. Use the {@link TourFragment#newInstance} factory method to create an
- * instance of this fragment.
- * 
- */
+
 public class TourFragment extends ListFragment implements OnBinClicked {
 
 	private ShareActionProvider mShareActionProvider;
@@ -83,12 +73,8 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 				mTour.addTourPoint(tourPoint);
 
 			} else if (mTour != null) {
-				// not a new tour but add company to exiting tourPoint
-				long tourId = mTour.getId();
-				TourPoint tourPoint = new TourPoint(mCompany);
-				tourPoint.setId(TourHelper.insertTourPoint(
-						dbHelper.getWritableDatabase(), tourPoint, tourId));
-				mTour.addTourPoint(tourPoint);
+				//TODO rework if branch
+
 
 			}
 			dbHelper.close();
@@ -177,7 +163,6 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 		Intent intent = new Intent(getActivity().getBaseContext(), CompanyActivity.class);
 		intent.putExtra(TourActivity.COMPANY, tourPoint.getCompany());
 		startActivity(intent);
-
 	}
 
 	public static TourFragment getInitializedFragement(Tour tour) {
@@ -186,13 +171,8 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 		return fragment;
 	}
 
-	public static TourFragment getInitializedFragement(Tour tour, Company company) {
-		TourFragment fragment = getInitializedFragement(tour);
-		fragment.mCompany = company;
-		return fragment;
-	}
-
 	public static TourFragment newTour(Company company, boolean newTour) {
+		//TODO maybe insert new tour here into db;
 		TourFragment fragment = new TourFragment();
 		fragment.mCompany = company;
 		fragment.mNewTour = newTour;
@@ -201,6 +181,7 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 
 	@Override
 	public void onPause() {
+		mListener.requestUpdates(false);
 		MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity().getBaseContext());
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 		String tourName = this.mTourName.getText().toString();
@@ -216,11 +197,13 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 	@Override
 	public void onResume() {
 		getActivity().setTitle(R.string.title_activity_tour);
+		mListener.requestUpdates(true);
 		if (mTour != null && mTour.getId() != 0) {
 			// MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity());
 			// mTour = TourHelper.getTourById(dbHelper.getReadableDatabase(),
 			// mTour.getId());
 			// dbHelper.close();
+			
 			initAdapter();
 		}
 		super.onResume();
@@ -282,129 +265,26 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 		// super.onCreateOptionsMenu(menu, inflater);
 	}
 
-	private void orderList() {
-
-		ArrayList<TourPoint> newTourPointList = new ArrayList<TourPoint>();
-		Permutations<Building> buildingPermutations = new Permutations<Building>(
-				getUniqueBuildings(mTour.getTourPointList()));
-		TreeMap<Float, List<Building>> tourLength = new TreeMap<>();
-		while(buildingPermutations.hasNext()) {
-			List<Building> buildings = buildingPermutations.next();
-			tourLength.put(mListener.calcDistance(buildings), buildings);
-
-		}
-		Log.v(TAG, "shortest tourLength: "+Float.toString(tourLength.firstEntry().getKey()));
-		for(Building building : tourLength.firstEntry().getValue()){
-			for(TourPoint tourPoint: mTour.getTourPointList()){
-				if(tourPoint.getCompany().getLocation().getBuilding().getId()== building.getId()){
-					newTourPointList.add(tourPoint);
-				}
-			}
-		}
-		
-		
-
-		newTourPointList = orderFloors(newTourPointList);
-
-		// check if no tourPoint got Lost
-		if (mTour.getTourPointList().size() == newTourPointList.size()) {
-			mTour.setTourPointList(newTourPointList);
-			mAdapter.clear();
-			initAdapter();
-			makePositionsPersistent();
-
-		} else {
-			Log.e(TAG, "error in order list check code");
-			
-		}
-
-	}
-	
-	private List<Building> getUniqueBuildings(List<TourPoint> tourPoints){
-		HashMap<Long,Building> buildingMap = new HashMap<Long,Building>(4);
-		List<Building> buildingList = new ArrayList<Building>();
-		for(TourPoint tourPoint : tourPoints){
-			Building building = tourPoint.getCompany().getLocation().getBuilding();
-			buildingMap.put(building.getId(), building);
-		}
-		for(Entry<Long,Building> building : buildingMap.entrySet()){
-			buildingList.add(building.getValue());
-		}
-		return buildingList;
-		
-	}
-
-	/**
-	 * 
-	 * @param tourPointList
-	 *            the tourPoints should be ordered by buildings i.e. all
-	 *            tourPoints with the same building should be next to each other
-	 * @return ArrayList<TourPoint> where the tourPoints are orderd in respect
-	 *         of the building and with a increasing floor number within one
-	 *         building
-	 */
-	private ArrayList<TourPoint> orderFloors(List<TourPoint> tourPointList) {
-		Building building = new Building(-1, "dummy", "dummy");
-		ArrayList<TourPoint> tempList = new ArrayList<TourPoint>();
-		ArrayList<TourPoint> returnList = new ArrayList<TourPoint>();
-		for(TourPoint tourPoint : tourPointList){
-			
-			if (tourPoint.getCompany().getLocation().getBuilding().getId() != building
-			.getId()) {
-				if(!tempList.isEmpty()){
-					try{
-						Collections.sort(tempList);
-					}catch(ClassCastException ex){
-						Log.e(TAG, "porpably tried to compare TourPoints of different buildings", ex);
-						Toast.makeText(getActivity(), R.string.error_on_tour_sort, Toast.LENGTH_SHORT).show();
-					}
-					returnList.addAll(tempList);
-					tempList.clear();
-				}
-							
-				building = tourPoint.getCompany().getLocation().getBuilding();
-			}
-			tempList.add(tourPoint);	
-			
-		}
-		Collections.sort(tempList);
-		returnList.addAll(tempList);
-
-		return returnList;
-	}
-
-	private void makePositionsPersistent() {
-		int i = 1;
-		SQLiteDatabase db = new MySQLiteHelper(getActivity()).getReadableDatabase();
-		for (TourPoint tourPoint : mTour.getTourPointList()) {
-			tourPoint.setPosition(i);
-			TourHelper.updatePosition(db, tourPoint);
-			i++;
-
-		}
-		db.close();
-	}
-
-
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int itemId = item.getItemId();
-		if (itemId == R.id.menu_item_start_tour) {
-			orderList();
+		switch(itemId){
+		case R.id.menu_item_start_tour:
+			mTour.setTourPointList(mListener.bestTourPointList(mTour.getTourPointList()));
+			mAdapter.clear();
+			initAdapter();
 			return true;
-		} else if (itemId == R.id.menu_item_export) {
-
+		case R.id.menu_item_export:
 			String exportString = mTour.getName() + ":" + getCompanyIdsOfTour();
 			Intent exportIntent = new Intent(getActivity(), NfcActivity.class);
 			exportIntent.putExtra(NfcActivity.EXPORT, exportString);
 			startActivity(exportIntent);
 			return true;
-		} else if (itemId == R.id.menu_item_add_tourPoint) {
+		case R.id.menu_item_add_tourPoint:
 			mCompanyAddListener.addCompanyToTour(mTour);
 			return true;
-		} else {
-
-			return super.onOptionsItemSelected(item);
+		default:
+			return super.onOptionsItemSelected(item);			
 		}
 	}
 
@@ -444,7 +324,8 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 	}
 
 	public interface MyDistanceListener {
-		public float calcDistance(List<Building> buildings);
+		public List<TourPoint> bestTourPointList(List<TourPoint> tourPoints);
+		public void requestUpdates(boolean onOff);
 	}
 
 	public interface OnTourPointAddListener {

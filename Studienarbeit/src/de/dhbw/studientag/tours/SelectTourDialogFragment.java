@@ -1,4 +1,4 @@
-package de.dhbw.studientag;
+package de.dhbw.studientag.tours;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +14,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
+import de.dhbw.studientag.CompanyActivity;
+import de.dhbw.studientag.OnBinClicked;
+import de.dhbw.studientag.R;
 import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.dbHelpers.TourHelper;
 import de.dhbw.studientag.model.Company;

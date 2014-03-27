@@ -1,4 +1,4 @@
-package de.dhbw.studientag;
+package de.dhbw.studientag.tours;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,8 @@ import android.view.ViewManager;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import de.dhbw.studientag.OnBinClicked;
+import de.dhbw.studientag.R;
 import de.dhbw.studientag.model.Tour;
 
 public class SelectTourDialogAdapter extends ArrayAdapter<Tour> {

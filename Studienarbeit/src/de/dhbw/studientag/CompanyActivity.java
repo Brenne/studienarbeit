@@ -16,12 +16,13 @@ import de.dhbw.studientag.dbHelpers.CommentHelper;
 import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.model.Company;
 import de.dhbw.studientag.model.Subject;
+import de.dhbw.studientag.tours.SelectTourDialogFragment;
 
 public class CompanyActivity extends Activity {
 
 	private Company company;
 	private MySQLiteHelper dbHelper = new MySQLiteHelper(this);
-	protected static final String COMPANY ="company";
+	public static final String COMPANY ="company";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -82,18 +83,19 @@ public class CompanyActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    int itemId = item.getItemId();
-		if (itemId == R.id.action_comment) {
-			Intent intent = new Intent(this, CommentActivity.class);
+	    switch(itemId){
+	    case R.id.action_comment:
+	    	Intent intent = new Intent(this, CommentActivity.class);
 			intent.putExtra(COMPANY, company);
 			startActivity(intent);
 			return true;
-		} else if (itemId == R.id.action_addToTour) {
+	    case R.id.action_addToTour:
 			DialogFragment toursDialog = SelectTourDialogFragment.newInstance(company);
 			toursDialog.show(getFragmentManager(),"tours");
 			return true;
-		} else {
-			return super.onOptionsItemSelected(item);
-		}
+		default:
+			return super.onOptionsItemSelected(item);  	    	
+	    }
 	}
 	
 	@Override
@@ -102,6 +104,5 @@ public class CompanyActivity extends Activity {
 		super.onResume();
 	}
 	
-
 
 }

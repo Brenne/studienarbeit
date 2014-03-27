@@ -93,9 +93,9 @@ public class LocationsActivity extends Activity implements
 
 	}
 
-	public void setMarker(LatLng position) {
+	public void setMarker(LatLng position, String title) {
 		mMap.clear();
-		mMap.addMarker(new MarkerOptions().position(position).title("Marker"));
+		mMap.addMarker(new MarkerOptions().position(position).title(title));
 	}
 
 

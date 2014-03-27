@@ -1,16 +1,14 @@
 package de.dhbw.studientag.dbHelpers;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
-import de.dhbw.studientag.CommentsActivity;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import de.dhbw.studientag.model.Comment;
+import de.dhbw.studientag.model.Company;
 
 public class CommentHelper {
 
@@ -23,13 +21,11 @@ public class CommentHelper {
 
 	protected static final String COMMENT_TABLE_CREATE = "CREATE TABLE "
 			+ COMMENT_TABLE_NAME + "( " + MySQLiteHelper.ID
-			+ " INTEGER PRIMARY KEY AUTOINCREMENT," 
-			+COMMENT_COMPANY_ID	+ " INTEGER REFERENCES "
-			+CompanyHelper.COMPANY_TABLE_NAME+"("+MySQLiteHelper.ID+")," 
-			+ COMMENT_MESSAGE + " TEXT " + ")";
+			+ " INTEGER PRIMARY KEY AUTOINCREMENT," + COMMENT_COMPANY_ID
+			+ " INTEGER REFERENCES " + CompanyHelper.COMPANY_TABLE_NAME + "("
+			+ MySQLiteHelper.ID + ")," + COMMENT_MESSAGE + " TEXT " + ")";
 
-	public static void insertComment(long companyId, String message,
-			SQLiteDatabase db) {
+	public static void insertComment(long companyId, String message, SQLiteDatabase db) {
 		ContentValues values = new ContentValues();
 		values.put(COMMENT_COMPANY_ID, companyId);
 		values.put(COMMENT_MESSAGE, message);
@@ -39,16 +35,16 @@ public class CommentHelper {
 		else
 			db.insert(COMMENT_TABLE_NAME, null, values);
 	}
-	
-	public static void deleteComment(long companyId, SQLiteDatabase db){
-		db.delete(COMMENT_TABLE_NAME, COMMENT_COMPANY_ID+"="+Long.toString(companyId), null);
+
+	public static void deleteComment(long companyId, SQLiteDatabase db) {
+		db.delete(COMMENT_TABLE_NAME,
+				COMMENT_COMPANY_ID + "=" + Long.toString(companyId), null);
 	}
 
-	public static String getCommentByIdCompanyId(long companyId,
-			SQLiteDatabase db) {
-		Cursor cursor = db.query(COMMENT_TABLE_NAME,
-				new String[] { COMMENT_MESSAGE }, COMMENT_COMPANY_ID + "=?",
-				new String[] { Long.toString(companyId) }, null, null, null);
+	public static String getCommentByIdCompanyId(long companyId, SQLiteDatabase db) {
+		Cursor cursor = db.query(COMMENT_TABLE_NAME, new String[] { COMMENT_MESSAGE },
+				COMMENT_COMPANY_ID + "=?", new String[] { Long.toString(companyId) },
+				null, null, null);
 		String message = "";
 		if (cursor.getCount() == 1) {
 			cursor.moveToFirst();
@@ -59,8 +55,7 @@ public class CommentHelper {
 		return message;
 	}
 
-	public static boolean commentForCompanyExist(long companyId,
-			SQLiteDatabase db) {
+	public static boolean commentForCompanyExist(long companyId, SQLiteDatabase db) {
 		long comments = DatabaseUtils.queryNumEntries(db, COMMENT_TABLE_NAME,
 				COMMENT_COMPANY_ID + "=" + companyId);
 		if (comments > 0)
@@ -68,43 +63,38 @@ public class CommentHelper {
 		else
 			return false;
 	}
+
 	/**
 	 * 
 	 * @param db
-	 * @return List of Map<String,Object>. Each map has two entries one key is "company" the other
-	 * "message"
+	 * @return List of Map<String,Object>. Each map has two entries one key is
+	 *         "company" the other "message"
 	 */
-	public static List<Map<String, Object>> getAllComments(SQLiteDatabase db){
-		//SELECT message, companyId FROM Comment INNER JOIN Company  ON _id=companyID ;
-		List<Map<String, Object>> comments = new LinkedList<Map<String, Object>>();
-		Cursor cursor = db.rawQuery("SELECT "+COMMENT_MESSAGE+", "+COMMENT_COMPANY_ID+" FROM "+
-				COMMENT_TABLE_NAME +" INNER JOIN "+CompanyHelper.COMPANY_TABLE_NAME +" com ON com."+
-				MySQLiteHelper.ID+"="+COMMENT_COMPANY_ID, null);
+	public static List<Comment> getAllComments(SQLiteDatabase db) {
+		// SELECT message, companyId FROM Comment INNER JOIN Company ON
+		// _id=companyID ;
+		List<Comment> comments = new LinkedList<Comment>();
+		// Cursor cursor =
+		// db.rawQuery("SELECT "+COMMENT_MESSAGE+", "+COMMENT_COMPANY_ID+" FROM "+
+		// COMMENT_TABLE_NAME +" INNER JOIN "+CompanyHelper.COMPANY_TABLE_NAME
+		// +" com ON com."+
+		// MySQLiteHelper.ID+"="+COMMENT_COMPANY_ID, null);
+		Cursor cursor = db.query(COMMENT_TABLE_NAME, COMMENT_ALL_COLUMNS, null, null,
+				null, null, null);
 		cursor.moveToFirst();
-		while(!cursor.isAfterLast()){
-			Map<String, Object> comment = new HashMap<String, Object>();
+		while (!cursor.isAfterLast()) {
+
 			long companyId = cursor.getLong(cursor.getColumnIndex(COMMENT_COMPANY_ID));
+			Company company = CompanyHelper.getCompanyById(db, companyId);
 			String message = cursor.getString(cursor.getColumnIndex(COMMENT_MESSAGE));
-			message = shortenMessage(message);
-			comment.put(CommentsActivity.COMPANY_KEY, CompanyHelper.getCompanyById(db, companyId));
-			comment.put(COMMENT_MESSAGE, message);
+			long commentId = cursor.getLong(0);
+			Comment comment = new Comment(commentId, company, message);
 			comments.add(comment);
 			cursor.moveToNext();
 		}
 		cursor.close();
 		return comments;
-		
-	}
-	
-	private static String shortenMessage(String message){
-		final int LIMIT = 100;
-		//remove line breaks:
-		message = message.replace("\n", " ").replace("\r", " ");
-		if(message.length()<LIMIT){
-			return message;
-		}else{
-			return message.substring(0,LIMIT).concat("...");
-		}
+
 	}
 
 }

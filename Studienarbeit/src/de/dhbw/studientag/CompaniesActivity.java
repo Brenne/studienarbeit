@@ -27,8 +27,6 @@ public class CompaniesActivity extends Activity implements CompaniesFragment.OnC
 		List<Company> companyList = getIntent().getParcelableArrayListExtra(COMPANIES);
 		mListFragment= CompaniesFragment.newCompaniesFragmentInstance((ArrayList<Company>) companyList);
 
-	
-
 		transaction.add(R.id.companies_fragment, mListFragment); 
 		transaction.commit();
 		

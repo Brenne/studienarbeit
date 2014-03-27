@@ -13,6 +13,7 @@ import de.dhbw.studientag.dbHelpers.BuildingHelper;
 import de.dhbw.studientag.dbHelpers.CompanyHelper;
 import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.model.Company;
+import de.dhbw.studientag.tours.TourActivity;
 
 public class MainActivity extends ListActivity {
 

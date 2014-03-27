@@ -1,4 +1,4 @@
-package de.dhbw.studientag;
+package de.dhbw.studientag.tours;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import de.dhbw.studientag.OnBinClicked;
+import de.dhbw.studientag.R;
 import de.dhbw.studientag.model.Tour;
 import de.dhbw.studientag.model.TourPoint;
 
@@ -18,7 +20,7 @@ public class TourPointAdapter extends ArrayAdapter<TourPoint> {
 	private final Tour mTour;
 	
 	public TourPointAdapter(Context context, Tour tour) {
-		super(context, R.layout.tour_list_item, tour.getTourPointList());
+		super(context, R.layout.two_line_list_item_with_bin, tour.getTourPointList());
 		this.context = context;
 		this.mTour = tour;
 		
@@ -28,16 +30,16 @@ public class TourPointAdapter extends ArrayAdapter<TourPoint> {
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		LayoutInflater inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View rowView = inflater.inflate(R.layout.tour_list_item, parent, false);
-		TextView tvCompanyName = (TextView) rowView.findViewById(R.id.tourItemFirstLine);
+		View rowView = inflater.inflate(R.layout.two_line_list_item_with_bin, parent, false);
+		TextView tvCompanyName = (TextView) rowView.findViewById(R.id.binItemFirstLine);
 		TextView tvCompanLocation = (TextView) rowView
-				.findViewById(R.id.tourItemSecondLine);
+				.findViewById(R.id.bintemSecondLine);
 		tvCompanyName.setText((CharSequence) mTour.getTourPointList().get(position).getCompany().getName());
 		String tourPointBuilding =  mTour.getTourPointList().get(position).getCompany().getLocation().getBuilding().getFullName();
 		String tourPointRoom     =  mTour.getTourPointList().get(position).getCompany().getLocation().getRoom().getRoomNo();
 		tvCompanLocation.setText(tourPointBuilding+", "+getContext().getString(R.string.room)+" "+tourPointRoom);
 
-		ImageButton imageButton = (ImageButton) rowView.findViewById(R.id.tourItemDelete);
+		ImageButton imageButton = (ImageButton) rowView.findViewById(R.id.binItemDelete);
 		imageButton.setOnClickListener(new OnClickListener() {
 
 			@Override

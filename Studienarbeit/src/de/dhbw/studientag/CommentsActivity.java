@@ -1,14 +1,10 @@
 package de.dhbw.studientag;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import de.dhbw.studientag.dbHelpers.CompanyHelper;
-import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.model.Company;
 
 public class CommentsActivity extends Activity implements
@@ -18,22 +14,14 @@ public class CommentsActivity extends Activity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_comments);
-		// Show the Up button in the action bar.
-		setupActionBar();
+		Fragment commentsFragment = new CommentsFragment();
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
-		CommentsFragment commentsFragment = new CommentsFragment();
-		transaction.add(R.id.comments_fragment_container, commentsFragment).commit();
-
-	}
-
-	/**
-	 * Set up the {@link android.app.ActionBar}.
-	 */
-	private void setupActionBar() {
-
+		transaction.replace(R.id.comments_fragment_container, commentsFragment).commit();
+		// Show the Up button in the action bar.
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 	}
+
 
 	@Override
 	public void onCompanySelected(Company company) {
@@ -46,18 +34,15 @@ public class CommentsActivity extends Activity implements
 	}
 
 	@Override
-	public void addComment() {
-
+	public void addComment() {	
+		
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
-		SQLiteDatabase db = new MySQLiteHelper(this).getReadableDatabase();
-		ArrayList<Company> companyList = (ArrayList<Company>) CompanyHelper
-				.getAllCompanies(db);
-		db.close();
-		CompaniesFragment companiesFragment = CompaniesFragment
-				.newCompaniesFragmentInstance(companyList);
+		CompaniesFragment companiesFragment =new CompaniesFragment();
 		transaction.addToBackStack(null);
 		transaction.replace(R.id.comments_fragment_container, companiesFragment,
 				CompanyActivity.COMPANY).commit();
+		setTitle(R.string.title_new_comment);
+		
 
 	}
 

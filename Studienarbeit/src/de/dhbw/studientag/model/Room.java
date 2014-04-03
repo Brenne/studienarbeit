@@ -8,20 +8,29 @@ public class Room implements Parcelable{
 
 	private String roomNo;
 	private long id;
+	/**
+	 * represents the favored subject of the companies which are presenting themselves in this room
+	 */
+	private long subjectId;
 	
 	public Room(String roomNo){
 		this.roomNo=roomNo;
 		
 	}
 	
-	public Room(long id, String roomNo){
+	public Room(long id, String roomNo, long subjectId){
 		this(roomNo);
 		this.id=id;
+		this.subjectId=subjectId;
 		
 	}
 	
 	public String getRoomNo() {
 		return roomNo;
+	}
+
+	public long getSubjectId() {
+		return subjectId;
 	}
 
 	public long getId() {
@@ -46,11 +55,11 @@ public class Room implements Parcelable{
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeLong(id);
 		dest.writeString(roomNo);
-		
+		dest.writeLong(subjectId);
 	}
 	
 	private Room(Parcel source){
-		this(source.readLong(), source.readString());
+		this(source.readLong(), source.readString(),source.readLong());
 	}
 	
    public static final Parcelable.Creator<Room> CREATOR = 

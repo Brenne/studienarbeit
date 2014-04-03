@@ -1,10 +1,6 @@
 package de.dhbw.studientag;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import de.dhbw.studientag.model.Company;
@@ -13,7 +9,7 @@ public class CompaniesActivity extends Activity implements CompaniesFragment.OnC
 	
 	protected static final String TITLE = "title";
 	protected static final String COMPANIES = "companies";
-	private CompaniesFragment mListFragment;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -23,13 +19,17 @@ public class CompaniesActivity extends Activity implements CompaniesFragment.OnC
 		if (title == null)
 			title = getString(R.string.label_companies);
 		setTitle(title);
-		FragmentTransaction transaction = getFragmentManager().beginTransaction();
-		List<Company> companyList = getIntent().getParcelableArrayListExtra(COMPANIES);
-		mListFragment= CompaniesFragment.newCompaniesFragmentInstance((ArrayList<Company>) companyList);
-
-		transaction.add(R.id.companies_fragment, mListFragment); 
-		transaction.commit();
-		
+//		FragmentTransaction transaction = getFragmentManager().beginTransaction();
+//		List<Company> companyList = getIntent().getParcelableArrayListExtra(COMPANIES);
+//		if(companyList.isEmpty()){
+//			//no Companies activity without companies to display
+//			finish();
+//		}
+//		mListFragment= CompaniesFragment.newCompaniesFragmentInstance((ArrayList<Company>) companyList);
+//
+//		transaction.add(R.id.companies_fragment, mListFragment); 
+//		transaction.commit();
+//		
 		
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		

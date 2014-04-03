@@ -32,6 +32,7 @@ import de.dhbw.studientag.model.Tour;
 public class TourListFragment extends ListFragment implements OnBinClicked {
 
 	private OnTourSelectedListener mTourListener;
+	private NewTourListener mCreateNewTourListener;
 	protected static final String TOUR_NAME = "tourName";
 	protected static final String TOUR_STATIONS = "stations";
 	protected static final String TOUR_ID = "tourId";
@@ -80,9 +81,10 @@ public class TourListFragment extends ListFragment implements OnBinClicked {
 		super.onAttach(activity);
 		try {
 			mTourListener = (OnTourSelectedListener) activity;
+			mCreateNewTourListener= (NewTourListener) activity;
 		} catch (ClassCastException e) {
 			throw new ClassCastException(activity.toString()
-					+ " must implement OnTourSelectedListener");
+					+ " must implement OnTourSelectedListener and NewTourListener");
 		}
 	}
 
@@ -145,14 +147,17 @@ public class TourListFragment extends ListFragment implements OnBinClicked {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int itemId = item.getItemId();
-		if (itemId == R.id.menu_item_import) {
+		switch(itemId){
+		case R.id.menu_item_import:
 			Intent intent = new Intent(getActivity(), NfcActivity.class);
 			startActivity(intent);
 			return true;
-		} else {
+		case R.id.menu_item_newTour:
+			mCreateNewTourListener.createNewTour();
+			return true;
+		default:
 			return super.onOptionsItemSelected(item);
 		}
-
 	}
 
 	@Override
@@ -168,6 +173,10 @@ public class TourListFragment extends ListFragment implements OnBinClicked {
 		initAdapter(getTourList());
 		setListAdapter(mTourAdapter);
 
+	}
+	
+	public interface NewTourListener{
+		public void createNewTour();
 	}
 
 }

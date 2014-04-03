@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/list_text"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:drawableLeft="@android:drawable/sym_def_app_icon"
-    android:drawablePadding="20dp"
-    android:orientation="horizontal"
-    android:paddingLeft="@dimen/textView_paddingBottom"
-    android:text="@string/label_list_item"
-    android:textAppearance="?android:attr/textAppearanceListItem" />
+    android:layout_height="?android:attr/listPreferredItemHeightLarge" >
+
+    <ImageView
+        android:id="@+id/faculty_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_centerVertical="true"
+        android:contentDescription="@string/label_faculty_icon"
+        android:src="@android:drawable/sym_def_app_icon" />
+
+    <TextView
+        android:id="@+id/faculty_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/faculty_icon"
+        android:paddingLeft="@dimen/textView_paddingBottom"
+        android:text="@string/label_list_item"
+        android:textAppearance="?android:attr/textAppearanceListItem" />
+
+</RelativeLayout>

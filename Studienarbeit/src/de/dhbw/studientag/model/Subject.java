@@ -8,14 +8,16 @@ public class Subject implements Parcelable {
 	private long id;
 	private String name;
 	private Faculty faculty;
+	private String webAddress;
 
-	public Subject(String name, Faculty faculty) {
+	public Subject(String name, Faculty faculty, String webAddress) {
 		this.name = name;
 		this.faculty = faculty;
+		this.webAddress=webAddress;
 	}
 
-	public Subject(long id, String name, Faculty faculty) {
-		this(name, faculty);
+	public Subject(long id, String name, Faculty faculty, String webAddress) {
+		this(name, faculty, webAddress);
 		this.id = id;
 	}
 
@@ -25,6 +27,10 @@ public class Subject implements Parcelable {
 
 	public Faculty getFaculty() {
 		return faculty;
+	}
+	
+	public String getWebAddress() {
+		return webAddress;
 	}
 
 	public long getId() {
@@ -50,12 +56,13 @@ public class Subject implements Parcelable {
 		dest.writeLong(id);
 		dest.writeString(name);
 		dest.writeSerializable(faculty);
+		dest.writeString(webAddress);
 
 	}
 
 	private Subject(Parcel source) {
 		this(source.readLong(), source.readString(), (Faculty) source
-				.readSerializable());
+				.readSerializable(), source.readString());
 
 	}
 

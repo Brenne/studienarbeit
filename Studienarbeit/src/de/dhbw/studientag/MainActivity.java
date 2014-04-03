@@ -6,10 +6,8 @@ import android.app.DialogFragment;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.Window;
 import android.widget.ArrayAdapter;
-import de.dhbw.studientag.dbHelpers.BuildingHelper;
 import de.dhbw.studientag.dbHelpers.CompanyHelper;
 import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.model.Company;
@@ -62,9 +60,6 @@ public class MainActivity extends ListActivity {
 			newFragment.show(getFragmentManager(), "faculties");
 		} else if (selected.equals(getString(R.string.title_activity_locations))) {
 			Intent intent = new Intent(this, LocationsActivity.class);
-			ArrayList<? extends Parcelable> buildings = (ArrayList<? extends Parcelable>) BuildingHelper
-					.getAllBuildings(dbHelper.getReadableDatabase());
-			intent.putParcelableArrayListExtra("buildings", buildings);
 			startActivity(intent);
 		} else if (selected.equals(getString(R.string.label_comments))){
 			Intent intent = new Intent(this, CommentsActivity.class);

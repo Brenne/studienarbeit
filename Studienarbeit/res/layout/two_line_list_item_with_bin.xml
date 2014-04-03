@@ -30,7 +30,7 @@
     <ImageButton
         android:id="@+id/binItemDelete"
         android:layout_width="40dp"
-        android:layout_height="30dp"
+        android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
         android:layout_marginRight="0dp"
         android:contentDescription="@string/delete"

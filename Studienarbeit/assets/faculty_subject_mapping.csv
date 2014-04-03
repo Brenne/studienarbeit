@@ -1,9 +1,12 @@
-Studiengang;Fakultät
-Angewandte Informatik;Technik
-Wirtschaftsinformatik;Wirtschaft
-Dienstleistungsmanagement;Wirtschaft
-International Business;Wirtschaft
-BWL;Wirtschaft
-Finanzdienstleistungen;Wirtschaft
-Maschinenbau;Technik
-Versicherung;Wirtschaft
+Studiengang;Fakultät;Link zum Studiengang
+Angewandte Informatik;Technik;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-technik/informatik/
+Wirtschaftsinformatik;Wirtschaft;
+Dienstleistungsmanagement;Wirtschaft;
+International Business;Wirtschaft;
+BWL;Wirtschaft;
+Finanzdienstleistungen;Wirtschaft;
+Maschinenbau;Technik;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-technik/maschinenbau/
+Versicherung;Wirtschaft;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-technik/elektrotechnik
+Elektrotechnik;Technik;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-technik/elektrotechnik/
+Mechatronik;Technik;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-technik/mechatronik/
+Wirtschaftsingenieurwesen;Technik;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-technik/wirtschaftsingenieurwesen/

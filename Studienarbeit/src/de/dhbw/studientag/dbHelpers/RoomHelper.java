@@ -13,16 +13,19 @@ public class RoomHelper {
 
 	protected final static String ROOM_FLOOR = "floorId";
 	protected final static String ROOM_NUMBER = "number";
+	protected final static String ROOM_SUBJECT_ID = "subjectId";
 	protected final static String ROOM_TABLE_NAME = "Room";
 	protected final static String ROOM_TABLE_CREATE =
 			"CREATE TABLE " + ROOM_TABLE_NAME + " (" +
-			MySQLiteHelper.ID 	+ " integer primary key autoincrement," +
+			MySQLiteHelper.ID 	+ " integer primary key autoincrement, " +
 			ROOM_NUMBER	 + " TEXT, " +
-			ROOM_FLOOR	 + " INTGER REFERENCES " + 
-				FloorHelper.FLOOR_TABLE_NAME+"("+MySQLiteHelper.ID+")"+
+			ROOM_FLOOR	 + " INTEGER REFERENCES " + 
+				FloorHelper.FLOOR_TABLE_NAME+"("+MySQLiteHelper.ID+"), "+
+			ROOM_SUBJECT_ID +" INTEGER REFERENCES "+
+				SubjectsHelper.SUBJECTS_TABLE_NAME+"("+MySQLiteHelper.ID+")"+
 			")";
 	protected final static String[] ROOM_ALL_COLUMNS={
-		MySQLiteHelper.ID,ROOM_NUMBER,ROOM_FLOOR
+		MySQLiteHelper.ID,ROOM_NUMBER,ROOM_FLOOR, ROOM_SUBJECT_ID
 	};
 	
 	protected static final void initRooms(Floor floor, SQLiteDatabase db){
@@ -30,6 +33,7 @@ public class RoomHelper {
 			ContentValues values= new ContentValues();
 			values.put(ROOM_NUMBER, room.getRoomNo());
 			values.put(ROOM_FLOOR, floor.getId());
+			values.put(ROOM_SUBJECT_ID, room.getSubjectId());
 			long roomId=db.insert(ROOM_TABLE_NAME, null, values);
 			room.setId(roomId);
 			
@@ -65,7 +69,8 @@ public class RoomHelper {
 
 	private static Room cursorToRoom(Cursor cursor) {
 		Room room = new Room(cursor.getLong(0), 
-				cursor.getString(cursor.getColumnIndex(ROOM_NUMBER)));
+				cursor.getString(cursor.getColumnIndex(ROOM_NUMBER)),
+				cursor.getLong(cursor.getColumnIndex(ROOM_SUBJECT_ID)));
 		return room;
 	}
 	

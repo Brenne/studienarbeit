@@ -32,7 +32,6 @@ import de.dhbw.studientag.model.Room;
 import de.dhbw.studientag.model.Tour;
 import de.dhbw.studientag.model.TourPoint;
 
-
 public class TourFragment extends ListFragment implements OnBinClicked {
 
 	private ShareActionProvider mShareActionProvider;
@@ -73,8 +72,7 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 				mTour.addTourPoint(tourPoint);
 
 			} else if (mTour != null) {
-				//TODO rework if branch
-
+				// TODO rework if branch
 
 			}
 			dbHelper.close();
@@ -93,11 +91,11 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 		if (!mTour.getName().isEmpty()) {
 			mTourName.setText(mTour.getName());
 		} else if (tourNameExists(mTourName.getText().toString())) {
-			mTourName.setError(getString(R.string.warning_tourName_exists));
+			// mTourName.setError(getString(R.string.warning_tourName_exists));
 		}
 
 		mTourName.addTextChangedListener(new TextWatcher() {
-			final String originalTourName = mTourName.getText().toString();
+			String originalTourName = mTourName.getText().toString();
 
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -112,13 +110,16 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 			@Override
 			public void afterTextChanged(Editable s) {
 				mTourNameChanged = true;
-				if (s.toString().equals(originalTourName)) {
+				if (mTour.getName().equals(s.toString())
+						|| s.toString().equals(originalTourName)) {
 					mTourName.setError(null);
 					mTourNameChanged = false;
 				} else if (s.toString().isEmpty()) {
 					mTourName.setError(getString(R.string.warning_empty_TourName));
+					mTourNameChanged = false;
 				} else if (tourNameExists(s.toString())) {
 					mTourName.setError(getString(R.string.warning_tourName_exists));
+					mTourNameChanged = false;
 				} else {
 					mTourName.setError(null);
 				}
@@ -135,10 +136,10 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 			mListener = (MyDistanceListener) activity;
 			mCompanyAddListener = (OnTourPointAddListener) activity;
 
-		} catch (ClassCastException catExeption) {
+		} catch (ClassCastException castExeption) {
 			Log.e(TAG,
 					"activity did not ipmlement MyDistanceListener or OnTourPointAddListener",
-					catExeption);
+					castExeption);
 		}
 	}
 
@@ -172,7 +173,7 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 	}
 
 	public static TourFragment newTour(Company company, boolean newTour) {
-		//TODO maybe insert new tour here into db;
+		// TODO maybe insert new tour here into db;
 		TourFragment fragment = new TourFragment();
 		fragment.mCompany = company;
 		fragment.mNewTour = newTour;
@@ -199,11 +200,6 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 		getActivity().setTitle(R.string.title_activity_tour);
 		mListener.requestUpdates(true);
 		if (mTour != null && mTour.getId() != 0) {
-			// MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity());
-			// mTour = TourHelper.getTourById(dbHelper.getReadableDatabase(),
-			// mTour.getId());
-			// dbHelper.close();
-			
 			initAdapter();
 		}
 		super.onResume();
@@ -268,7 +264,7 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int itemId = item.getItemId();
-		switch(itemId){
+		switch (itemId) {
 		case R.id.menu_item_start_tour:
 			mTour.setTourPointList(mListener.bestTourPointList(mTour.getTourPointList()));
 			mAdapter.clear();
@@ -281,10 +277,12 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 			startActivity(exportIntent);
 			return true;
 		case R.id.menu_item_add_tourPoint:
+			if (mTourNameChanged)
+				mTour.setName(mTourName.getText().toString());
 			mCompanyAddListener.addCompanyToTour(mTour);
 			return true;
 		default:
-			return super.onOptionsItemSelected(item);			
+			return super.onOptionsItemSelected(item);
 		}
 	}
 
@@ -325,6 +323,7 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 
 	public interface MyDistanceListener {
 		public List<TourPoint> bestTourPointList(List<TourPoint> tourPoints);
+
 		public void requestUpdates(boolean onOff);
 	}
 

@@ -197,6 +197,7 @@ GooglePlayServicesClient.ConnectionCallbacks,
 			/*
 			 * If the result code is Activity.RESULT_OK, try to connect again
 			 */
+			
 			switch (resultCode) {
 			case Activity.RESULT_OK:
 				/*
@@ -204,6 +205,8 @@ GooglePlayServicesClient.ConnectionCallbacks,
 				 */
 
 				break;
+			default:
+					Log.d(TAG,"Connection Failure");
 			}
 
 		}
@@ -248,6 +251,7 @@ GooglePlayServicesClient.ConnectionCallbacks,
 		 * has a resolution, try sending an Intent to start a Google Play
 		 * services activity that can resolve error.
 		 */
+		Log.d(TAG,"Google Play Connection Failed");
 		if (result.hasResolution()) {
 			try {
 				// Start an Activity that tries to resolve the error
@@ -266,7 +270,7 @@ GooglePlayServicesClient.ConnectionCallbacks,
 			 * If no resolution is available, display a dialog to the user with
 			 * the error.
 			 */
-
+			Log.d(TAG,"Goolge Play Connection failed, no resolution available");
 			showErrorDialog(result.getErrorCode());
 		}
 

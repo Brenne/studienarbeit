@@ -180,7 +180,7 @@ public class NfcActivity extends LocationServiceActivity {
 		super.onResume();
 	}
 
-	public static void setupForegroundDispatch(final Activity activity, NfcAdapter adapter) {
+	private static void setupForegroundDispatch(final Activity activity, NfcAdapter adapter) {
 		final Intent intent = new Intent(activity,
 				activity.getClass());
 		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);

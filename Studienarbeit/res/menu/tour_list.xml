@@ -6,4 +6,9 @@
 	    android:showAsAction="ifRoom"
 	    android:title="@string/label_import_tour"
 	    />
+	<item 
+	    android:id="@+id/menu_item_newTour"
+	    android:title="@string/label_create_new_Tour"
+	    android:showAsAction="ifRoom"
+	    android:icon="@android:drawable/ic_menu_add"/>
 </menu>

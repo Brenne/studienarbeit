@@ -41,6 +41,7 @@ public class SelectTourDialogFragment extends DialogFragment implements OnBinCli
 					public void onClick(DialogInterface dialog, int which) {
 						// Log.v("SelectTourDialogFragment", "onClick");
 						if (which == 0) {
+							//add company to new tour
 							Intent intent = new Intent(getActivity().getBaseContext(),
 									TourActivity.class);
 							intent.putExtra(TourActivity.COMPANY, company);

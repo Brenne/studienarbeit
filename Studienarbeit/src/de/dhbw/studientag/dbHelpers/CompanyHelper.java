@@ -29,7 +29,7 @@ public final class CompanyHelper {
 	protected static final String COMPANY_TABLE_CREATE = 
 			"CREATE TABLE " + COMPANY_TABLE_NAME + " (" +
 			MySQLiteHelper.ID 	+ " integer primary key autoincrement," +
-			COMPANY_NAME	 + " TEXT, " +
+			COMPANY_NAME	 + " TEXT NOT NULL, " +
 			COMPANY_WEBSITE	 + " TEXT, " +
 			COMPANY_CITY	 + " TEXT, " +
 			COMPANY_STREET	 + " TEXT, " +

@@ -27,23 +27,34 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
 
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
-		LayoutInflater inflater = (LayoutInflater) context
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View rowView = inflater.inflate(R.layout.two_line_list_item_with_bin, parent, false);
-		TextView tvCompanyName = (TextView) rowView.findViewById(R.id.binItemFirstLine);
-		TextView tvCommentMessage = (TextView) rowView
-				.findViewById(R.id.bintemSecondLine);
+		ImageButton imageButton;
+		TextView tvCompanyName;
+		TextView tvCommentMessage;
+		if(convertView == null){
+			convertView = LayoutInflater.from(context).inflate(R.layout.two_line_list_item_with_bin, parent, false);
+			tvCompanyName = (TextView) convertView.findViewById(R.id.binItemFirstLine);
+			tvCommentMessage = (TextView) convertView
+					.findViewById(R.id.bintemSecondLine);
+			imageButton = (ImageButton) convertView.findViewById(R.id.binItemDelete);
+			//setTags on the first list item, because findViewById costs much
+			convertView.setTag(R.id.binItemFirstLine, tvCompanyName);
+			convertView.setTag(R.id.bintemSecondLine, tvCommentMessage);
+			convertView.setTag(R.id.binItemDelete, imageButton);
+			
+		}else{
+			tvCompanyName = (TextView) convertView.getTag(R.id.binItemFirstLine);
+			tvCommentMessage = (TextView) convertView.getTag(R.id.bintemSecondLine);
+			imageButton = (ImageButton) convertView.getTag(R.id.binItemDelete);
+		}
 		tvCompanyName.setText(mComments.get(position).getCompany().getName());	
 		tvCommentMessage.setText(mComments.get(position).getShortMessage());
-		
-		ImageButton imageButton = (ImageButton) rowView.findViewById(R.id.binItemDelete);
 		imageButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {	
 					mBinClicked.binClicked(position);
 			}
 		});
-		return rowView;
+		return convertView;
 	}
 
 	public void setOnBinClickListener(OnBinClicked binClicked) {

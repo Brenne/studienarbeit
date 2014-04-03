@@ -42,9 +42,10 @@
         android:text="@string/label_companyCity"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+         >
 
         <TextView
             android:id="@+id/textView_companyBuilding"
@@ -57,16 +58,31 @@
             android:id="@+id/textView_companyRoom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/textView_companyBuilding"
             android:paddingBottom="@dimen/textView_paddingBottom"
             android:paddingLeft="18dp"
             android:text="@string/label_companyRoom"
             android:textAppearance="?android:attr/textAppearanceMedium" />
-    </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/company_imageMap"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="0dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/label_go_to_company_at_DHBW"
+            android:onClick="goToDhbwLocation"
+            android:src="@android:drawable/ic_dialog_map" />
+        
+    </RelativeLayout>
 
     <ListView
         android:id="@+id/listView_companyOfferedSubjects"
         android:layout_width="match_parent"
-        android:layout_height="210dp" >
+        android:layout_height="match_parent"
+        android:paddingTop="10dp" >
     </ListView>
 
 </LinearLayout>

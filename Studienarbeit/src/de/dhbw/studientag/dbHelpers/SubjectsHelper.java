@@ -16,17 +16,17 @@ public final class SubjectsHelper  {
 	protected static final String SUBJECTS_TABLE_NAME ="Subjects";
 	protected static final String SUBJECT_NAME = "name";
 	protected static final String FACULTY_ID = "facultyId";
+	protected static final String SUBJECT_WEBADDRESS ="webAddress";
 	protected static final String SUBJECTS_TABLE_CREATE=
 			"CREATE TABLE " + SUBJECTS_TABLE_NAME + " ( " +
 			MySQLiteHelper.ID 	+ " integer primary key autoincrement, " +
 			SUBJECT_NAME + " TEXT unique, " +
+			SUBJECT_WEBADDRESS + " TEXT, "+
 			FACULTY_ID + " INTEGER"  +
 			")";
 	protected static final String[] SUBJECT_ALL_COLUMNS ={
-		MySQLiteHelper.ID, SUBJECT_NAME, FACULTY_ID
+		MySQLiteHelper.ID, SUBJECT_NAME, FACULTY_ID, SUBJECT_WEBADDRESS
 	};
-	
-	
 	
 	protected static final void initSubjects(SQLiteDatabase db){
 		for(Subject subject : TestData.getSubjects())
@@ -38,7 +38,7 @@ public final class SubjectsHelper  {
 		values.put(SUBJECT_NAME, subject.getName());
 		values.put(FACULTY_ID, 
 				subject.getFaculty().getId());
-
+		values.put(SUBJECT_WEBADDRESS, subject.getWebAddress());
 		db.insert(SUBJECTS_TABLE_NAME, null, values);
 				
 	}
@@ -90,11 +90,12 @@ public final class SubjectsHelper  {
 	
 	private static Subject cursorToSubject(Cursor cursor){
 //		Log.d("id" ,cursor.getColumnNames().toString());
-		int col = cursor.getColumnIndex(SUBJECT_NAME);
+		
 		Subject subject = new Subject(
 				cursor.getLong(cursor.getColumnIndex(MySQLiteHelper.ID)),
-				cursor.getString(col),
-				Faculty.getById(cursor.getInt(cursor.getColumnIndex(FACULTY_ID))));
+				cursor.getString(cursor.getColumnIndex(SUBJECT_NAME)),
+				Faculty.getById(cursor.getInt(cursor.getColumnIndex(FACULTY_ID))),
+				cursor.getString(cursor.getColumnIndex(SUBJECT_WEBADDRESS)));
 		return subject;
 				
 	}

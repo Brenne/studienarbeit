@@ -12,6 +12,8 @@ import android.widget.ListView;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import de.dhbw.studientag.dbHelpers.BuildingHelper;
+import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.model.Building;
 
 /**
@@ -36,8 +38,9 @@ public class LocationsFragment extends ListFragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		List<Building> buildings = getActivity().getIntent()
-				.getParcelableArrayListExtra("buildings");
+		MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity());
+		List<Building> buildings = BuildingHelper
+				.getAllBuildings(dbHelper.getReadableDatabase());
 		setListAdapter(new ArrayAdapter<Building>(getActivity(),
 				android.R.layout.simple_list_item_1, buildings));
 		

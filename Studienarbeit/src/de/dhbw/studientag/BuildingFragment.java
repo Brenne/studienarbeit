@@ -89,11 +89,8 @@ public class BuildingFragment extends ListFragment {
 		Floor floor = (Floor) getListView()
 				.getItemAtPosition(position);
 	
-
 		mCallback.onFloorSelected(floor);
 	}
-
-
 	
 
 	/**

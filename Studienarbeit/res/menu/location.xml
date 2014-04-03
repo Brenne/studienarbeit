@@ -4,9 +4,14 @@
     <item
         android:id="@+id/menu_map"
         android:icon="@android:drawable/ic_menu_mapmode"
-        
-        android:showAsAction="ifRoom"
+        android:showAsAction="always"
         android:title="@string/title_map">
     </item>
+    
+    <item 
+        android:id="@+id/menu_goToLocation"
+        android:icon="@android:drawable/ic_menu_directions"
+        android:showAsAction="ifRoom"
+        android:title="@string/label_display_route"/>
 
 </menu>

@@ -8,6 +8,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.location.Location;
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import de.dhbw.studientag.LocationsActivity;
@@ -15,10 +20,6 @@ import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.dbHelpers.TourHelper;
 import de.dhbw.studientag.model.Building;
 import de.dhbw.studientag.model.TourPoint;
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.location.Location;
-import android.util.Log;
 
 public final class BestTourController {
 
@@ -76,18 +77,24 @@ public final class BestTourController {
 		Map<String, Float> distance = new HashMap<String, Float>();
 
 		if (mCurrentLocation == null) {
-			Log.v(TAG, "curLocation is null");
-		} else {
-			for (Entry<String, LatLng> entry : LocationsActivity.LOCATIONS.entrySet()) {
-				Location location = new Location(entry.getKey());
-				location.setLatitude(entry.getValue().latitude);
-				location.setLongitude(entry.getValue().longitude);
+			Log.w(TAG, "curLocation is null");
+			final String buildingShortName = "RB41";
+			Location location = new Location(buildingShortName);
+			LatLng coordinates = LocationsActivity.LOCATIONS.entrySet().iterator().next().getValue();
+			location.setLatitude(coordinates.latitude);
+			location.setLongitude(coordinates.longitude);
+			mCurrentLocation= location;
+		} 
+		for (Entry<String, LatLng> entry : LocationsActivity.LOCATIONS.entrySet()) {
+			Location location = new Location(entry.getKey());
+			location.setLatitude(entry.getValue().latitude);
+			location.setLongitude(entry.getValue().longitude);
 
-				float fDistance = location.distanceTo(mCurrentLocation);
-				distance.put(entry.getKey(), fDistance);
-			}
-
+			float fDistance = location.distanceTo(mCurrentLocation);
+			distance.put(entry.getKey(), fDistance);
 		}
+
+		
 
 		return distance;
 	}

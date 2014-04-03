@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import de.dhbw.studientag.model.Faculty;
 
@@ -27,16 +28,18 @@ public class FacultyAdapter extends ArrayAdapter<Faculty> {
 		LayoutInflater inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View row = inflater.inflate(R.layout.image_list_item, parent, false);
-		TextView facultyName = (TextView) row.findViewById(R.id.list_text);
-
+		TextView facultyName = (TextView) row.findViewById(R.id.faculty_name);
 		int drawable = context.getResources().getIdentifier(
 				"ic_dialog_"
 						+ facultyList.get(position).name()
 								.toLowerCase(Locale.getDefault()), "drawable",
 				context.getPackageName());
+		ImageView facultyIcon = (ImageView) row.findViewById(R.id.faculty_icon);
+		facultyIcon.setImageResource(drawable);
+		
 		facultyName.setText(FacultyActivity.getFirstLetterCapital(facultyList.get(
 				position).name()));
-		facultyName.setCompoundDrawablesWithIntrinsicBounds(drawable, 0, 0, 0);
+		
 
 		return row;
 	}

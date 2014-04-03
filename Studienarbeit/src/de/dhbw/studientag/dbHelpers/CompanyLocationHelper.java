@@ -6,7 +6,6 @@ import java.util.List;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 import de.dhbw.studientag.TestData;
 import de.dhbw.studientag.model.Building;
 import de.dhbw.studientag.model.Company;
@@ -27,17 +26,16 @@ public class CompanyLocationHelper {
 			+ COMPANYROOM_TABLE_NAME + " (" + COMPANYROOM_COMPANY_ID
 			+ " INTEGER REFERENCES " + CompanyHelper.COMPANY_TABLE_NAME + "("
 			+ MySQLiteHelper.ID + "), " + COMPANYROOM_ROOM_ID + " INTEGER REFERENCES "
-			+ RoomHelper.ROOM_TABLE_NAME + "(" + MySQLiteHelper.ID + ")" + ")";
+			+ RoomHelper.ROOM_TABLE_NAME + "(" + MySQLiteHelper.ID + "), UNIQUE("
+			+ COMPANYROOM_COMPANY_ID + ")" + ")";
 
 	protected static void init(SQLiteDatabase db) {
 		List<Company> companyList = TestData.getCompanies();
 		for (Company company : companyList) {
-				ContentValues values = new ContentValues();
-				values.put(COMPANYROOM_COMPANY_ID,
-						company.getId());
-				values.put(COMPANYROOM_ROOM_ID,
-						company.getLocation().getRoom().getId());
-				db.insert(COMPANYROOM_TABLE_NAME, null, values);
+			ContentValues values = new ContentValues();
+			values.put(COMPANYROOM_COMPANY_ID, company.getId());
+			values.put(COMPANYROOM_ROOM_ID, company.getLocation().getRoom().getId());
+			db.insert(COMPANYROOM_TABLE_NAME, null, values);
 		}
 	}
 
@@ -47,26 +45,15 @@ public class CompanyLocationHelper {
 				COMPANYROOM_COMPANY_ID + "=" + Long.toString(companyId), null, null,
 				null, null);
 
-		if (cursor.getCount() == 1) {
-			cursor.moveToFirst();
-			Room room = RoomHelper.getRoomById(
-					cursor.getLong(cursor.getColumnIndex(COMPANYROOM_ROOM_ID)), db);
-			Floor floor = FloorHelper.getFloorByRoomId(db, room.getId());
-			Building building = BuildingHelper.getBuildingByFloorId(db, floor.getId());
-			Location location = new Location(building, floor, room);
-			cursor.close();
-			
-			return location;
+		cursor.moveToFirst();
+		Room room = RoomHelper.getRoomById(
+				cursor.getLong(cursor.getColumnIndex(COMPANYROOM_ROOM_ID)), db);
+		Floor floor = FloorHelper.getFloorByRoomId(db, room.getId());
+		Building building = BuildingHelper.getBuildingByFloorId(db, floor.getId());
+		Location location = new Location(building, floor, room);
+		cursor.close();
 
-		} else {
-			// if this happens there is more than one company with the same id
-			// in database
-			Log.e("studientag",
-					"Fatal Error in getLocationByCompanyId more than one company with the same ID");
-			return null;
-
-		}
-
+		return location;
 	}
 
 	public static List<Company> getCompaniesByRoomId(SQLiteDatabase db, long roomId) {

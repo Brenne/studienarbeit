@@ -1,6 +1,7 @@
 package de.dhbw.studientag;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import android.app.AlertDialog;
@@ -20,11 +21,9 @@ public class SelectFacultyDialogFragment extends DialogFragment {
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-
-		List<Faculty> faclutyList = new ArrayList<Faculty>();
-		faclutyList.add(Faculty.TECHNIK);
-		faclutyList.add(Faculty.WIRTSCHAFT);
-		faclutyList.add(Faculty.SOZIALWESEN);
+		
+		Faculty[] faculties = Faculty.class.getEnumConstants();
+		List<Faculty> faclutyList = new ArrayList<Faculty>(Arrays.asList(faculties));
 		FacultyAdapter facultyAdapter = new FacultyAdapter(getActivity(), faclutyList);
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity()).setTitle(
 				R.string.label_select_faculty).setAdapter(facultyAdapter,
@@ -36,8 +35,8 @@ public class SelectFacultyDialogFragment extends DialogFragment {
 						Intent intent = new Intent(getActivity().getBaseContext(),
 								FacultyActivity.class);
 						Faculty faculty = Faculty.getById(++which);
-						intent.putExtra("faculty", faculty.name());
-						intent.putParcelableArrayListExtra("subjects",
+						intent.putExtra(FacultyActivity.FACULTY, faculty.name());
+						intent.putParcelableArrayListExtra(FacultyActivity.SUBJECTS,
 								(ArrayList<? extends Parcelable>) SubjectsHelper
 										.getSubjectsByFaculty(
 												mySQLiteHelper.getReadableDatabase(),

@@ -15,6 +15,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Filterable;
 import android.widget.ListView;
 import android.widget.SearchView;
+import de.dhbw.studientag.dbHelpers.CompanyHelper;
+import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.model.Company;
 
 /**
@@ -51,9 +53,12 @@ public class CompaniesFragment extends ListFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		if (getArguments() != null) {
+		if (getArguments() != null && getArguments().containsKey(COMPANIES)) {
 			mCompanyList = getArguments().getParcelableArrayList(COMPANIES);
-
+		}else{
+			MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity());
+			mCompanyList = CompanyHelper.getAllCompanies(dbHelper.getReadableDatabase());
+			dbHelper.close();
 		}
 
 		setListAdapter(new ArrayAdapter<Company>(getActivity(),

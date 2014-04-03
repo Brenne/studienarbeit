@@ -12,19 +12,13 @@
     <string name="label_companyCity">Stuttgart</string>
     <string name="label_select_faculty">Wähle die Faktultät</string>
 
-    <string-array name="faculty_array">
-        <item>Technik</item>
-        <item>Wirtschaft</item>
-        <item>Sozialwesen</item>
-    </string-array>
-
     <string name="title_activity_faculty">FacultyActivity</string>
     <string name="search_hint">Suche Unternehmen</string>
     <string name="label_faculty">Fakultät</string>
     <string name="label_companyBuilding">RB41</string>
     <string name="label_companyRoom">1.18</string>
     <string name="title_activity_locations">Lokationen</string>
-    <string name="label_companyCityDesc">Standort des Unternehmens</string>
+    <string name="label_companyCityDesc">Sitz des Unternehmens:</string>
     <string name="label_companyProfile">Steckbrief</string>
     <string name="title_activity_comment">Notiz</string>
     <string name="title_activity_comments">Notizen</string>
@@ -58,7 +52,7 @@
     <string name="label_show_location">Show Location</string>
     <string name="label_mylocation">mein Ort</string>
     <string name="label_btn_order_list">sortiere Lokationen</string>
-    <string name="label_calc_best_way">beste Tour berechnen</string>
+    <string name="label_calc_best_way">optimale Reihenfolge</string>
     <string name="label_stations">Stationen</string>
     <string name="label_tour_import_successfull">Tour erfolgreich importiert</string>
     <string name="label_tour_export_successfull">Tour erfolgreich exportiert</string>
@@ -73,6 +67,14 @@
     <string name="label_list_picture">List Picture</string>
     <string name="label_comment_info">Hier kannst du Notizen zu einzelnen Unternehmen, erstellen, ansehen, bearbeiten und löschen</string>
     <string name="label_add_comment">Notiz hinzufügen</string>
+    <string name="label_subject_info_link">Info Link</string>
+    <string name="label_subject_name">Angewandte Informatik</string>
+    <string name="label_faculty_icon">Fakultätsicon</string>
+    <string name="title_new_comment">Neue Notiz zu:</string>
+    <string name="label_go_to_company_at_DHBW">Springe zu  Unternehmeninformationsstand</string>
+    <string name="label_display_route">Route anzeigen</string>
+    <string name="label_tour_info">Hier kannst du interessante Unternehmen sammeln und zu einer Tour zusammenfassen.\n
+      \ Dadurch behältst du den Überblick über den Standort Ihrer Informationsstände.</string>
 
 
 </resources>

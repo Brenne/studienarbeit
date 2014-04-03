@@ -3,13 +3,14 @@ package de.dhbw.studientag;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.graphics.PorterDuff.Mode;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import de.dhbw.studientag.dbHelpers.CommentHelper;
@@ -37,6 +38,8 @@ public class CompanyActivity extends Activity {
 		TextView companyRoom = (TextView) findViewById(R.id.textView_companyRoom);
 		TextView companyBld  = (TextView) findViewById(R.id.textView_companyBuilding);
 		
+		ImageButton map = (ImageButton) findViewById(R.id.company_imageMap);
+		
 		companyName.setText(company.getName());
 		companyWWW.setText(company.getWebiste());
 		companyWWW.setMovementMethod(LinkMovementMethod.getInstance());
@@ -44,9 +47,11 @@ public class CompanyActivity extends Activity {
 		dbHelper.close();
 		companyRoom.setText(company.getLocation().getRoom().getRoomNo());
 		companyBld.setText(company.getLocation().getBuilding().getFullName());
+		
+		map.setColorFilter(android.graphics.Color.LTGRAY, Mode.MULTIPLY);
+		
 		final ListView offeredSubjects = (ListView) findViewById(R.id.listView_companyOfferedSubjects);
-		final ArrayAdapter<Subject> adapter = new ArrayAdapter<Subject>(this,android.R.layout.simple_list_item_1, 
-				company.getSubjectList());
+		final SubjectAdapter adapter = new SubjectAdapter(this,company.getSubjectList());
 		offeredSubjects.setAdapter(adapter);
 		offeredSubjects.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -96,6 +101,12 @@ public class CompanyActivity extends Activity {
 		default:
 			return super.onOptionsItemSelected(item);  	    	
 	    }
+	}
+	
+	public void goToDhbwLocation(View v){
+		Intent intent = new Intent(this, LocationsActivity.class);
+		intent.putExtra(COMPANY, company);
+		startActivity(intent);
 	}
 	
 	@Override

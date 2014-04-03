@@ -77,7 +77,7 @@ public class TourHelper {
 
 	}
 
-	public static String getTourNameByTourId(SQLiteDatabase db, int tourId) {
+	public static String getTourNameByTourId(SQLiteDatabase db, long tourId) {
 		Cursor cursor = db.query(TOUR_TABLE_NAME, new String[] { "DISTINCT(" + TOUR_NAME
 				+ ")" }, MySQLiteHelper.ID + "=" + tourId, null, null, null, null);
 		cursor.moveToFirst();

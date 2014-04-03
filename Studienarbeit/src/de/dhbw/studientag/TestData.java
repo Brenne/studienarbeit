@@ -34,7 +34,15 @@ public final class TestData {
 	private static ArrayList<Subject> subjects = new ArrayList<Subject>();
 	private static List<Building> buildings = new ArrayList<Building>();
 	private static List<Location> locationList = new ArrayList<Location>();
+	
+	private static final String FILE_NAME_COMPANY_CSV = "beispieldaten.csv";
+	private static final String FILE_NAME_FACULTY_SUBJECT_MAPPING = "faculty_subject_mapping.csv";
+	private static final String FILE_NAME_ROOM_JSON = "room.json";
+	private static final char CSV_DELIMITER =';';
 
+	/*
+	 * column numbers where the adequate information is stored
+	 */
 	private static final short COMPANY_NAME = 0;
 //	private static final short COMPANY_SHORT_NAME = 1;
 	private static final short COMPANY_STREET = 2;
@@ -45,6 +53,10 @@ public final class TestData {
 	private static final short COMPANY_OFFERED_SUBJECTS = 14;
 	private static final short COMPANY_BUILDING = 15;
 	private static final short COMPANY_ROOM = 16;
+	
+	private static final short SUBJECT_NAME = 0;
+	private static final short SUBJECT_FACULTY = 1;
+	private static final short SUBJECT_WEBADDRESS = 2;
 
 	public TestData(AssetManager assets) {
 		Log.v(TAG,"TestData constructor");
@@ -52,24 +64,29 @@ public final class TestData {
 		try {
 			// Read faculty subject mapping
 			CSVReader facultySubjectReader = new CSVReader(new InputStreamReader(
-					assets.open("faculty_subject_mapping.csv")), ';');
+					assets.open(FILE_NAME_FACULTY_SUBJECT_MAPPING)), CSV_DELIMITER);
 			String[] nextLine;
+			//skip first line
 			facultySubjectReader.readNext();
 			while ((nextLine = facultySubjectReader.readNext()) != null) {
-				Subject subject = new Subject(nextLine[0], Faculty.valueOf(nextLine[1]
-						.toUpperCase(Locale.getDefault())));
+				Subject subject = new Subject(
+						nextLine[SUBJECT_NAME], 
+						Faculty.valueOf(nextLine[SUBJECT_FACULTY].toUpperCase(Locale.getDefault())),
+						nextLine[SUBJECT_WEBADDRESS]);
 				subjects.add(subject);
 			}
 			facultySubjectReader.close();
 			CSVReader reader = new CSVReader(new InputStreamReader(
-					assets.open("beispieldaten.csv")), ';');
+					assets.open(FILE_NAME_COMPANY_CSV)), CSV_DELIMITER);
 
 			// skip first line
 			reader.readNext();
 			while ((nextLine = reader.readNext()) != null) {
-
-				ArrayList<Subject> companyOfferedSubjects = getSubjectList(nextLine[COMPANY_OFFERED_SUBJECTS]);
-
+				/* comma seperated string with subject name e.g. 
+				 * "Angewandte Informatik, Maschinenbau, Dienstleistungsmanagement" */
+				String subjectNames =nextLine[COMPANY_OFFERED_SUBJECTS];
+				ArrayList<Subject> companyOfferedSubjects = getSubjectList(subjectNames);
+				
 				Company company = new Company(0, nextLine[COMPANY_NAME],
 						nextLine[COMPANY_STREET], nextLine[COMPANY_CITY],
 						nextLine[COMPANY_PLZ], nextLine[COMPANY_WWW]);
@@ -100,7 +117,7 @@ public final class TestData {
 			}.getType();
 
 			StringBuilder buf = new StringBuilder();
-			InputStream json = assets.open("room.json");
+			InputStream json = assets.open(FILE_NAME_ROOM_JSON);
 			BufferedReader in = new BufferedReader(new InputStreamReader(json));
 			String line;
 
@@ -124,12 +141,9 @@ public final class TestData {
 				for(Room room : floor.getRoomList()){
 					Location location = new Location(building, floor, room);
 					locationList.add(location);
-				}
-				
-			}
-			
+				}	
+			}	
 		}
-		
 		TestData.locationList=locationList;
 	}
 	
@@ -181,19 +195,22 @@ public final class TestData {
 		LinkedList<Subject> allSubjects = new LinkedList<Subject>(TestData.subjects);
 		for (String subjectName : subjectNames) {
 			Iterator<Subject> i = allSubjects.iterator();
+			boolean subjectFound = false;
 			while (i.hasNext()) {
-				Subject subject = (Subject) i.next();
+				Subject subject = i.next();
 				if (subject.getName().equalsIgnoreCase(subjectName.trim())) {
 					subjectList.add(subject);
+					//remove subject from all subjects to reduce number iterations 
 					allSubjects.remove(subject);
+					subjectFound = true;
 					break;
 				}
 			}
-
+			if(!subjectFound){
+				Log.w(TAG, "Subject "+ subjectName.trim() + " in companies' subject list but not in subject faculty mapping");
+			}
 		}
-		if (subjectNames.length != subjectList.size())
-			Log.w("studientag", "Not all subjects of company found in subject list ");
-
+			
 		return subjectList;
 	}
 

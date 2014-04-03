@@ -75,6 +75,7 @@
     <string name="label_display_route">Route anzeigen</string>
     <string name="label_tour_info">Hier kannst du interessante Unternehmen sammeln und zu einer Tour zusammenfassen.\n
       \ Dadurch behältst du den Überblick über den Standort Ihrer Informationsstände.</string>
+    <string name="label_dhbw_stuttgart">DHBW Stuttgart</string>
 
 
 </resources>

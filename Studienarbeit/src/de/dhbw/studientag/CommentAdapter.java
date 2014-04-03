@@ -56,6 +56,16 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
 		});
 		return convertView;
 	}
+	
+	 public void remove(int position) {
+         mComments.remove(position);
+         notifyDataSetChanged();
+     }
+	 
+     public void insert(int position, Comment comment) {
+         mComments.add(position, comment);
+         notifyDataSetChanged();
+     }
 
 	public void setOnBinClickListener(OnBinClicked binClicked) {
 		this.mBinClicked = binClicked;

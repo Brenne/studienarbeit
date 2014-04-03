@@ -3,7 +3,7 @@ package de.dhbw.studientag;
 import java.util.List;
 
 import android.app.Activity;
-import android.app.ListFragment;
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,17 +13,22 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 import de.dhbw.studientag.dbHelpers.CommentHelper;
 import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.model.Comment;
 import de.dhbw.studientag.model.Company;
+import de.timroes.android.listview.EnhancedListView;
+import de.timroes.android.listview.EnhancedListView.Undoable;
 
-public class CommentsFragment extends ListFragment implements OnBinClicked {
+public class CommentsFragment extends Fragment implements OnBinClicked {
 
 	private final static String TAG = "CommentsFragment";
 	private List<Comment> mComments;
+	private EnhancedListView mEnhancedListView;
 	private OnCommentAddListener mCommentAddListener;
 
 	@Override
@@ -35,8 +40,40 @@ public class CommentsFragment extends ListFragment implements OnBinClicked {
 	private void setListAdapter() {
 		MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity());
 		mComments = CommentHelper.getAllComments(dbHelper.getReadableDatabase());
-		CommentAdapter adapter = new CommentAdapter(getActivity(), mComments);
-		setListAdapter(adapter);
+		final CommentAdapter adapter = new CommentAdapter(getActivity(), mComments);
+		mEnhancedListView.setAdapter(adapter);
+		mEnhancedListView.setDismissCallback(new EnhancedListView.OnDismissCallback() {
+			
+			
+			
+			@Override
+			public Undoable onDismiss(EnhancedListView listView, final int position) {
+			     final Comment comment = (Comment) adapter.getItem(position);
+	                adapter.remove(position);
+	                return new EnhancedListView.Undoable() {
+	                    @Override
+	                    public void undo() {
+	                        adapter.insert(position, comment);
+	                    }
+	                } ;   
+			}
+		});
+		mEnhancedListView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position,
+					long id) {
+				Comment selectedComment = (Comment) adapter.getItem(position);
+				Company selectedCompany = (Company) selectedComment.getCompany();
+				Intent intent = new Intent(getActivity(), CommentActivity.class);
+				intent.putExtra(CompanyActivity.COMPANY, selectedCompany);
+				startActivity(intent);
+				
+			}
+			
+		
+			
+		});
 		adapter.setOnBinClickListener(this);
 		dbHelper.close();
 	}
@@ -60,6 +97,8 @@ public class CommentsFragment extends ListFragment implements OnBinClicked {
 			    }
 
 		});
+		
+		mEnhancedListView = (EnhancedListView) view.findViewById(R.id.list);
 		return view;
 	}
 
@@ -82,14 +121,7 @@ public class CommentsFragment extends ListFragment implements OnBinClicked {
 
 	}
 
-	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {
-		Comment selectedComment = (Comment) getListAdapter().getItem(position);
-		Company selectedCompany = (Company) selectedComment.getCompany();
-		Intent intent = new Intent(getActivity(), CommentActivity.class);
-		intent.putExtra(CompanyActivity.COMPANY, selectedCompany);
-		startActivity(intent);
-	}
+
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -112,14 +144,16 @@ public class CommentsFragment extends ListFragment implements OnBinClicked {
 	@Override
 	public void binClicked(int position) {
 		Comment comment = mComments.get(position);
-		if (comment != null) {
-			MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity());
-			CommentHelper.deleteComment(comment.getCompany().getId(),
-					dbHelper.getReadableDatabase());
-			dbHelper.close();
-			setListAdapter();
-		}
+		mEnhancedListView.delete(position);
 
+//		if (comment != null) {
+//			MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity());
+//			CommentHelper.deleteComment(comment.getCompany().getId(),
+//					dbHelper.getReadableDatabase());
+//			dbHelper.close();
+//			setListAdapter();
+//		}
+	
 	}
 
 	public interface OnCommentAddListener {

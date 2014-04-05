@@ -69,15 +69,12 @@
             android:name="de.dhbw.studientag.LocationsActivity"
             android:label="@string/title_activity_locations" >
         </activity>
-        <activity
-            android:name="de.dhbw.studientag.CommentActivity"
-            android:label="@string/title_activity_comment" >
-        </activity>
+
         <activity
             android:name="de.dhbw.studientag.CommentsActivity"
             android:label="@string/title_activity_comments"
              android:configChanges="keyboardHidden|orientation|screenSize"
-            android:parentActivityName="de.dhbw.studientag.CommentActivity" >
+            android:parentActivityName="de.dhbw.studientag.CommentFragment" >
         </activity>
 
         <meta-data

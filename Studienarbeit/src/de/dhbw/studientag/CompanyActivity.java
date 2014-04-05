@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import de.dhbw.studientag.dbHelpers.CommentHelper;
 import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
+import de.dhbw.studientag.model.Comment;
 import de.dhbw.studientag.model.Company;
 import de.dhbw.studientag.model.Subject;
 import de.dhbw.studientag.tours.SelectTourDialogFragment;
@@ -22,6 +23,7 @@ import de.dhbw.studientag.tours.SelectTourDialogFragment;
 public class CompanyActivity extends Activity {
 
 	private Company company;
+	private Comment mComment=null;
 	private MySQLiteHelper dbHelper = new MySQLiteHelper(this);
 	public static final String COMPANY ="company";
 	
@@ -79,8 +81,12 @@ public class CompanyActivity extends Activity {
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		MenuItem comment = menu.findItem(R.id.action_comment);
 		
-		if(CommentHelper.commentForCompanyExist(company.getId(), dbHelper.getReadableDatabase() ))
+		if(CommentHelper.commentForCompanyExist(company.getId(), dbHelper.getReadableDatabase() )){
+			mComment = CommentHelper.getCommentByIdCompanyId(company.getId(), dbHelper.getReadableDatabase());
 			comment.setIcon(android.R.drawable.ic_input_get);
+		}else{
+			mComment= new Comment(company);
+		}
 		dbHelper.close();
 		return super.onPrepareOptionsMenu(menu);
 	}
@@ -90,8 +96,8 @@ public class CompanyActivity extends Activity {
 	    int itemId = item.getItemId();
 	    switch(itemId){
 	    case R.id.action_comment:
-	    	Intent intent = new Intent(this, CommentActivity.class);
-			intent.putExtra(COMPANY, company);
+	    	Intent intent = new Intent(this, CommentsActivity.class);
+			intent.putExtra(CommentFragment.COMMENT, mComment);
 			startActivity(intent);
 			return true;
 	    case R.id.action_addToTour:
@@ -103,6 +109,7 @@ public class CompanyActivity extends Activity {
 	    }
 	}
 	
+	//image button next to location information about exhibition venue
 	public void goToDhbwLocation(View v){
 		Intent intent = new Intent(this, LocationsActivity.class);
 		intent.putExtra(COMPANY, company);

@@ -70,5 +70,9 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
 	public void setOnBinClickListener(OnBinClicked binClicked) {
 		this.mBinClicked = binClicked;
 	}
+	
+	public List<Comment> getCommentList(){
+		return mComments;
+	}
 
 }

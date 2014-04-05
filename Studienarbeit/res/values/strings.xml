@@ -73,9 +73,10 @@
     <string name="title_new_comment">Neue Notiz zu:</string>
     <string name="label_go_to_company_at_DHBW">Springe zu  Unternehmeninformationsstand</string>
     <string name="label_display_route">Route anzeigen</string>
-    <string name="label_tour_info">Hier kannst du interessante Unternehmen sammeln und zu einer Tour zusammenfassen.\n
-      \ Dadurch behältst du den Überblick über den Standort Ihrer Informationsstände.</string>
+    <string name="label_tour_info">Hier kannst du interessante Unternehmen sammeln und zu einer Tour zusammenfassen.\nDadurch behältst du den Überblick über den Standort Ihrer Informationsstände.</string>
     <string name="label_dhbw_stuttgart">DHBW Stuttgart</string>
+    <string name="label_comment_removed">Kommentar gelöscht</string>
+    <string name="dispaly_info">Info anzeigen</string>
 
 
 </resources>

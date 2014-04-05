@@ -6,6 +6,9 @@ import java.util.Iterator;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.ListFragment;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,6 +32,7 @@ public class TourActivity extends LocationServiceActivity implements
 	protected static final String TAG_TOUR_FRAGMENT = "tourFragment";
 	protected static final String TAG_TOUR_LIST_FRAGMENT = "tourListFragment";
 	protected static final String TAG_COMPANIES_FRAGMENT = "companiesFragment";
+	protected static final String TOUR_INFO="showTourInfo";
 	private static final String TAG = "TourActivity";
 	private Tour mTour;
 
@@ -57,6 +61,18 @@ public class TourActivity extends LocationServiceActivity implements
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 	}
+	
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		SharedPreferences prefs = getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);
+		Editor editor = prefs.edit();
+		//do not show info in future	
+			editor.putBoolean(TOUR_INFO, false);
+			editor.apply();
+
+	}
+
 
 	@Override
 	public void onTourSelected(Tour tour) {

@@ -41,18 +41,21 @@ public class CommentHelper {
 				COMMENT_COMPANY_ID + "=" + Long.toString(companyId), null);
 	}
 
-	public static String getCommentByIdCompanyId(long companyId, SQLiteDatabase db) {
-		Cursor cursor = db.query(COMMENT_TABLE_NAME, new String[] { COMMENT_MESSAGE },
+	public static Comment getCommentByIdCompanyId(long companyId, SQLiteDatabase db) {
+		Cursor cursor = db.query(COMMENT_TABLE_NAME, COMMENT_ALL_COLUMNS,
 				COMMENT_COMPANY_ID + "=?", new String[] { Long.toString(companyId) },
 				null, null, null);
-		String message = "";
+		Comment comment = null;
 		if (cursor.getCount() == 1) {
 			cursor.moveToFirst();
-
-			message = cursor.getString(0);
+			long commentId = cursor.getLong(cursor.getColumnIndex(MySQLiteHelper.ID));
+			Company company = CompanyHelper.getCompanyById(db, companyId);
+			String message = cursor.getString(cursor.getColumnIndex(COMMENT_MESSAGE));
+			comment = new Comment(commentId,company,message);
+					
 		}
 		cursor.close();
-		return message;
+		return comment;
 	}
 
 	public static boolean commentForCompanyExist(long companyId, SQLiteDatabase db) {

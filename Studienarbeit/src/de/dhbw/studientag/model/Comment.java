@@ -1,15 +1,22 @@
 package de.dhbw.studientag.model;
 
-public class Comment {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Comment implements Parcelable {
 
 	private long id;
 	private Company company;
 	private String fullMessage;
 
 	public Comment(long id, Company company, String message) {
+		this(company);
 		this.id = id;
-		this.company = company;
 		this.fullMessage = message;
+	}
+	
+	public Comment(Company company){
+		this.company = company;
 	}
 
 	public long getId() {
@@ -39,5 +46,35 @@ public class Comment {
 		}
 
 	}
+	
+	@Override
+	public int describeContents() {
+		return this.hashCode();
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeLong(id);
+		dest.writeParcelable(company, flags);
+		dest.writeString(fullMessage);
+		
+	}
+	
+	private Comment(Parcel source){
+		this(source.readLong(), (Company) source.readParcelable(Company.class.getClassLoader()), source.readString());
+		
+	}
+	
+   public static final Parcelable.Creator<Comment> CREATOR = 
+            new Parcelable.Creator<Comment>() {
+        public Comment createFromParcel(Parcel in) {
+            return new Comment(in);
+        }
+
+        public Comment[] newArray(int size) {
+            return new Comment[size];
+        }
+    };
+
 
 }

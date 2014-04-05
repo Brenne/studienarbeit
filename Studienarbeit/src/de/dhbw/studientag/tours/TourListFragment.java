@@ -4,7 +4,9 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.ListFragment;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,7 +15,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.ListView;
+import android.widget.TextView;
 import de.dhbw.studientag.OnBinClicked;
 import de.dhbw.studientag.R;
 import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
@@ -36,6 +40,9 @@ public class TourListFragment extends ListFragment implements OnBinClicked {
 	protected static final String TOUR_NAME = "tourName";
 	protected static final String TOUR_STATIONS = "stations";
 	protected static final String TOUR_ID = "tourId";
+	private boolean mShowTourInfo;
+	private TextView mTourInfoText;
+	private Menu mMenu;
 
 	/**
 	 * The Adapter which will be used to populate the ListView/GridView with
@@ -53,6 +60,8 @@ public class TourListFragment extends ListFragment implements OnBinClicked {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		SharedPreferences prefs = getActivity().getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);
+		mShowTourInfo = prefs.getBoolean(TourActivity.TOUR_INFO, true);
 		setHasOptionsMenu(true);
 
 	}
@@ -69,9 +78,11 @@ public class TourListFragment extends ListFragment implements OnBinClicked {
 			Bundle savedInstanceState) {
 		View view = inflater
 				.inflate(R.layout.fragment_tourfragmentlist, container, false);
-
+		
 		// Set the adapter
 		setListAdapter(mTourAdapter);
+		
+		mTourInfoText = (TextView) view.findViewById(R.id.tours_info);
 
 		return view;
 	}
@@ -97,24 +108,28 @@ public class TourListFragment extends ListFragment implements OnBinClicked {
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 
-		// Log.i("studientag", "onListItemClick pos " +
-		// Integer.toString(position) + " id "
-		// + Long.toString(id));
 		if (mTourListener != null) {
 			Tour tour = (Tour) l.getItemAtPosition(position);
 			mTourListener.onTourSelected(tour);
 		}
 		super.onListItemClick(l, v, position, id);
 	}
-
+	
 	@Override
-	public void onResume() {
-		initAdapter(getTourList());
+	public void onActivityCreated(Bundle savedInstanceState) {
+		List<Tour> tours = getTourList();
+		initAdapter(tours);
 		setListAdapter(mTourAdapter);
+		if(tours.isEmpty()){
+			mTourInfoText.setVisibility(View.VISIBLE);
+			mShowTourInfo=true;
+		}else{
+			mTourInfoText.setVisibility(View.GONE);
+		}
 		getActivity().setTitle(R.string.title_activity_tours);
-		
-		super.onResume();
+		super.onActivityCreated(savedInstanceState);
 	}
+
 
 	/**
 	 * This interface must be implemented by activities that contain this
@@ -139,9 +154,16 @@ public class TourListFragment extends ListFragment implements OnBinClicked {
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		if (NfcAdapter.getDefaultAdapter(getActivity()) != null)
-			inflater.inflate(R.menu.tour_list, menu);
-
+		inflater.inflate(R.menu.tour_list, menu);
+		mMenu=menu;
+		//device has no NFC
+		if (NfcAdapter.getDefaultAdapter(getActivity()) == null){
+			menu.findItem(R.id.menu_item_import).setVisible(false);
+		}
+		if(mShowTourInfo){
+			menu.findItem(R.id.menu_item_info_tours).setVisible(false);
+		}
+		
 	}
 
 	@Override
@@ -155,6 +177,10 @@ public class TourListFragment extends ListFragment implements OnBinClicked {
 		case R.id.menu_item_newTour:
 			mCreateNewTourListener.createNewTour();
 			return true;
+		case R.id.menu_item_info_tours:
+			fadeInToursInfoText();
+//			item.setVisible(false);
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -166,13 +192,24 @@ public class TourListFragment extends ListFragment implements OnBinClicked {
 		Tour tour = (Tour) mTourAdapter.getItem(position);
 		MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity());
 		TourHelper.deleteTourById(dbHelper.getWritableDatabase(), tour.getId());
-		// Log.i("studientag", "on image button clickd " +
-		// Long.toString(tourId));
-
 		dbHelper.close();
-		initAdapter(getTourList());
+		List<Tour> remainingTours = getTourList();
+		initAdapter(remainingTours);
 		setListAdapter(mTourAdapter);
+		if(remainingTours.isEmpty()){
+			fadeInToursInfoText();
+		}
 
+
+	}
+	
+	private void fadeInToursInfoText(){
+		AlphaAnimation fadeIn = new AlphaAnimation(0.0f , 1.0f ) ; 
+		mTourInfoText.setVisibility(View.VISIBLE);
+		mTourInfoText.startAnimation(fadeIn);	
+		fadeIn.setDuration(1200);
+		fadeIn.setFillAfter(true);
+		mMenu.findItem(R.id.menu_item_info_tours).setVisible(false);
 	}
 	
 	public interface NewTourListener{

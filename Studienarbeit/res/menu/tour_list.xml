@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    
-	<item 
-	    android:id="@+id/menu_item_import"
-	    android:showAsAction="ifRoom"
-	    android:title="@string/label_import_tour"
-	    />
-	<item 
-	    android:id="@+id/menu_item_newTour"
-	    android:title="@string/label_create_new_Tour"
-	    android:showAsAction="ifRoom"
-	    android:icon="@android:drawable/ic_menu_add"/>
+
+    <item
+        android:id="@+id/menu_item_import"
+        android:showAsAction="ifRoom"
+        android:title="@string/label_import_tour"/>
+    <item
+        android:id="@+id/menu_item_newTour"
+        android:icon="@android:drawable/ic_menu_add"
+        android:showAsAction="ifRoom"
+        android:title="@string/label_create_new_Tour"/>
+    <item
+        android:id="@+id/menu_item_info_tours"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:showAsAction="ifRoom"
+        android:title="@string/dispaly_info"/>
+
 </menu>

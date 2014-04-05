@@ -8,6 +8,8 @@ import android.app.ListFragment;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -40,6 +42,7 @@ public class BuildingFragment extends ListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
 		Building building = getArguments().getParcelable(BUILDING);
 		List<Floor> floors = building.getFloorList();
 		Iterator<Floor> iterator = floors.iterator();
@@ -55,6 +58,12 @@ public class BuildingFragment extends ListFragment {
 		setListAdapter(new ArrayAdapter<Floor>(getActivity(),
 				android.R.layout.simple_list_item_1, floors));
 		
+		
+	}
+	
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
 		
 	}
 	

@@ -33,10 +33,10 @@ public class CompaniesFragment extends ListFragment {
 	private OnCompanySelectedLitener mListener;
 
 	public static CompaniesFragment newCompaniesFragmentInstance(
-			ArrayList<Company> companyList) {
+			List<Company> companyList) {
 		CompaniesFragment fragment = new CompaniesFragment();
 		Bundle args = new Bundle();
-		args.putParcelableArrayList(COMPANIES, companyList);
+		args.putParcelableArrayList(COMPANIES, (ArrayList<Company>)companyList);
 		fragment.setArguments(args);
 	
 		return fragment;

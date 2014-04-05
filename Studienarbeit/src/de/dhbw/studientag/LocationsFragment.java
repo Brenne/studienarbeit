@@ -41,10 +41,11 @@ public class LocationsFragment extends ListFragment {
 		MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity());
 		List<Building> buildings = BuildingHelper
 				.getAllBuildings(dbHelper.getReadableDatabase());
+		dbHelper.close();
 		setListAdapter(new ArrayAdapter<Building>(getActivity(),
 				android.R.layout.simple_list_item_1, buildings));
 		
-
+		
 	}
 
 	@Override

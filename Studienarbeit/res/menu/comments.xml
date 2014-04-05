@@ -6,6 +6,11 @@
         android:icon="@android:drawable/ic_menu_add"
         android:showAsAction="always"
         android:title="@string/label_add_comment"/>
+    <item
+        android:id="@+id/menu_item_info_comments"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:showAsAction="ifRoom"
+        android:title="@string/dispaly_info"/>
     
 
 </menu>

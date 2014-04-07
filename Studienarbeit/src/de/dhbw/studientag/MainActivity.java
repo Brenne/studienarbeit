@@ -29,7 +29,7 @@ public class MainActivity extends ListActivity {
 		list.add(getString(R.string.title_activity_locations));
 		list.add(getString(R.string.label_comments));
 		list.add(getString(R.string.title_activity_tours));
-		
+		list.add("Rechtliches");
 	
 		
 		final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -66,6 +66,9 @@ public class MainActivity extends ListActivity {
 			startActivity(intent);
 		} else if(selected.equals(getString(R.string.title_activity_tours))){
 			Intent intent = new Intent(this, TourActivity.class);
+			startActivity(intent);
+		} else if(selected.equalsIgnoreCase("Rechtliches")){
+			Intent intent = new Intent(this, SoftwareLicensesActivity.class);
 			startActivity(intent);
 		}
 

@@ -10,10 +10,12 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".CompaniesActivity" >
 
-    <fragment
-        android:id="@+id/companies_fragment"
-        android:name="de.dhbw.studientag.CompaniesFragment"
+
+
+    <FrameLayout
+         android:id="@+id/companies_fragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content" >
+    </FrameLayout>
 
 </LinearLayout>

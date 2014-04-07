@@ -182,9 +182,9 @@ public class CommentsFragment extends Fragment implements OnBinClicked {
 	}
 	
 	@Override
-	public void onResume() {
-		
-		super.onResume();
+	public void onStop() {
+		mEnhancedListView.discardUndo();
+		super.onStop();
 	}
 
 	@Override

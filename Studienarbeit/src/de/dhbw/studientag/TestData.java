@@ -20,6 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import de.dhbw.studientag.model.Building;
+import de.dhbw.studientag.model.Color;
 import de.dhbw.studientag.model.Company;
 import de.dhbw.studientag.model.Faculty;
 import de.dhbw.studientag.model.Floor;
@@ -56,7 +57,8 @@ public final class TestData {
 	
 	private static final short SUBJECT_NAME = 0;
 	private static final short SUBJECT_FACULTY = 1;
-	private static final short SUBJECT_WEBADDRESS = 2;
+	private static final short SUBJECT_COLOR = 2;
+	private static final short SUBJECT_WEBADDRESS = 3;
 
 	public TestData(AssetManager assets) {
 		Log.v(TAG,"TestData constructor");
@@ -69,10 +71,22 @@ public final class TestData {
 			//skip first line
 			facultySubjectReader.readNext();
 			while ((nextLine = facultySubjectReader.readNext()) != null) {
+				String colorString = nextLine[SUBJECT_COLOR];
+				Color color = new Color();
+				try{
+					color = new Color(colorString);
+				}catch(IndexOutOfBoundsException boundsEx){
+					Log.w(TAG,"Subject "+nextLine[SUBJECT_NAME]+" no color in csv.Color white");
+					color.setColor(android.graphics.Color.WHITE);
+				}catch(IllegalArgumentException ex){
+					Log.w(TAG,"Color "+colorString+" not found using white instead");
+					color.setColor(android.graphics.Color.WHITE);
+				}
+				
 				Subject subject = new Subject(
 						nextLine[SUBJECT_NAME], 
 						Faculty.valueOf(nextLine[SUBJECT_FACULTY].toUpperCase(Locale.getDefault())),
-						nextLine[SUBJECT_WEBADDRESS]);
+						nextLine[SUBJECT_WEBADDRESS],color);
 				subjects.add(subject);
 			}
 			facultySubjectReader.close();

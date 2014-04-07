@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import de.dhbw.studientag.TestData;
+import de.dhbw.studientag.model.Color;
 import de.dhbw.studientag.model.Faculty;
 import de.dhbw.studientag.model.Subject;
 
@@ -17,15 +18,17 @@ public final class SubjectsHelper  {
 	protected static final String SUBJECT_NAME = "name";
 	protected static final String FACULTY_ID = "facultyId";
 	protected static final String SUBJECT_WEBADDRESS ="webAddress";
+	protected static final String SUBJECT_COLOR="color";
 	protected static final String SUBJECTS_TABLE_CREATE=
 			"CREATE TABLE " + SUBJECTS_TABLE_NAME + " ( " +
 			MySQLiteHelper.ID 	+ " integer primary key autoincrement, " +
 			SUBJECT_NAME + " TEXT unique, " +
 			SUBJECT_WEBADDRESS + " TEXT, "+
-			FACULTY_ID + " INTEGER"  +
+			FACULTY_ID + " INTEGER, "  +
+			SUBJECT_COLOR+ " INTEGER"+
 			")";
 	protected static final String[] SUBJECT_ALL_COLUMNS ={
-		MySQLiteHelper.ID, SUBJECT_NAME, FACULTY_ID, SUBJECT_WEBADDRESS
+		MySQLiteHelper.ID, SUBJECT_NAME, FACULTY_ID, SUBJECT_WEBADDRESS, SUBJECT_COLOR
 	};
 	
 	protected static final void initSubjects(SQLiteDatabase db){
@@ -39,6 +42,7 @@ public final class SubjectsHelper  {
 		values.put(FACULTY_ID, 
 				subject.getFaculty().getId());
 		values.put(SUBJECT_WEBADDRESS, subject.getWebAddress());
+		values.put(SUBJECT_COLOR, subject.getColor().getColor());
 		db.insert(SUBJECTS_TABLE_NAME, null, values);
 				
 	}
@@ -90,12 +94,15 @@ public final class SubjectsHelper  {
 	
 	private static Subject cursorToSubject(Cursor cursor){
 //		Log.d("id" ,cursor.getColumnNames().toString());
-		
+		Color color = new Color();
+		color.setColor(cursor.getInt(cursor.getColumnIndex(SUBJECT_COLOR)));
 		Subject subject = new Subject(
 				cursor.getLong(cursor.getColumnIndex(MySQLiteHelper.ID)),
 				cursor.getString(cursor.getColumnIndex(SUBJECT_NAME)),
 				Faculty.getById(cursor.getInt(cursor.getColumnIndex(FACULTY_ID))),
-				cursor.getString(cursor.getColumnIndex(SUBJECT_WEBADDRESS)));
+				cursor.getString(cursor.getColumnIndex(SUBJECT_WEBADDRESS)),
+				color
+				);
 		return subject;
 				
 	}

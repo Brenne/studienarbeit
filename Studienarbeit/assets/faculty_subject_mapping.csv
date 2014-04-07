@@ -1,12 +1,20 @@
-Studiengang;Fakultät;Link zum Studiengang
-Angewandte Informatik;Technik;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-technik/informatik/
-Wirtschaftsinformatik;Wirtschaft;
-Dienstleistungsmanagement;Wirtschaft;
-International Business;Wirtschaft;
-BWL;Wirtschaft;
-Finanzdienstleistungen;Wirtschaft;
-Maschinenbau;Technik;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-technik/maschinenbau/
-Versicherung;Wirtschaft;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-technik/elektrotechnik
-Elektrotechnik;Technik;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-technik/elektrotechnik/
-Mechatronik;Technik;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-technik/mechatronik/
-Wirtschaftsingenieurwesen;Technik;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-technik/wirtschaftsingenieurwesen/
+Studiengang;Fakultät;Farbe;Link zum Studiengang
+Angewandte Informatik;Technik;gruen;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-technik/informatik/
+Wirtschaftsinformatik;Wirtschaft;gelb;
+Dienstleistungsmanagement;Wirtschaft;blau;
+International Business;Wirtschaft;rot;
+BWL;Wirtschaft;red;
+Finanzdienstleistungen;Wirtschaft;yellow;
+Maschinenbau;Technik;green;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-technik/maschinenbau/
+Versicherung;Wirtschaft;cyan;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-technik/elektrotechnik
+Elektrotechnik;Technik;kdsjfldsa;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-technik/elektrotechnik/
+Mechatronik;Technik;purpur;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-technik/mechatronik/
+Wirtschaftsingenieurwesen;Technik;magenta;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-technik/wirtschaftsingenieurwesen/
+Soziale Arbeit im Gesundheitswesen;Sozialwesen;;
+Soziale Arbeit in der Elementarpädagogik;Sozialwesen;;
+Soziale Arbeit in Pfelege und Rehabilitation;Sozialwesen;;
+Soziale Dienste in der Jugend-, Familien- und Sozialhilfe;Sozialwesen;;
+Arbeit, Integration und Soziale Sicherung;Sozialwesen;;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-sozialwesen/arbeit-integration-und-soziale-sicherung/
+Soziale Dienste in der Justiz;Sozialwesen;;
+Kinder- und Jugendarbeit;Sozialwesen;;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-sozialwesen/kinder-und-jugendarbeit/
+Erziehuingshilfen/Kinder- & Jugendhilfe;Sozialwesen;;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-sozialwesen/erziehungshilfenkinder-jugendhilfe/

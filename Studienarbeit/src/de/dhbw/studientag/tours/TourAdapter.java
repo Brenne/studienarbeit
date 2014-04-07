@@ -55,4 +55,15 @@ public class TourAdapter extends ArrayAdapter<Tour> {
 	public void setOnBinClickListener(OnBinClicked binClicked) {
 		this.mBinClicked = binClicked;
 	}
+
+	public void remove(int position) {
+		tourList.remove(position);
+		notifyDataSetChanged();		
+	}
+
+	public void insert(int position, Tour tour) {
+		tourList.add(position, tour);
+		notifyDataSetChanged();
+		
+	}
 }

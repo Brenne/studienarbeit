@@ -1,5 +1,6 @@
 package de.dhbw.studientag.model;
 
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -9,15 +10,17 @@ public class Subject implements Parcelable {
 	private String name;
 	private Faculty faculty;
 	private String webAddress;
+	private Color color;
 
-	public Subject(String name, Faculty faculty, String webAddress) {
+	public Subject(String name, Faculty faculty, String webAddress, Color color) {
 		this.name = name;
 		this.faculty = faculty;
 		this.webAddress=webAddress;
+		this.color=color;
 	}
 
-	public Subject(long id, String name, Faculty faculty, String webAddress) {
-		this(name, faculty, webAddress);
+	public Subject(long id, String name, Faculty faculty, String webAddress, Color color) {
+		this(name, faculty, webAddress, color);
 		this.id = id;
 	}
 
@@ -31,6 +34,10 @@ public class Subject implements Parcelable {
 	
 	public String getWebAddress() {
 		return webAddress;
+	}
+	
+	public Color getColor(){
+		return color;
 	}
 
 	public long getId() {
@@ -57,12 +64,13 @@ public class Subject implements Parcelable {
 		dest.writeString(name);
 		dest.writeSerializable(faculty);
 		dest.writeString(webAddress);
+		dest.writeParcelable(color, flags);
 
 	}
 
 	private Subject(Parcel source) {
 		this(source.readLong(), source.readString(), (Faculty) source
-				.readSerializable(), source.readString());
+				.readSerializable(), source.readString(), (Color) source.readParcelable(Color.class.getClassLoader()));
 
 	}
 

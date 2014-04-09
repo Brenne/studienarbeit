@@ -1,7 +1,6 @@
 package de.dhbw.studientag;
 
 import java.util.ArrayList;
-
 import android.app.DialogFragment;
 import android.app.ListActivity;
 import android.content.Intent;
@@ -29,7 +28,7 @@ public class MainActivity extends ListActivity {
 		list.add(getString(R.string.title_activity_locations));
 		list.add(getString(R.string.label_comments));
 		list.add(getString(R.string.title_activity_tours));
-		list.add("Rechtliches");
+		list.add(getString(R.string.label_legal_notices));
 	
 		
 		final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -67,7 +66,7 @@ public class MainActivity extends ListActivity {
 		} else if(selected.equals(getString(R.string.title_activity_tours))){
 			Intent intent = new Intent(this, TourActivity.class);
 			startActivity(intent);
-		} else if(selected.equalsIgnoreCase("Rechtliches")){
+		} else if(selected.equalsIgnoreCase(getString(R.string.label_legal_notices))){
 			Intent intent = new Intent(this, SoftwareLicensesActivity.class);
 			startActivity(intent);
 		}

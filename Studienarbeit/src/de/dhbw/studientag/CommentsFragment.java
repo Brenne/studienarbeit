@@ -18,7 +18,6 @@ import android.view.animation.AlphaAnimation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
-import android.widget.Toast;
 import de.dhbw.studientag.dbHelpers.CommentHelper;
 import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.model.Comment;
@@ -104,22 +103,6 @@ public class CommentsFragment extends Fragment implements OnBinClicked {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_comments, container, false);
-		view.findViewById(R.id.comments_info).setOnTouchListener(new OnSwipeTouchListener(getActivity()){
-			  public void onSwipeTop() {
-			        Toast.makeText(getActivity(), "top", Toast.LENGTH_SHORT).show();
-			    }
-			    public void onSwipeRight() {
-			        Toast.makeText(getActivity(), "right", Toast.LENGTH_SHORT).show();
-			    }
-			    public void onSwipeLeft() {
-			        Toast.makeText(getActivity(), "left", Toast.LENGTH_SHORT).show();
-			    }
-			    public void onSwipeBottom() {
-			        Toast.makeText(getActivity(), "bottom", Toast.LENGTH_SHORT).show();
-			    }
-
-		});
-		
 		mEnhancedListView = (EnhancedListView) view.findViewById(R.id.list);
 		mCommentInfoText = (TextView) view.findViewById(R.id.comments_info);
 		setListAdapter();		

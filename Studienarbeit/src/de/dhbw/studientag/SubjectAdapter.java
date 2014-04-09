@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ViewManager;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -45,37 +44,51 @@ public class SubjectAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		View rowView = LayoutInflater.from(mContext).inflate(R.layout.subject_list_item, parent, false);
-		
-		TextView subjectName = (TextView) rowView.findViewById(R.id.subjectName);
-		subjectName.setText(getItem(position).getName());
-		ImageView subjectColor = (ImageView) rowView.findViewById(R.id.subjectColorCircle);
-		int color = getItem(position).getColor().getColor();
+		TextView subjectName;
+		ImageButton infoButton;
+		ImageView subjectColor;
+		//getView is called for every list item and only null the first time
+		if(convertView ==null){
+			convertView = LayoutInflater.from(mContext).inflate(R.layout.subject_list_item, parent, false);
+			subjectName = (TextView) convertView.findViewById(R.id.subjectName);
+			infoButton = (ImageButton) convertView.findViewById(R.id.subjectInfoLink);
+			subjectColor = (ImageView) convertView.findViewById(R.id.subjectColorCircle);
+			/* setTags at the first time getView is called (first list item),
+			 * because findViewById costs much and therefore
+			 * can be avoided on future iterations
+			 */
+			convertView.setTag(R.id.subjectName, subjectName);
+			convertView.setTag(R.id.subjectInfoLink, infoButton);
+			convertView.setTag(R.id.subjectColorCircle, subjectColor);
+		}else{
+			subjectName = (TextView) convertView.getTag(R.id.subjectName);
+			infoButton = (ImageButton) convertView.getTag(R.id.subjectInfoLink);
+			subjectColor = (ImageView) convertView.getTag(R.id.subjectColorCircle);
+		}
+		Subject currentSubject = getItem(position);
+		subjectName.setText(currentSubject.getName());
+		int color = currentSubject.getColor().getColor();
 		if(color != android.graphics.Color.TRANSPARENT){
 			subjectColor.setColorFilter(color,Mode.MULTIPLY);
 		}else{
 			//if subjectColor is transparent hide color circle
 			 subjectColor.setVisibility(View.INVISIBLE);
 		}
-		
-		ImageButton infoButton = (ImageButton) rowView.findViewById(R.id.subjectInfoLink);
-		final String webAddress = getItem(position).getWebAddress();
-		if(webAddress != null && !webAddress.isEmpty()){
 			
-			infoButton.setOnClickListener(new OnClickListener() {
-				
+		final String webAddress = currentSubject.getWebAddress();
+		if(webAddress != null && !webAddress.isEmpty()){
+			infoButton.setOnClickListener(new OnClickListener() {		
 				@Override
 				public void onClick(View v) {
 					Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(webAddress));
-					mContext.startActivity(browserIntent);
-					
+					mContext.startActivity(browserIntent);		
 				}
 			});
 		}else{
 			//no info icon if webaddress is empty or null
-			((ViewManager) infoButton.getParent()).removeView(infoButton);
+			infoButton.setVisibility(View.INVISIBLE);
 		}
-		return rowView;
+		return convertView;
 	}
 
 }

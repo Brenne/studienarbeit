@@ -96,13 +96,9 @@ public class CompaniesFragment extends ListFragment {
 				adapter.getFilter().filter(newText);
 				return false;
 			}
-		});
-
-		
+		});	
 	}
 	
-
-
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -140,7 +136,6 @@ public class CompaniesFragment extends ListFragment {
 	 * >Communicating with Other Fragments</a> for more information.
 	 */
 	public interface OnCompanySelectedLitener {
-
 		public void onCompanySelected(Company company);
 	}
 

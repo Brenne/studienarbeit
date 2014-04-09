@@ -18,39 +18,63 @@ public class TourPointAdapter extends ArrayAdapter<TourPoint> {
 	private OnBinClicked mBinClicked;
 	private final Context context;
 	private final Tour mTour;
-	
+
 	public TourPointAdapter(Context context, Tour tour) {
-		super(context, R.layout.two_line_list_item_with_bin, tour.getTourPointList());
+		super(context, R.layout.two_line_list_item_with_bin, tour
+				.getTourPointList());
 		this.context = context;
 		this.mTour = tour;
-		
 	}
 
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
-		LayoutInflater inflater = (LayoutInflater) context
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		View rowView = inflater.inflate(R.layout.two_line_list_item_with_bin, parent, false);
-		TextView tvCompanyName = (TextView) rowView.findViewById(R.id.binItemFirstLine);
-		TextView tvCompanLocation = (TextView) rowView
-				.findViewById(R.id.bintemSecondLine);
-		tvCompanyName.setText((CharSequence) mTour.getTourPointList().get(position).getCompany().getName());
-		String tourPointBuilding =  mTour.getTourPointList().get(position).getCompany().getLocation().getBuilding().getFullName();
-		String tourPointRoom     =  mTour.getTourPointList().get(position).getCompany().getLocation().getRoom().getRoomNo();
-		tvCompanLocation.setText(tourPointBuilding+", "+getContext().getString(R.string.room)+" "+tourPointRoom);
+		TextView tvCompanyName;
+		TextView tvCompanyLocation;
+		ImageButton binButton;
+		//getView is called for every list item and only null the first time
+		if (convertView == null) {
+			convertView = LayoutInflater.from(context).inflate(
+					R.layout.two_line_list_item_with_bin, parent, false);
+			tvCompanyName = (TextView) convertView
+					.findViewById(R.id.binItemFirstLine);
+			tvCompanyLocation = (TextView) convertView
+					.findViewById(R.id.bintemSecondLine);
+			binButton = (ImageButton) convertView
+					.findViewById(R.id.binItemDelete);
+			/* setTags at the first time getView is called (first list item),
+			 * because findViewById costs much and therefore
+			 * can be avoided on future iterations
+			 */
+			convertView.setTag(R.id.binItemFirstLine, tvCompanyName);
+			convertView.setTag(R.id.bintemSecondLine, tvCompanyLocation);
+			convertView.setTag(R.id.binItemDelete, binButton);
 
-		ImageButton imageButton = (ImageButton) rowView.findViewById(R.id.binItemDelete);
-		imageButton.setOnClickListener(new OnClickListener() {
+		} else {
+			//from the second time on when getView is called restore the saved objects by getTag(key)
+			tvCompanyName = (TextView) convertView
+					.getTag(R.id.binItemFirstLine);
+			tvCompanyLocation = (TextView) convertView
+					.getTag(R.id.bintemSecondLine);
+			binButton = (ImageButton) convertView.getTag(R.id.binItemDelete);
+		}
+		TourPoint tourPoint = mTour.getTourPointList().get(position);
 
+		tvCompanyName.setText((CharSequence) tourPoint.getCompany().getName());
+		String tourPointBuilding = tourPoint.getCompany().getLocation()
+				.getBuilding().getFullName();
+		String tourPointRoom = tourPoint.getCompany().getLocation().getRoom()
+				.getRoomNo();
+		tvCompanyLocation.setText(tourPointBuilding + ", "
+				+ getContext().getString(R.string.room) + " " + tourPointRoom);
+
+		binButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-			
-					mBinClicked.binClicked(position);
+				mBinClicked.binClicked(position);
 			}
 		});
-		return rowView;
+		return convertView;
 	}
-
 
 	public void setOnBinClickListener(OnBinClicked binClicked) {
 		this.mBinClicked = binClicked;

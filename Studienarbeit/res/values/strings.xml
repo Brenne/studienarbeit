@@ -80,5 +80,6 @@
     <string name="label_company_information_location">Standort des Informationsstandes:</string>
     <string name="title_activity_software_licenses">Software Lizenzen</string>
     <string name="label_please_wait">Bitte warten</string>
+    <string name="label_legal_notices">Rechtliches</string>
 
 </resources>

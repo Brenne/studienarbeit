@@ -44,6 +44,8 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
+                        android:paddingTop="2dp"
+            android:paddingBottom="2dp"
             android:background="#000000" />
 
         <TextView
@@ -70,6 +72,8 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
+                        android:paddingTop="2dp"
+            android:paddingBottom="2dp"
             android:background="#000000" />
      <TextView
             android:id="@+id/textView_enhancedListView_heading"
@@ -95,6 +99,8 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
+                        android:paddingTop="2dp"
+            android:paddingBottom="2dp"
             android:background="#000000" />
         <TextView
             android:id="@+id/textView4"
@@ -112,6 +118,8 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
             android:background="#000000" />
 
         <TextView

@@ -49,7 +49,7 @@ public class LocationsActivity extends LocationServiceActivity implements
 	 */
 	public static final Map<String, LatLng> LOCATIONS;
 	static {
-		Map<String, LatLng> locationsMap = new HashMap<String, LatLng>();
+		Map<String, LatLng> locationsMap = new HashMap<>();
 		locationsMap.put("RB41", new LatLng(48.773536, 9.170902));
 		locationsMap.put("J58", new LatLng(48.785111, 9.173414));
 		locationsMap.put("J56", new LatLng(48.784607, 9.174141));

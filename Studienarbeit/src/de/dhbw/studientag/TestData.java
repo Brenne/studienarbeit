@@ -68,7 +68,7 @@ public final class TestData {
 			CSVReader facultySubjectReader = new CSVReader(new InputStreamReader(
 					assets.open(FILE_NAME_FACULTY_SUBJECT_MAPPING)), CSV_DELIMITER);
 			String[] nextLine;
-			//skip first line
+			//skip first line of CSCV file
 			facultySubjectReader.readNext();
 			while ((nextLine = facultySubjectReader.readNext()) != null) {
 				String colorString = nextLine[SUBJECT_COLOR];
@@ -197,7 +197,7 @@ public final class TestData {
 	}
 
 	/**
-	 * 
+	 * Checks if subjects are in {@link subjects}  
 	 * @param subjects
 	 *            String of comma seperated subject Names
 	 * @return

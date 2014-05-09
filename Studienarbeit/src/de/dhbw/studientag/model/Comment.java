@@ -3,6 +3,10 @@ package de.dhbw.studientag.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/**
+ * represents a comment / notes for a company
+ *
+ */
 public class Comment implements Parcelable {
 
 	private long id;

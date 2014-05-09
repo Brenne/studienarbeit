@@ -40,7 +40,7 @@ public final class BestTourController {
 		ArrayList<TourPoint> newTourPointList = new ArrayList<TourPoint>();
 		Permutations<Building> buildingPermutations = new Permutations<Building>(
 				getUniqueBuildings(mTourPoints));
-		TreeMap<Float, List<Building>> tourLength = new TreeMap<>();
+		TreeMap<Float, List<Building>> tourLength = new TreeMap<Float, List<Building>>();
 		while(buildingPermutations.hasNext()) {
 			List<Building> buildings = buildingPermutations.next();
 			tourLength.put(calcDistance(buildings), buildings);

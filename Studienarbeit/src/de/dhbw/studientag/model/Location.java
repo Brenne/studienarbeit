@@ -3,9 +3,12 @@ package de.dhbw.studientag.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/**
+ * represents the Location of a company information point
+ *
+ */
+public class Location implements Parcelable{
 
-public class Location  implements Parcelable{
-	
 	private Building building;
 	private Floor floor;
 	private Room room;
@@ -27,11 +30,6 @@ public class Location  implements Parcelable{
 	public Room getRoom() {
 		return room;
 	}
-	
-//	@Override
-//	public String toString() {
-//		return this.getFullName();
-//	}
 
 	@Override
 	public int describeContents() {
@@ -42,15 +40,12 @@ public class Location  implements Parcelable{
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeParcelable(building, flags);
 		dest.writeParcelable(floor, flags);
-		dest.writeParcelable(room, flags);
-
-		
+		dest.writeParcelable(room, flags);	
 	}
 	
 	private Location(Parcel source){
 		this((Building)source.readParcelable(Building.class.getClassLoader()), (Floor)source.readParcelable(Floor.class.getClassLoader()), 
-				(Room) source.readParcelable(Room.class.getClassLoader()));
-		
+				(Room) source.readParcelable(Room.class.getClassLoader()));	
 	}
 	
    public static final Parcelable.Creator<Location> CREATOR = 
@@ -64,6 +59,4 @@ public class Location  implements Parcelable{
         }
     };
 	
-	
-
 }

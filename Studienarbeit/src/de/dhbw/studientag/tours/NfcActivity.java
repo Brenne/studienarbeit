@@ -135,8 +135,9 @@ public class NfcActivity extends LocationServiceActivity {
 	//	Export
 	private boolean writeTextToNfcTag(Tag tag, String message) {
 		Ndef ndef = Ndef.get(tag);
-		NdefMessage newNdefMessage = new NdefMessage(createTextRecord(message,
-				Locale.GERMAN, true));
+		NdefRecord[] ndefRecord = {createTextRecord(message,
+				Locale.GERMAN, true)};
+		NdefMessage newNdefMessage = new NdefMessage(ndefRecord);
 		if (ndef == null) {
 			return false;
 		}
@@ -154,8 +155,10 @@ public class NfcActivity extends LocationServiceActivity {
 		} catch (TagLostException tagLostEx) {
 			Log.i(TAG, "tag removed while writing");
 			return false;
-
-		} catch (IOException | FormatException e) {
+		} catch (FormatException fex){
+			Log.e(TAG, "incorrect tag format", fex);
+			return false;
+		} catch (IOException e) {
 			Log.e(TAG, "could not write to tag", e);
 			return false;
 		}

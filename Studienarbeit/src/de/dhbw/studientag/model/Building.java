@@ -8,7 +8,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-public  class Building implements Parcelable{
+public class Building implements Parcelable{
 	
 	private final String fullName;
 	private final String shortName;

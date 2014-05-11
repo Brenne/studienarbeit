@@ -14,7 +14,7 @@
      <item
         android:id="@+id/menu_item_start_tour"
         android:icon="@android:drawable/ic_menu_sort_by_size"
-        android:showAsAction="ifRoom"
+        android:showAsAction="collapseActionView"
         android:title="@string/label_calc_best_way"/>
     <item
         android:id="@+id/menu_item_export"

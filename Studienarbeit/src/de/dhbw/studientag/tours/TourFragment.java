@@ -53,7 +53,7 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setHasOptionsMenu(true);
+	
 
 		if (mCompany != null) {
 			MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity().getBaseContext());
@@ -79,6 +79,7 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 		} else if (mTour != null && !mTour.getTourPointList().isEmpty()) {
 
 		}
+		setHasOptionsMenu(true);
 
 	}
 

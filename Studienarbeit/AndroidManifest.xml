@@ -67,7 +67,8 @@
         </activity>
         <activity
             android:name="de.dhbw.studientag.LocationsActivity"
-            android:label="@string/title_activity_locations" >
+            android:label="@string/title_activity_locations"
+            android:parentActivityName="de.dhbw.studientag.MainActivity" >
         </activity>
         <activity
             android:name="de.dhbw.studientag.CommentsActivity"

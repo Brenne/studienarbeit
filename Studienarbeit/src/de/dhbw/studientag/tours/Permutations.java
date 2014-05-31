@@ -3,10 +3,11 @@ package de.dhbw.studientag.tours;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
+/*
  * This java class is from google-collections
  * https://code.google.com/p/google-collections/issues/attachmentText?id=71&aid=-7147814569069805842&name=Permutations.java
- *  
+ */
+/** 
  * The Permutations class provides an iteration of all permutations of an list
  * of objects. Each permutation is simply an ordered list of the group.
  * <p>

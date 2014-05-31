@@ -180,7 +180,7 @@ public class LocationsActivity extends LocationServiceActivity implements
 			if (mMarkerPosition != null &&  mCurrentLocation != null) {
 				
 				String uri = String.format(Locale.ENGLISH,
-						"http://maps.google.com/maps?saddr=%f,%f(%s)&daddr=%f,%f(%s) ",
+						"http://maps.google.com/maps?mode=walking&saddr=%f,%f(%s)&daddr=%f,%f(%s) ",
 						mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), "mein Standort", mMarkerPosition.latitude,
 						mMarkerPosition.longitude, getString(R.string.label_dhbw_stuttgart));
 				Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
@@ -188,7 +188,7 @@ public class LocationsActivity extends LocationServiceActivity implements
 						"com.google.android.maps.MapsActivity");
 				startActivity(intent);
 			}else{
-				Toast.makeText(this, "Route nicht verfÃ¼gbar", Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, "Route nicht verfügbar", Toast.LENGTH_SHORT).show();
 			}
 			return true;
 		default:

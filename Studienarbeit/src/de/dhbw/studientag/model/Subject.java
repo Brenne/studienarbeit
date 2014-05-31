@@ -4,12 +4,20 @@ package de.dhbw.studientag.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/**
+ * Subject = degree course. Every Subject belongs to a faculty. Companies offer subjects.
+ * 
+ *
+ */
 public class Subject implements Parcelable {
 
 	private long id;
 	private String name;
 	private Faculty faculty;
 	private String webAddress;
+	/**
+	 * the color of a subject represents the color used in the DHBW flyer
+	 */
 	private Color color;
 
 	public Subject(String name, Faculty faculty, String webAddress, Color color) {

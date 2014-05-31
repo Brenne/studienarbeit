@@ -28,21 +28,25 @@ import de.dhbw.studientag.model.Location;
 import de.dhbw.studientag.model.Room;
 import de.dhbw.studientag.model.Subject;
 
-public final class TestData {
+public final class ImportDataController {
 
-	private static final String TAG ="TestData";
+	private static final String TAG ="ImportData";
 	private static ArrayList<Company> companies = new ArrayList<Company>();
+	/**
+	 * all subjects of the Studientaginformationssystem. Only subjects which are related to a faculty.
+	 */
 	private static ArrayList<Subject> subjects = new ArrayList<Subject>();
 	private static List<Building> buildings = new ArrayList<Building>();
 	private static List<Location> locationList = new ArrayList<Location>();
 	
-	private static final String FILE_NAME_COMPANY_CSV = "beispieldaten.csv";
+	//Import files (located in the folder 'assets'):
+	private static final String FILE_NAME_COMPANY_CSV = "company_data.csv";
 	private static final String FILE_NAME_FACULTY_SUBJECT_MAPPING = "faculty_subject_mapping.csv";
 	private static final String FILE_NAME_ROOM_JSON = "room.json";
 	private static final char CSV_DELIMITER =';';
 
 	/*
-	 * column numbers where the adequate information is stored
+	 * column numbers where the corresponding information is stored
 	 */
 	private static final short COMPANY_NAME = 0;
 //	private static final short COMPANY_SHORT_NAME = 1;
@@ -60,8 +64,8 @@ public final class TestData {
 	private static final short SUBJECT_COLOR = 2;
 	private static final short SUBJECT_WEBADDRESS = 3;
 
-	public TestData(AssetManager assets) {
-		Log.v(TAG,"TestData constructor");
+	public ImportDataController(AssetManager assets) {
+		Log.d(TAG,"constructor");
 		initBuildingList(assets);
 		try {
 			// Read faculty subject mapping
@@ -76,7 +80,8 @@ public final class TestData {
 				try{
 					color = new Color(colorString);
 				}catch(IndexOutOfBoundsException boundsEx){
-					Log.w(TAG,"Subject "+nextLine[SUBJECT_NAME]+" no color in csv.Color white");
+					Log.w(TAG,"Subject "+nextLine[SUBJECT_NAME]+" no color in "+
+				FILE_NAME_FACULTY_SUBJECT_MAPPING+". Using color white");
 					color.setColor(android.graphics.Color.WHITE);
 				}catch(IllegalArgumentException ex){
 					Log.w(TAG,"Color "+colorString+" not found using white instead");
@@ -109,7 +114,7 @@ public final class TestData {
 				String companyBuildingName = nextLine[COMPANY_BUILDING];
 				company.setLocation(getLocationBy(companyBuildingName, companyRoomName));
 
-				TestData.companies.add(company);
+				ImportDataController.companies.add(company);
 
 			}
 			reader.close();
@@ -122,7 +127,13 @@ public final class TestData {
 
 
 	}
-	
+	/**
+	 * read building/room structure from JSON file and set 
+	 * {@link ImportDataController#buildings}.
+	 * Also calls
+	 * {@link ImportDataController#setLocationList(List)}  
+	 * @param assets
+	 */
 	private final void initBuildingList(AssetManager assets){
 		// Building room.json TestData
 		try {
@@ -141,7 +152,7 @@ public final class TestData {
 
 			final List<Building> buildingList = new Gson().fromJson(buf.toString(),
 					listType);
-			TestData.buildings = buildingList;
+			ImportDataController.buildings = buildingList;
 			setLocationList(buildingList);
 		} catch (IOException e) {
 			Log.e(TAG,"Error in initBuldings could not open assets",e);
@@ -158,11 +169,11 @@ public final class TestData {
 				}	
 			}	
 		}
-		TestData.locationList=locationList;
+		ImportDataController.locationList=locationList;
 	}
 	
 	private Location getLocationBy(String buildingShortName, String roomName){
-		for(Location location : TestData.locationList){
+		for(Location location : ImportDataController.locationList){
 			if(location.getBuilding().getShortName().equalsIgnoreCase(buildingShortName)){
 				for(Floor floor : location.getBuilding().getFloorList()){
 					for(Room room : floor.getRoomList()){
@@ -181,32 +192,33 @@ public final class TestData {
 	}
 
 	public static ArrayList<Company> getCompanies() {
-		return TestData.companies;
+		return ImportDataController.companies;
 	}
 
 	public static ArrayList<Subject> getSubjects() {
-		return TestData.subjects;
+		return ImportDataController.subjects;
 	}
 
 	public static ArrayList<String> getCompanyNames() {
 		ArrayList<String> companyNamesList = new ArrayList<String>();
-		for (int i = 0; i < TestData.companies.size(); i++) {
-			companyNamesList.add(TestData.companies.get(i).getName());
+		for (int i = 0; i < ImportDataController.companies.size(); i++) {
+			companyNamesList.add(ImportDataController.companies.get(i).getName());
 		}
 		return companyNamesList;
 	}
 
 	/**
-	 * Checks if subjects are in {@link subjects}  
+	 * Checks if subjects are in {@link ImportDataController#subjects} 
 	 * @param subjects
 	 *            String of comma seperated subject Names
-	 * @return
+	 * @return list of subjects contained in subjects param. 
+	 * But only those which are in {@link ImportDataController#subjects} are in this returned list.
 	 */
 	private static ArrayList<Subject> getSubjectList(String subjects) {
 		String[] subjectNames = subjects.split(",");
 		ArrayList<Subject> subjectList = new ArrayList<Subject>();
 		//use LinkedList because better to remove objects than ArrayList
-		LinkedList<Subject> allSubjects = new LinkedList<Subject>(TestData.subjects);
+		LinkedList<Subject> allSubjects = new LinkedList<Subject>(ImportDataController.subjects);
 		for (String subjectName : subjectNames) {
 			Iterator<Subject> i = allSubjects.iterator();
 			boolean subjectFound = false;
@@ -221,7 +233,8 @@ public final class TestData {
 				}
 			}
 			if(!subjectFound){
-				Log.w(TAG, "Subject "+ subjectName.trim() + " in companies' subject list but not in subject faculty mapping");
+				Log.w(TAG, "Subject "+ subjectName.trim() + " in "+FILE_NAME_COMPANY_CSV +" list but not in "+
+			FILE_NAME_FACULTY_SUBJECT_MAPPING);
 			}
 		}
 			
@@ -231,11 +244,5 @@ public final class TestData {
 	public static List<Building> getBuildings() {
 		return buildings;
 	}
-
-	
-	
-
-	
-
 
 }

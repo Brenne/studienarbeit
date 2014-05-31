@@ -8,7 +8,7 @@ import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import de.dhbw.studientag.TestData;
+import de.dhbw.studientag.ImportDataController;
 import de.dhbw.studientag.model.Company;
 import de.dhbw.studientag.model.Subject;
 
@@ -41,7 +41,7 @@ public final class CompanyHelper {
 
 	
 	protected static final void initCompanies(SQLiteDatabase db){
-		ArrayList<Company> companies = TestData.getCompanies();
+		ArrayList<Company> companies = ImportDataController.getCompanies();
 		for(Company company : companies)
 			initCompany(company,db);
 	}

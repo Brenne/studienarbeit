@@ -6,7 +6,7 @@ import java.util.List;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import de.dhbw.studientag.TestData;
+import de.dhbw.studientag.ImportDataController;
 import de.dhbw.studientag.model.Color;
 import de.dhbw.studientag.model.Faculty;
 import de.dhbw.studientag.model.Subject;
@@ -32,7 +32,7 @@ public final class SubjectsHelper  {
 	};
 	
 	protected static final void initSubjects(SQLiteDatabase db){
-		for(Subject subject : TestData.getSubjects())
+		for(Subject subject : ImportDataController.getSubjects())
 			initSubject(subject,db);
 	}
 	

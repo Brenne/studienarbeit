@@ -6,7 +6,7 @@ import java.util.List;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import de.dhbw.studientag.TestData;
+import de.dhbw.studientag.ImportDataController;
 import de.dhbw.studientag.model.Building;
 
 public final class BuildingHelper {
@@ -26,7 +26,7 @@ public final class BuildingHelper {
 			+ " TEXT unique, " + BUILDING_FULLNAME + " TEXT " + ")";
 
 	protected final static void initBuildings(SQLiteDatabase db) {
-		List<Building> builidings = TestData.getBuildings();
+		List<Building> builidings = ImportDataController.getBuildings();
 		for (Building building : builidings)
 			initBuilding(building, db);
 	}

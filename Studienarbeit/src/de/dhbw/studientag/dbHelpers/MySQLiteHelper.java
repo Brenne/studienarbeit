@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import de.dhbw.studientag.TestData;
+import de.dhbw.studientag.ImportDataController;
 
 public final class MySQLiteHelper extends SQLiteOpenHelper {
 	
@@ -22,7 +22,7 @@ public final class MySQLiteHelper extends SQLiteOpenHelper {
 		this.context = context;
 		if(!init && context != null){
 			Log.v("MySQLHelper","new testdata");
-			new TestData(context.getAssets());
+			new ImportDataController(context.getAssets());
 			init=true;
 		}
 		

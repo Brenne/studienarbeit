@@ -66,7 +66,6 @@ public class NfcActivity extends LocationServiceActivity {
 					Toast.LENGTH_LONG).show();
 			finish();
 			return;
-
 		}
 		TextView waitForTag = (TextView) findViewById(R.id.textView_waitForTag);
 		if (!myNfcAdapter.isEnabled()) {
@@ -96,6 +95,7 @@ public class NfcActivity extends LocationServiceActivity {
 		if(getIntent().hasExtra(EXPORT)){
 			intent.putExtra(EXPORT, getIntent().getStringExtra(EXPORT));
 		}else{
+			//import of a Tour request location updates
 			requestUpdates(true);
 		}
 		handleIntent(intent);
@@ -171,7 +171,7 @@ public class NfcActivity extends LocationServiceActivity {
 		 * Call this before onPause, otherwise an IllegalArgumentException is
 		 * thrown as well.
 		 */
-		stopForegroundDispatch(this, myNfcAdapter);
+		myNfcAdapter.disableForegroundDispatch(this);
 		requestUpdates(false);
 
 		super.onPause();
@@ -214,10 +214,6 @@ public class NfcActivity extends LocationServiceActivity {
 		}
 
 		adapter.enableForegroundDispatch(activity, pendingIntent, filters, techList);
-	}
-
-	public static void stopForegroundDispatch(final Activity activity, NfcAdapter adapter) {
-		adapter.disableForegroundDispatch(activity);
 	}
 
 	private boolean processCompanyTourList(String rawData) {

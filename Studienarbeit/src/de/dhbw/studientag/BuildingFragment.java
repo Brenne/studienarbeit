@@ -49,7 +49,7 @@ public class BuildingFragment extends ListFragment {
 		SQLiteDatabase db = new MySQLiteHelper(getActivity()).getReadableDatabase();
 		while(iterator.hasNext()){
 			Floor floor =iterator.next();
-			if(!FloorHelper.hasRoomsOccupiedRooms(db, floor.getId())){
+			if(!FloorHelper.hasOccupiedRooms(db, floor.getId())){
 				
 				iterator.remove();
 			}

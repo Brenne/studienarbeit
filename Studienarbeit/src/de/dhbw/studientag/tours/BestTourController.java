@@ -59,23 +59,24 @@ public final class BestTourController {
 		
 		}
 	
-		// check if no tourPoint got Lost
+		// check if no tourPoint got Lost (should never happen)
 		if (mTourPoints.size() == newTourPointList.size()) {
 			makePositionsPersistent(newTourPointList);
-			
-			
-			
 			return newTourPointList;
 		} else {
 			Log.e(TAG, "error in order list check code");
 			return mTourPoints;
 		}
 	}
-
+	/**
+	 * 
+	 * @return Map with key = short name of a building and value = the distance 
+	 * (in respect of the current position) to this particular building in meters
+	 */
 	private Map<String, Float> getDistanceMap() {
 
 		Map<String, Float> distance = new HashMap<String, Float>();
-
+		//if CurrentLocation is null take Rotebuehlplatz as basis 
 		if (mCurrentLocation == null) {
 			Log.w(TAG, "curLocation is null");
 			final String buildingShortName = "RB41";
@@ -93,8 +94,6 @@ public final class BestTourController {
 			float fDistance = location.distanceTo(mCurrentLocation);
 			distance.put(entry.getKey(), fDistance);
 		}
-
-		
 
 		return distance;
 	}
@@ -131,9 +130,9 @@ public final class BestTourController {
 	 */
 	private float calcDistance(List<Building> buildings) {
 		float distance = 0;
+		final Map<String, Float> distanceMap = getDistanceMap();
 		for (int i = 0; i < buildings.size(); i++) {
 			if (i == 0) {
-				Map<String, Float> distanceMap = getDistanceMap();
 				distance += distanceMap.get(buildings.get(0).getShortName());
 			} else {
 				Building prevTourPoint = buildings.get(i - 1);
@@ -158,7 +157,7 @@ public final class BestTourController {
 		}
 		db.close();
 	}
-
+	
 	private List<Building> getUniqueBuildings(List<TourPoint> tourPoints) {
 		HashMap<Long, Building> buildingMap = new HashMap<Long, Building>(4);
 		List<Building> buildingList = new ArrayList<Building>();

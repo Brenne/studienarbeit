@@ -44,6 +44,7 @@ public class RoomHelper {
 		Cursor cursor = db.query(ROOM_TABLE_NAME, ROOM_ALL_COLUMNS, MySQLiteHelper.ID+"="+Long.toString(roomId), null, null, null, null);
 		cursor.moveToFirst();
 		Room room = cursorToRoom(cursor);
+		cursor.close();
 		return room;
 	}
 	

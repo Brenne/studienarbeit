@@ -8,7 +8,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-public class Floor implements Parcelable {
+public class Floor implements Parcelable{
 	
 
 	private long id;

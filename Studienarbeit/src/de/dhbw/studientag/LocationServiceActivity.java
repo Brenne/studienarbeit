@@ -24,6 +24,11 @@ import com.google.android.gms.location.LocationRequest;
 import de.dhbw.studientag.model.TourPoint;
 import de.dhbw.studientag.tours.BestTourController;
 
+/**
+ * provides methods for locating the user via
+ * GooglePlay Location Service
+ * 
+ */
 public abstract class LocationServiceActivity extends Activity implements
 
 GooglePlayServicesClient.ConnectionCallbacks,
@@ -86,7 +91,7 @@ GooglePlayServicesClient.ConnectionCallbacks,
 			if(mLocationClient.isConnected()){
 				mLocationClient.requestLocationUpdates(mLocationRequest, this);
 			}
-		}else if(!on_off){
+		}else{
 			mEditor.putBoolean(KEY_UPDATES_ON, false).apply();
 			mLocationClient.removeLocationUpdates(this);
 		}

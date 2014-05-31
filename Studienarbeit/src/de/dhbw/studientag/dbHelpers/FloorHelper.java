@@ -90,7 +90,7 @@ public final class FloorHelper  {
 	 * @param floorId to check
 	 * @return true if the floor has at least one room which is occupied by at least one company, false otherwise
 	 */
-	public static boolean hasRoomsOccupiedRooms(SQLiteDatabase db, long floorId){
+	public static boolean hasOccupiedRooms(SQLiteDatabase db, long floorId){
 		//SELECT count(*) FROM CompanyRoom cr INNER JOIN Room r ON r._id=cr.roomId AND r.floorId=floorId
 		boolean returnV=false;
 		String query = "SELECT * FROM "+CompanyLocationHelper.COMPANYROOM_TABLE_NAME+ " cr INNER JOIN "+

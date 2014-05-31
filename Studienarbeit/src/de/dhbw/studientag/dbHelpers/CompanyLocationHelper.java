@@ -6,7 +6,7 @@ import java.util.List;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import de.dhbw.studientag.TestData;
+import de.dhbw.studientag.ImportDataController;
 import de.dhbw.studientag.model.Building;
 import de.dhbw.studientag.model.Company;
 import de.dhbw.studientag.model.Floor;
@@ -30,7 +30,7 @@ public class CompanyLocationHelper {
 			+ COMPANYROOM_COMPANY_ID + ")" + ")";
 
 	protected static void init(SQLiteDatabase db) {
-		List<Company> companyList = TestData.getCompanies();
+		List<Company> companyList = ImportDataController.getCompanies();
 		for (Company company : companyList) {
 			ContentValues values = new ContentValues();
 			values.put(COMPANYROOM_COMPANY_ID, company.getId());

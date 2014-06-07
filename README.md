@@ -7,8 +7,8 @@ Android App for the student information day at Cooperative State University Bade
 Dependencies
 ------------
 
-*[GooglePlay Library](http://developer.android.com/google/play-services/index.html)
-*[EnhnacedListView](https://github.com/Brenne/EnhancedListView)
+* [GooglePlay Library](http://developer.android.com/google/play-services/index.html)
+* [EnhnacedListView](https://github.com/Brenne/EnhancedListView)
 
 
 Setup dependencies
@@ -23,9 +23,9 @@ Setup Google Maps Android
 
 [Setting up Google Maps API in Android](https://developers.google.com/maps/documentation/android/start):
 
-*Create a Google Maps API Project in Google's API Console
-*obtain an Google Maps API Key
-*substitute the existing Google Maps API key in the AndroidManifest.xml with the your key.
+* Create a Google Maps API Project in Google's API Console
+* obtain an Google Maps API Key
+* substitute the existing Google Maps API key in the AndroidManifest.xml with the your key.
 
 
 Licence

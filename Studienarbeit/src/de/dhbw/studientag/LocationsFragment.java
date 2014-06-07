@@ -32,7 +32,7 @@ public class LocationsFragment extends ListFragment {
 	
 	//Conatiner Activty must implement this interface
 	public interface OnBuildingSelectedListener{
-		public void onBuildingClicked(Building building);
+		public void onBuildingSelected(Building building);
 	}
 	
 	@Override
@@ -59,7 +59,7 @@ public class LocationsFragment extends ListFragment {
 			((LocationsActivity)getActivity()).setMarker(location, building.getFullName());
 		}
 //		getActivity().getIntent().putExtra("bulding", building);
-		mCallback.onBuildingClicked(building);
+		mCallback.onBuildingSelected(building);
 
 	}
 

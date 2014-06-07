@@ -44,6 +44,7 @@ public class LocationsActivity extends LocationServiceActivity implements
 	private static final float CAMERA_ZOOM = 17;
 	private static final String MARKER_POSITION = "MarkerPosition";
 	private static final String LOCATIONS_FRAGMENT = "locationsFragment";
+	public static final String FACULTY_SOZIALWESEN_KEY="RB131";
 	/**
 	 * key is building shortname and value is LatLng position of the building
 	 */
@@ -54,6 +55,7 @@ public class LocationsActivity extends LocationServiceActivity implements
 		locationsMap.put("J58", new LatLng(48.785111, 9.173414));
 		locationsMap.put("J56", new LatLng(48.784607, 9.174141));
 		locationsMap.put("P50", new LatLng(48.773298, 9.170553));
+		locationsMap.put(FACULTY_SOZIALWESEN_KEY,new LatLng(48.7703652,9.1579517));
 		LOCATIONS = Collections.unmodifiableMap(locationsMap);
 	}
 
@@ -198,7 +200,7 @@ public class LocationsActivity extends LocationServiceActivity implements
 	}
 
 	@Override
-	public void onBuildingClicked(Building building) {
+	public void onBuildingSelected(Building building) {
 
 		CameraUpdate cameraPosition = CameraUpdateFactory.newLatLngZoom(
 				LOCATIONS.get(building.getShortName()), CAMERA_ZOOM);

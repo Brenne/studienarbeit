@@ -37,9 +37,7 @@ public class TourHelper {
 			+ ") ON CONFLICT ROLLBACK "  + ")";
 
 	private final static String[] TOUR_ALL_COLUMNS = { MySQLiteHelper.ID, TOUR_NAME };
-	private final static String[] TOUR_POINT_ALL_COLUMNS = { MySQLiteHelper.ID,
-			TOUR_POINT_COMPANY_ID, TOUR_POINT_POSITION, TOUR_POINT_TOUR_ID };
-
+	
 	public static long insertTour(SQLiteDatabase db, String tourName) {
 		ContentValues values = new ContentValues();
 		values.put(TOUR_NAME, tourName);

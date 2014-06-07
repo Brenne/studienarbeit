@@ -49,8 +49,8 @@ public class BuildingFragment extends ListFragment {
 		SQLiteDatabase db = new MySQLiteHelper(getActivity()).getReadableDatabase();
 		while(iterator.hasNext()){
 			Floor floor =iterator.next();
-			if(!FloorHelper.hasOccupiedRooms(db, floor.getId())){
-				
+			if(!building.getShortName().equals(LocationsActivity.FACULTY_SOZIALWESEN_KEY) &&
+					!FloorHelper.hasOccupiedRooms(db, floor.getId())){
 				iterator.remove();
 			}
 		}
@@ -97,8 +97,12 @@ public class BuildingFragment extends ListFragment {
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		Floor floor = (Floor) getListView()
 				.getItemAtPosition(position);
-	
-		mCallback.onFloorSelected(floor);
+		SQLiteDatabase db = new MySQLiteHelper(getActivity()).getReadableDatabase();
+		if(FloorHelper.hasOccupiedRooms(db, floor.getId())){
+			mCallback.onFloorSelected(floor);
+		}
+		db.close();
+		
 	}
 	
 

@@ -1,4 +1,4 @@
-Studiengang;Fakultät;Farbe;Link zum Studiengang
+Studiengang;Fakult�t;Farbe;Link zum Studiengang
 Angewandte Informatik;Technik;gruen;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-technik/informatik/
 Wirtschaftsinformatik;Wirtschaft;gelb;
 Dienstleistungsmanagement;Wirtschaft;blau;
@@ -6,9 +6,9 @@ International Business;Wirtschaft;rot;
 BWL;Wirtschaft;red;
 Finanzdienstleistungen;Wirtschaft;yellow;
 Maschinenbau;Technik;green;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-technik/maschinenbau/
-Versicherung;Wirtschaft;cyan;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-technik/elektrotechnik
-Elektrotechnik;Technik;kdsjfldsa;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-technik/elektrotechnik/
-Mechatronik;Technik;purpur;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-technik/mechatronik/
+Versicherung;Wirtschaft;cyan;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-wirtschaft/bwl-versicherung/
+Elektrotechnik;Technik;;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-technik/elektrotechnik/
+Mechatronik;Technik;;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-technik/mechatronik/
 Wirtschaftsingenieurwesen;Technik;magenta;http://www.dhbw-stuttgart.de/themen/bachelor/fakultaet-technik/wirtschaftsingenieurwesen/
 Soziale Arbeit im Gesundheitswesen;Sozialwesen;;
 Soziale Arbeit in der Elementarpädagogik;Sozialwesen;;

@@ -18,7 +18,7 @@ public class SoftwareLicenseFragment extends Fragment {
 	private TextView mTextViewGooglePlay;
 	private TextView mTextViewApacheFullLicence;
 	private TextView mTextViewWait;
-
+	
 	public SoftwareLicenseFragment() {
 		// Required empty public constructor
 	}
@@ -32,7 +32,6 @@ public class SoftwareLicenseFragment extends Fragment {
 
 		mTextViewApacheFullLicence = (TextView) view
 				.findViewById(R.id.textView_apache_full_licence);
-
 		mTextViewGooglePlay = (TextView) view
 				.findViewById(R.id.textView_google_play_licence);
 		mTextViewWait = (TextView) view.findViewById(R.id.textView_wait);
@@ -69,7 +68,6 @@ public class SoftwareLicenseFragment extends Fragment {
 					.getOpenSourceSoftwareLicenseInfo(params[0]);
 
 		}
-
 	}
 
 }

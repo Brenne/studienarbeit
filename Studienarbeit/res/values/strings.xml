@@ -16,7 +16,7 @@
     <string name="label_faculty">Fakultät</string>
     <string name="label_companyBuilding">RB41</string>
     <string name="label_companyRoom">1.18</string>
-    <string name="title_activity_locations">Lokationen</string>
+    <string name="title_activity_locations">Lokationen &amp; Gebäude</string>
     <string name="label_companyCityDesc">Sitz des Unternehmens:</string>
     <string name="label_companyProfile">Steckbrief</string>
     <string name="title_activity_comment">Notiz</string>

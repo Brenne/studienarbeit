@@ -31,7 +31,7 @@ Setup Google Maps Android
 Licence
 ------------------------------
 
-The (EnhancedListView Project)[https://github.com/timroes/EnhancedListView/wiki#license] is licensed under the [Apache 2.0 Licence](http://www.apache.org/licenses/LICENSE-2.0.html). Originally copyright by Tim Roes.
+The [EnhancedListView Project](https://github.com/timroes/EnhancedListView/wiki#license) is licensed under the [Apache 2.0 Licence](http://www.apache.org/licenses/LICENSE-2.0.html). Originally copyright by Tim Roes.
 
 The Studienarbeit Project is licensed under the[Apache 2.0 Licence](http://www.apache.org/licenses/LICENSE-2.0.html). 
 

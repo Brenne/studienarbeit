@@ -14,7 +14,7 @@ Dependencies
 Setup dependencies
 ------------------------------
 
-Setup the GooglePlay Services in your IDE. (http://developer.android.com/google/play-services/setup.html)
+[Setup the GooglePlay Services in your IDE](http://developer.android.com/google/play-services/setup.html).
 Include also the EnhancedListView project in your project.properties (if you're using Eclipse).
 
 

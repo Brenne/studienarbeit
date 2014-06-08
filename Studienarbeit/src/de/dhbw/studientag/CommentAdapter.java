@@ -27,7 +27,7 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
 
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
-		ImageButton imageButton;
+		ImageButton binButton;
 		TextView tvCompanyName;
 		TextView tvCommentMessage;
 		if(convertView == null){
@@ -35,20 +35,21 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
 			tvCompanyName = (TextView) convertView.findViewById(R.id.binItemFirstLine);
 			tvCommentMessage = (TextView) convertView
 					.findViewById(R.id.bintemSecondLine);
-			imageButton = (ImageButton) convertView.findViewById(R.id.binItemDelete);
+			binButton = (ImageButton) convertView.findViewById(R.id.binItemDelete);
 			//setTags on the first list item, because findViewById costs much
 			convertView.setTag(R.id.binItemFirstLine, tvCompanyName);
 			convertView.setTag(R.id.bintemSecondLine, tvCommentMessage);
-			convertView.setTag(R.id.binItemDelete, imageButton);
+			convertView.setTag(R.id.binItemDelete, binButton);
 			
 		}else{
+			//convertView is not null up from the second list item
 			tvCompanyName = (TextView) convertView.getTag(R.id.binItemFirstLine);
 			tvCommentMessage = (TextView) convertView.getTag(R.id.bintemSecondLine);
-			imageButton = (ImageButton) convertView.getTag(R.id.binItemDelete);
+			binButton = (ImageButton) convertView.getTag(R.id.binItemDelete);
 		}
 		tvCompanyName.setText(mComments.get(position).getCompany().getName());	
 		tvCommentMessage.setText(mComments.get(position).getShortMessage());
-		imageButton.setOnClickListener(new OnClickListener() {
+		binButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {	
 					mBinClicked.binClicked(position);

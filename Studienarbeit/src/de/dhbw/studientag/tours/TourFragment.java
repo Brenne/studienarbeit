@@ -32,6 +32,14 @@ import de.dhbw.studientag.model.Room;
 import de.dhbw.studientag.model.Tour;
 import de.dhbw.studientag.model.TourPoint;
 
+/**
+ * A fragment representing a {@link Tour} and containing its {@link TourPoint}
+ * objects.
+ * <p>
+ * Activities containing this fragment MUST implement {@link MyDistanceListener}
+ * and {@link OnTourPointAddListener} interfaces.
+ * 
+ */
 public class TourFragment extends ListFragment implements OnBinClicked {
 
 	private ShareActionProvider mShareActionProvider;
@@ -53,30 +61,19 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-	
-
-		if (mCompany != null) {
+		//add company to new tour
+		if (mCompany != null && mNewTour) {
 			MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity().getBaseContext());
-			if (mNewTour) {
-
-				SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-				String tourName = TourHelper.getFreeTourName(db,
-						getString(R.string.label_TourName));
-				TourPoint tourPoint = new TourPoint(mCompany);
-				long tourId = TourHelper.insertTour(db, tourName);
-				mTour = new Tour(tourId, tourName);
-				tourPoint.setId(TourHelper.insertTourPoint(db, tourPoint, tourId));
-				db.close();
-
-				mTour.addTourPoint(tourPoint);
-
-			} else if (mTour != null) {
-				// TODO rework if branch
-
-			}
+			SQLiteDatabase db = dbHelper.getWritableDatabase();
+			String tourName = TourHelper.getFreeTourName(db, getString(R.string.label_TourName));
+			TourPoint tourPoint = new TourPoint(mCompany);
+			long tourId = TourHelper.insertTour(db, tourName);
+			mTour = new Tour(tourId, tourName);
+			tourPoint.setId(TourHelper.insertTourPoint(db, tourPoint, tourId));
+			mTour.addTourPoint(tourPoint);
+			
+			db.close();
 			dbHelper.close();
-		} else if (mTour != null && !mTour.getTourPointList().isEmpty()) {
 
 		}
 		setHasOptionsMenu(true);
@@ -84,8 +81,7 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 		View v = inflater.inflate(R.layout.fragment_tour_point, container, false);
 		mTourName = (EditText) v.findViewById(R.id.editText_TourName);
@@ -111,8 +107,7 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 			@Override
 			public void afterTextChanged(Editable s) {
 				mTourNameChanged = true;
-				if (mTour.getName().equals(s.toString())
-						|| s.toString().equals(originalTourName)) {
+				if (mTour.getName().equals(s.toString()) || s.toString().equals(originalTourName)) {
 					mTourName.setError(null);
 					mTourNameChanged = false;
 				} else if (s.toString().isEmpty()) {
@@ -138,16 +133,14 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 			mCompanyAddListener = (OnTourPointAddListener) activity;
 
 		} catch (ClassCastException castExeption) {
-			Log.e(TAG,
-					"activity did not ipmlement MyDistanceListener or OnTourPointAddListener",
+			Log.e(TAG, "activity did not ipmlement MyDistanceListener or OnTourPointAddListener",
 					castExeption);
 		}
 	}
 
 	private boolean tourNameExists(String tourName) {
 		MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity());
-		boolean returnV = TourHelper.tourNameExists(dbHelper.getReadableDatabase(),
-				tourName);
+		boolean returnV = TourHelper.tourNameExists(dbHelper.getReadableDatabase(), tourName);
 		dbHelper.close();
 		return returnV;
 	}
@@ -208,18 +201,16 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 
 	@Override
 	public void binClicked(int position) {
-
+		//if tour list is already empty return without doing something
 		if (mTour.getTourPointList().isEmpty())
 			return;
 		long tourPointId = mTour.getTourPointList().get(position).getId();
-		// long tourId = tourPoints.get(0).getTourId();
 		mTour.getTourPointList().remove(position);
 
 		Iterator<TourPoint> iterator = mTour.getTourPointList().iterator();
 		while (iterator.hasNext()) {
 			TourPoint tourPoint = iterator.next();
-			long tmpTourPointId = tourPoint.getId();
-			if (tmpTourPointId == tourPointId) {
+			if (tourPoint.getId() == tourPointId) {
 				iterator.remove();
 				break;
 			}
@@ -236,7 +227,7 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 
 	}
 
-	// needed for export companyids
+	// necessary for export of company IDs
 	private String getCompanyIdsOfTour() {
 		StringBuilder companyIdsBuilder = new StringBuilder();
 		if (!mTour.getTourPointList().isEmpty())
@@ -299,8 +290,8 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 			Room room = companyLocation.getRoom();
 			shareMessage.append(company.getName());
 			shareMessage.append(", ");
-			shareMessage.append(building.getFullName() + " " + getString(R.string.room)
-					+ " " + room.getRoomNo() + " \n");
+			shareMessage.append(building.getFullName() + " " + getString(R.string.room) + " "
+					+ room.getRoomNo() + " \n");
 
 		}
 
@@ -324,7 +315,6 @@ public class TourFragment extends ListFragment implements OnBinClicked {
 
 	public interface MyDistanceListener {
 		public List<TourPoint> bestTourPointList(List<TourPoint> tourPoints);
-
 		public void requestUpdates(boolean onOff);
 	}
 

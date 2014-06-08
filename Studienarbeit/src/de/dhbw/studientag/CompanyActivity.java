@@ -20,6 +20,11 @@ import de.dhbw.studientag.model.Company;
 import de.dhbw.studientag.model.Subject;
 import de.dhbw.studientag.tours.SelectTourDialogFragment;
 
+/**
+ * Activity representing a {@link Company} Object. Displays all its attributes.
+ * Provides action bar to add/edit a {@link Comment} or add this company to a {@link Tour}
+ *
+ */
 public class CompanyActivity extends Activity {
 
 	private Company company;

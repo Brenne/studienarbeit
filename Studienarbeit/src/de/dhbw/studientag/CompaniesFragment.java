@@ -20,10 +20,10 @@ import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.model.Company;
 
 /**
- * A fragment representing a list of Items.
+ * A fragment representing a list of {@link Company} Objects
  * <p />
  * <p />
- * Activities containing this fragment MUST implement the {@link Callbacks}
+ * Activities containing this fragment MUST implement the {@link OnCompanySelectedLitener}
  * interface.
  */
 public class CompaniesFragment extends ListFragment {

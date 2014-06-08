@@ -12,6 +12,11 @@ import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.model.Company;
 import de.dhbw.studientag.tours.TourActivity;
 
+/**
+ * MainActivity showed at application start.
+ * Contains the main menu
+ *
+ */
 public class MainActivity extends ListActivity {
 
 	private MySQLiteHelper dbHelper;
@@ -19,6 +24,7 @@ public class MainActivity extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		//remove action bar
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
 

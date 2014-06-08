@@ -85,7 +85,7 @@ public class SubjectAdapter extends BaseAdapter {
 				}
 			});
 		}else{
-			//no info icon if webaddress is empty or null
+			//no info icon if web address (of subject) is empty or null
 			infoButton.setVisibility(View.INVISIBLE);
 		}
 		return convertView;

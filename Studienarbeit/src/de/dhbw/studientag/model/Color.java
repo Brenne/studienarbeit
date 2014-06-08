@@ -6,13 +6,11 @@ import java.util.Locale;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Color extends android.graphics.drawable.ColorDrawable implements
-		Parcelable {
+public class Color extends android.graphics.drawable.ColorDrawable implements Parcelable {
 
 	private enum MyColors {
 
-		GREEN("258039"), RED("b12c37"), YELLOW("f9a10d"), BLUE("548ed2"), PURPLE(
-				"605ab2");
+		GREEN("258039"), RED("b12c37"), YELLOW("f9a10d"), BLUE("548ed2"), PURPLE("605ab2");
 		private String colorString;
 
 		MyColors(String colorString) {
@@ -46,17 +44,17 @@ public class Color extends android.graphics.drawable.ColorDrawable implements
 		}
 		color = android.graphics.Color.parseColor(colorString);
 		setColor(color);
-		
+
 	}
 
 	@Override
 	public int getColor() {
 		return mColor;
 	}
-	
+
 	@Override
-	public void setColor(int color){
-		this.mColor=color;
+	public void setColor(int color) {
+		this.mColor = color;
 	}
 
 	@Override

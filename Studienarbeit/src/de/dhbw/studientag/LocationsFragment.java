@@ -17,12 +17,9 @@ import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.model.Building;
 
 /**
- * A fragment representing a list of Items.
+ * A fragment containing a list of all {@link Building} objects.
  * <p />
- * Large screen devices (such as tablets) are supported by replacing the
- * ListView with a GridView.
- * <p />
- * Activities containing this fragment MUST implement the {@link Callbacks}
+ * Activities containing this fragment MUST implement the {@link OnBuildingSelectedListener}
  * interface.
  */
 public class LocationsFragment extends ListFragment {

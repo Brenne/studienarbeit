@@ -19,6 +19,13 @@ import de.dhbw.studientag.dbHelpers.CommentHelper;
 import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.model.Comment;
 
+/**
+ * A fragment representing  {@link Comment} Object
+ * <p />
+ * <p />
+ * Activities containing this fragment MUST implement the {@link OnRemoveFragmentListener}
+ * interface.
+ */
 public class CommentFragment extends Fragment {
 
 	protected static final String COMMENT = "comment";
@@ -28,7 +35,7 @@ public class CommentFragment extends Fragment {
 	private OnRemoveFragmentListener mRemoveFragmentListener;
 
 	public CommentFragment() {
-
+		//empty constructor is mandatory
 	}
 
 	public static CommentFragment getCommentFragment(Comment comment) {

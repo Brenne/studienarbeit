@@ -24,6 +24,13 @@ import de.dhbw.studientag.model.Comment;
 import de.timroes.android.listview.EnhancedListView;
 import de.timroes.android.listview.EnhancedListView.Undoable;
 
+/**
+ * A fragment representing a list of {@link Comment} Objects.
+ * <p>
+ * Activities containing this fragment MUST implement the
+ * {@link CommentsFragmentListeners} interface
+ * 
+ */
 public class CommentsFragment extends Fragment implements OnBinClicked {
 
 	private final static String TAG = "CommentsFragment";
@@ -36,63 +43,63 @@ public class CommentsFragment extends Fragment implements OnBinClicked {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		setHasOptionsMenu(true);
-		SharedPreferences prefs = getActivity().getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);	
+		SharedPreferences prefs = getActivity().getSharedPreferences("SharedPreferences",
+				Context.MODE_PRIVATE);
 		mShowCommentsInfo = prefs.getBoolean(CommentsActivity.COMMENT_INFO, true);
-		
+
 		super.onCreate(savedInstanceState);
 	}
 
-	private void setListAdapter() {	
-		final CommentAdapter adapter =  new CommentAdapter(getActivity(), getCommentListFromDB());
+	private void setListAdapter() {
+		final CommentAdapter adapter = new CommentAdapter(getActivity(), getCommentListFromDB());
 		mCommentAdapter = adapter;
 		mEnhancedListView.setAdapter(adapter);
 		mEnhancedListView.setDismissCallback(new EnhancedListView.OnDismissCallback() {
-			
+
 			@Override
 			public Undoable onDismiss(EnhancedListView listView, final int position) {
-			     final Comment comment = (Comment) adapter.getItem(position);
-	                adapter.remove(position);
-	                return new EnhancedListView.Undoable() {
-	                    @Override
-	                    public void undo() {
-	                        adapter.insert(position, comment);
-	                    }
-	                    
-	                    @Override
-	                    public void discard() {
-	                		
-	                		if (comment != null) {
-	                			MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity());
-	                			CommentHelper.deleteComment(comment.getCompany().getId(),
-	                					dbHelper.getReadableDatabase());
-	                			dbHelper.close();
-	                				
-	                		}
-	                    }
-	                    
-	                    @Override
-	                    public String getTitle() {	
-	                    	return getString(R.string.label_comment_removed);
-	                    }
-	                } ;   
+				final Comment comment = (Comment) adapter.getItem(position);
+				adapter.remove(position);
+				return new EnhancedListView.Undoable() {
+					@Override
+					public void undo() {
+						adapter.insert(position, comment);
+					}
+
+					@Override
+					public void discard() {
+
+						if (comment != null) {
+							MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity());
+							CommentHelper.deleteComment(comment.getCompany().getId(),
+									dbHelper.getReadableDatabase());
+							dbHelper.close();
+
+						}
+					}
+
+					@Override
+					public String getTitle() {
+						return getString(R.string.label_comment_removed);
+					}
+				};
 			}
 		});
 		mEnhancedListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position,
-					long id) {
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				Comment selectedComment = (Comment) adapter.getItem(position);
 				mCommentsListener.commentSelected(selectedComment);
 
 			}
-	
+
 		});
 		adapter.setOnBinClickListener(this);
-		
+
 	}
-	
-	private List<Comment> getCommentListFromDB(){
+
+	private List<Comment> getCommentListFromDB() {
 		final MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity());
 		List<Comment> comments = CommentHelper.getAllComments(dbHelper.getReadableDatabase());
 		dbHelper.close();
@@ -100,19 +107,18 @@ public class CommentsFragment extends Fragment implements OnBinClicked {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_comments, container, false);
 		mEnhancedListView = (EnhancedListView) view.findViewById(R.id.list);
 		mCommentInfoText = (TextView) view.findViewById(R.id.comments_info);
-		setListAdapter();		
+		setListAdapter();
 		return view;
 	}
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.comments, menu);
-		if(mShowCommentsInfo || mCommentAdapter.isEmpty()){
+		if (mShowCommentsInfo || mCommentAdapter.isEmpty()) {
 			menu.findItem(R.id.menu_item_info_comments).setVisible(false);
 		}
 		super.onCreateOptionsMenu(menu, inflater);
@@ -127,9 +133,9 @@ public class CommentsFragment extends Fragment implements OnBinClicked {
 			return true;
 		case R.id.menu_item_info_comments:
 
-			AlphaAnimation fadeIn = new AlphaAnimation(0.0f , 1.0f ) ; 
+			AlphaAnimation fadeIn = new AlphaAnimation(0.0f, 1.0f);
 			mCommentInfoText.setVisibility(View.VISIBLE);
-			mCommentInfoText.startAnimation(fadeIn);	
+			mCommentInfoText.startAnimation(fadeIn);
 			fadeIn.setDuration(1200);
 			fadeIn.setFillAfter(true);
 			item.setVisible(false);
@@ -140,8 +146,6 @@ public class CommentsFragment extends Fragment implements OnBinClicked {
 
 	}
 
-
-
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -151,19 +155,19 @@ public class CommentsFragment extends Fragment implements OnBinClicked {
 			Log.e(TAG, "activity did not ipmlement OnCommentAddListener", castExeption);
 		}
 	}
-	
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		
+
 		getActivity().setTitle(R.string.title_activity_comments);
-		if(!mShowCommentsInfo && !mCommentAdapter.isEmpty()){
+		if (!mShowCommentsInfo && !mCommentAdapter.isEmpty()) {
 			mCommentInfoText.setVisibility(View.GONE);
-		}else{
+		} else {
 			mCommentInfoText.setVisibility(View.VISIBLE);
 		}
 		super.onActivityCreated(savedInstanceState);
 	}
-	
+
 	@Override
 	public void onStop() {
 		mEnhancedListView.discardUndo();
@@ -177,6 +181,7 @@ public class CommentsFragment extends Fragment implements OnBinClicked {
 
 	public interface CommentsFragmentListeners {
 		public void addComment(List<Comment> existingComments);
+
 		public void commentSelected(Comment comment);
 	}
 

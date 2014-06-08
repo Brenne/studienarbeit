@@ -1,13 +1,12 @@
 package de.dhbw.studientag.model;
 
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * Subject = degree course. Every Subject belongs to a faculty. Companies offer subjects.
+ * Subject = degree course. Every Subject belongs to a faculty. Companies offer
+ * subjects.
  * 
- *
  */
 public class Subject implements Parcelable {
 
@@ -23,8 +22,8 @@ public class Subject implements Parcelable {
 	public Subject(String name, Faculty faculty, String webAddress, Color color) {
 		this.name = name;
 		this.faculty = faculty;
-		this.webAddress=webAddress;
-		this.color=color;
+		this.webAddress = webAddress;
+		this.color = color;
 	}
 
 	public Subject(long id, String name, Faculty faculty, String webAddress, Color color) {
@@ -39,12 +38,12 @@ public class Subject implements Parcelable {
 	public Faculty getFaculty() {
 		return faculty;
 	}
-	
+
 	public String getWebAddress() {
 		return webAddress;
 	}
-	
-	public Color getColor(){
+
+	public Color getColor() {
 		return color;
 	}
 
@@ -77,8 +76,8 @@ public class Subject implements Parcelable {
 	}
 
 	private Subject(Parcel source) {
-		this(source.readLong(), source.readString(), (Faculty) source
-				.readSerializable(), source.readString(), (Color) source.readParcelable(Color.class.getClassLoader()));
+		this(source.readLong(), source.readString(), (Faculty) source.readSerializable(), source
+				.readString(), (Color) source.readParcelable(Color.class.getClassLoader()));
 
 	}
 

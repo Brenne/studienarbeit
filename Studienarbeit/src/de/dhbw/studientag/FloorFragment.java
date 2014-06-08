@@ -17,8 +17,16 @@ import de.dhbw.studientag.model.Company;
 import de.dhbw.studientag.model.Floor;
 import de.dhbw.studientag.model.Room;
 
+
+/**
+ * A fragment representing a list {@link Floor} Objects.
+ * <p>
+ * Activities containing this fragment MUST implement
+ * {@link OnRoomSelectedListener}
+ * 
+ */
 public class FloorFragment extends ListFragment {
-	
+
 	protected static final String FLOOR = "floor";
 	OnRoomSelectedListener mCallback;
 	private Floor floor;
@@ -29,58 +37,56 @@ public class FloorFragment extends ListFragment {
 		super.onCreate(savedInstanceState);
 		floor = getArguments().getParcelable(FLOOR);
 		MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity());
-		building = BuildingHelper.getBuildingByFloorId(dbHelper.getReadableDatabase(), floor.getId());
-		
+		building = BuildingHelper.getBuildingByFloorId(dbHelper.getReadableDatabase(),
+				floor.getId());
+
 		List<Room> rooms = floor.getRoomList();
 		Iterator<Room> iterator = rooms.iterator();
-		while(iterator.hasNext()){
+		while (iterator.hasNext()) {
 			Room room = iterator.next();
 			List<Company> companies = CompanyLocationHelper.getCompaniesByRoomId(
 					dbHelper.getReadableDatabase(), room.getId());
-			if(companies.isEmpty()){
+			if (companies.isEmpty()) {
 				iterator.remove();
 			}
-			
+
 		}
 		dbHelper.close();
-		setListAdapter(new ArrayAdapter<Room>(getActivity(),
-				android.R.layout.simple_list_item_1, rooms));
+		setListAdapter(new ArrayAdapter<Room>(getActivity(), android.R.layout.simple_list_item_1,
+				rooms));
 	}
-	
+
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		Room room = (Room) getListView()
-				.getItemAtPosition(position);
-	
+		Room room = (Room) getListView().getItemAtPosition(position);
 
 		mCallback.onRoomSelected(room, floor);
 	}
-	
+
 	@Override
 	public void onResume() {
-		
-		
-		if(floor != null && building != null){
-			
-			getActivity().setTitle(building.getFullName()+", "+floor.getName());
+
+		if (floor != null && building != null) {
+
+			getActivity().setTitle(building.getFullName() + ", " + floor.getName());
 		}
 		super.onResume();
 	}
-	
+
 	@Override
 	public void onAttach(Activity activity) {
-		
+
 		super.onAttach(activity);
 		// This makes sure that the container activity has implemented
-        // the callback interface. If not, it throws an exception
-        try {
-            mCallback = (OnRoomSelectedListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnRoomSelectedListener");
-        }
+		// the callback interface. If not, it throws an exception
+		try {
+			mCallback = (OnRoomSelectedListener) activity;
+		} catch (ClassCastException e) {
+			throw new ClassCastException(activity.toString()
+					+ " must implement OnRoomSelectedListener");
+		}
 	}
-	
+
 	public static FloorFragment newInstance(Floor floor) {
 		FloorFragment f = new FloorFragment();
 		Bundle args = new Bundle();
@@ -88,10 +94,9 @@ public class FloorFragment extends ListFragment {
 		f.setArguments(args);
 		return f;
 	}
-	
-	
-	public interface OnRoomSelectedListener{
+
+	public interface OnRoomSelectedListener {
 		public void onRoomSelected(Room room, Floor floor);
 	}
-	
+
 }

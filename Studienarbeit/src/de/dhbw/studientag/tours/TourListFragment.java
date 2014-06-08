@@ -29,13 +29,10 @@ import de.timroes.android.listview.EnhancedListView;
 import de.timroes.android.listview.EnhancedListView.Undoable;
 
 /**
- * A fragment representing a list of Items.
+ * A fragment representing a list of {@link Tour} Objects.
  * <p />
- * Large screen devices (such as tablets) are supported by replacing the
- * ListView with a GridView.
- * <p />
- * Activities containing this fragment MUST implement the {@link Callbacks}
- * interface.
+ * Activities containing this fragment MUST implement the
+ * {@link OnTourSelectedListener} and {@link NewTourListener} interfaces.
  */
 public class TourListFragment extends Fragment implements OnBinClicked {
 
@@ -49,10 +46,6 @@ public class TourListFragment extends Fragment implements OnBinClicked {
 	private TextView mTourInfoText;
 	private Menu mMenu;
 
-	/**
-	 * The Adapter which will be used to populate the ListView/GridView with
-	 * Views.
-	 */
 	private TourAdapter mTourAdapter;
 
 	/**
@@ -65,7 +58,8 @@ public class TourListFragment extends Fragment implements OnBinClicked {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		SharedPreferences prefs = getActivity().getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);
+		SharedPreferences prefs = getActivity().getSharedPreferences("SharedPreferences",
+				Context.MODE_PRIVATE);
 		mShowTourInfo = prefs.getBoolean(TourActivity.TOUR_INFO, true);
 		setHasOptionsMenu(true);
 
@@ -76,76 +70,71 @@ public class TourListFragment extends Fragment implements OnBinClicked {
 		mTourAdapter.setOnBinClickListener(this);
 		mListViewTours.setAdapter(mTourAdapter);
 		mListViewTours.setDismissCallback(new EnhancedListView.OnDismissCallback() {
-			
+
 			@Override
 			public Undoable onDismiss(EnhancedListView listView, final int position) {
-			     final Tour tour = (Tour) mTourAdapter.getItem(position);
-	                mTourAdapter.remove(position);
-	        		if(mTourAdapter.isEmpty()){
-	        			fadeInToursInfoText();
-	        		}else{
-	        			Log.i("TourListFragment",Integer.toString(mTourAdapter.getCount()));
-	        		}
-	                return new EnhancedListView.Undoable() {
-	                    @Override
-	                    public void undo() {
-	                        mTourAdapter.insert(position, tour);
-	                    }
-	                    
-	                    @Override
-	                    public void discard() {
-	                		
-	                		if (tour != null) {
-	                			
-	                			MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity());
-	                			TourHelper.deleteTourById(dbHelper.getWritableDatabase(), tour.getId());
-	                			dbHelper.close();
-	                				
-	                		}
-	                    }
-	                    
-	                    @Override
-	                    public String getTitle() {	
-	                    	
-	                    	return tour.getName()+" entfernt";
-	                    }
-	                } ;   
+				final Tour tour = (Tour) mTourAdapter.getItem(position);
+				mTourAdapter.remove(position);
+				if (mTourAdapter.isEmpty()) {
+					fadeInToursInfoText();
+				} else {
+					Log.i("TourListFragment", Integer.toString(mTourAdapter.getCount()));
+				}
+				return new EnhancedListView.Undoable() {
+					@Override
+					public void undo() {
+						mTourAdapter.insert(position, tour);
+					}
+
+					@Override
+					public void discard() {
+
+						if (tour != null) {
+
+							MySQLiteHelper dbHelper = new MySQLiteHelper(getActivity());
+							TourHelper.deleteTourById(dbHelper.getWritableDatabase(), tour.getId());
+							dbHelper.close();
+
+						}
+					}
+
+					@Override
+					public String getTitle() {
+
+						return tour.getName() + " entfernt";
+					}
+				};
 			}
 		});
 		mListViewTours.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position,
-					long id) {
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				if (mTourListener != null) {
 					Tour tour = (Tour) mTourAdapter.getItem(position);
 					mTourListener.onTourSelected(tour);
 				}
 
 			}
-	
+
 		});
 		mListViewTours.setUndoStyle(EnhancedListView.UndoStyle.MULTILEVEL_POPUP);
 	}
-	
+
 	@Override
 	public void onStop() {
 		mListViewTours.discardUndo();
 		super.onStop();
 	}
 
-
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		View view = inflater
-				.inflate(R.layout.fragment_tourfragmentlist, container, false);
-		
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.fragment_tourfragmentlist, container, false);
+
 		mTourInfoText = (TextView) view.findViewById(R.id.tours_info);
 		mListViewTours = (EnhancedListView) view.findViewById(R.id.tour_list);
 		// Set the adapter
 		initAdapter(getTourList());
-		
 
 		return view;
 	}
@@ -155,7 +144,7 @@ public class TourListFragment extends Fragment implements OnBinClicked {
 		super.onAttach(activity);
 		try {
 			mTourListener = (OnTourSelectedListener) activity;
-			mCreateNewTourListener= (NewTourListener) activity;
+			mCreateNewTourListener = (NewTourListener) activity;
 		} catch (ClassCastException e) {
 			throw new ClassCastException(activity.toString()
 					+ " must implement OnTourSelectedListener and NewTourListener");
@@ -168,21 +157,18 @@ public class TourListFragment extends Fragment implements OnBinClicked {
 		mTourListener = null;
 	}
 
-
-	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		
-		if(mTourAdapter.isEmpty()){
+
+		if (mTourAdapter.isEmpty()) {
 			mTourInfoText.setVisibility(View.VISIBLE);
-			mShowTourInfo=true;
-		}else{
+			mShowTourInfo = true;
+		} else {
 			mTourInfoText.setVisibility(View.GONE);
 		}
 		getActivity().setTitle(R.string.title_activity_tours);
 		super.onActivityCreated(savedInstanceState);
 	}
-
 
 	/**
 	 * This interface must be implemented by activities that contain this
@@ -196,8 +182,10 @@ public class TourListFragment extends Fragment implements OnBinClicked {
 	public interface OnTourSelectedListener {
 		public void onTourSelected(Tour tour);
 	}
+
 	/**
 	 * Get a list of {@link Tour} Objects from DB
+	 * 
 	 * @return tourList from DB
 	 */
 	private List<Tour> getTourList() {
@@ -211,21 +199,21 @@ public class TourListFragment extends Fragment implements OnBinClicked {
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.tour_list, menu);
-		mMenu=menu;
-		//hide import if device has no NFC
-		if (NfcAdapter.getDefaultAdapter(getActivity()) == null){
+		mMenu = menu;
+		// hide import if device has no NFC
+		if (NfcAdapter.getDefaultAdapter(getActivity()) == null) {
 			menu.findItem(R.id.menu_item_import).setVisible(false);
 		}
-		if(mShowTourInfo){
+		if (mShowTourInfo) {
 			menu.findItem(R.id.menu_item_info_tours).setVisible(false);
 		}
-		
+
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int itemId = item.getItemId();
-		switch(itemId){
+		switch (itemId) {
 		case R.id.menu_item_import:
 			Intent intent = new Intent(getActivity(), NfcActivity.class);
 			startActivity(intent);
@@ -235,7 +223,7 @@ public class TourListFragment extends Fragment implements OnBinClicked {
 			return true;
 		case R.id.menu_item_info_tours:
 			fadeInToursInfoText();
-//			item.setVisible(false);
+			// item.setVisible(false);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -245,20 +233,19 @@ public class TourListFragment extends Fragment implements OnBinClicked {
 	@Override
 	public void binClicked(int position) {
 		mListViewTours.delete(position);
-		
 
 	}
-	
-	private void fadeInToursInfoText(){
-		AlphaAnimation fadeIn = new AlphaAnimation(0.0f , 1.0f ) ; 
+
+	private void fadeInToursInfoText() {
+		AlphaAnimation fadeIn = new AlphaAnimation(0.0f, 1.0f);
 		mTourInfoText.setVisibility(View.VISIBLE);
-		mTourInfoText.startAnimation(fadeIn);	
+		mTourInfoText.startAnimation(fadeIn);
 		fadeIn.setDuration(1200);
 		fadeIn.setFillAfter(true);
 		mMenu.findItem(R.id.menu_item_info_tours).setVisible(false);
 	}
-	
-	public interface NewTourListener{
+
+	public interface NewTourListener {
 		public void createNewTour();
 	}
 

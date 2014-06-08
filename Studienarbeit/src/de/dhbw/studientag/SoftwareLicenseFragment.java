@@ -18,27 +18,24 @@ public class SoftwareLicenseFragment extends Fragment {
 	private TextView mTextViewGooglePlay;
 	private TextView mTextViewApacheFullLicence;
 	private TextView mTextViewWait;
-	
+
 	public SoftwareLicenseFragment() {
 		// Required empty public constructor
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
-		View view = inflater.inflate(R.layout.fragment_software_licenses,
-				container, false);
+		View view = inflater.inflate(R.layout.fragment_software_licenses, container, false);
 
 		mTextViewApacheFullLicence = (TextView) view
 				.findViewById(R.id.textView_apache_full_licence);
-		mTextViewGooglePlay = (TextView) view
-				.findViewById(R.id.textView_google_play_licence);
+		mTextViewGooglePlay = (TextView) view.findViewById(R.id.textView_google_play_licence);
 		mTextViewWait = (TextView) view.findViewById(R.id.textView_wait);
 		mTextViewWait.setVisibility(View.VISIBLE);
 		return view;
 	}
-	
+
 	public void printLicenses(Context context) {
 		new ShowPlayLicence().execute(getActivity());
 		new ShowApacheLicence().execute();
@@ -64,8 +61,7 @@ public class SoftwareLicenseFragment extends Fragment {
 		}
 
 		protected String doInBackground(Context... params) {
-			return GooglePlayServicesUtil
-					.getOpenSourceSoftwareLicenseInfo(params[0]);
+			return GooglePlayServicesUtil.getOpenSourceSoftwareLicenseInfo(params[0]);
 
 		}
 	}

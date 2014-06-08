@@ -35,7 +35,6 @@ public class CompaniesActivity extends Activity implements CompaniesFragment.OnC
 		transaction.add(R.id.companies_fragment, companiesFragment); 
 		transaction.commit();
 		
-		
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
 	}

@@ -29,17 +29,16 @@ public class FacultyAdapter extends ArrayAdapter<Faculty> {
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View row = inflater.inflate(R.layout.image_list_item, parent, false);
 		TextView facultyName = (TextView) row.findViewById(R.id.faculty_name);
+		// faculty icons have the same file name like the faculty itself with
+		// the prefix "ic_dialog_"
 		int drawable = context.getResources().getIdentifier(
-				"ic_dialog_"
-						+ facultyList.get(position).name()
-								.toLowerCase(Locale.getDefault()), "drawable",
-				context.getPackageName());
+				"ic_dialog_" + facultyList.get(position).name().toLowerCase(Locale.getDefault()),
+				"drawable", context.getPackageName());
 		ImageView facultyIcon = (ImageView) row.findViewById(R.id.faculty_icon);
 		facultyIcon.setImageResource(drawable);
-		
-		facultyName.setText(FacultyActivity.getFirstLetterCapital(facultyList.get(
-				position).name()));
-		
+
+		facultyName
+				.setText(FacultyActivity.getFirstLetterCapital(facultyList.get(position).name()));
 
 		return row;
 	}

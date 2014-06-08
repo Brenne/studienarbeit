@@ -1,6 +1,7 @@
 package de.dhbw.studientag;
 
 import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Locale;
 
@@ -15,10 +16,15 @@ import de.dhbw.studientag.dbHelpers.MySQLiteHelper;
 import de.dhbw.studientag.model.Company;
 import de.dhbw.studientag.model.Subject;
 
+/**
+ * An Activity representing a Faculty containing a list of
+ * {@link Subject} Objects.
+ * 
+ */
 public class FacultyActivity extends ListActivity {
-	
+
 	protected static final String SUBJECTS = "subjects";
-	protected static final String FACULTY  = "facluty";
+	protected static final String FACULTY = "facluty";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,33 +34,28 @@ public class FacultyActivity extends ListActivity {
 		String title = (String) getIntent().getCharSequenceExtra(FACULTY);
 		title = getString(R.string.label_faculty) + " " + getFirstLetterCapital(title);
 		setTitle(title);
-//		final ArrayAdapter<Subject> adapter = new ArrayAdapter<Subject>(this,
-//				R.layout.subject_list_item, R.id.subjectName,subjects);
 		final SubjectAdapter adapter = new SubjectAdapter(this, subjects);
 		setListAdapter(adapter);
 
 	}
-
+	//list item is a subject
 	@Override
-	protected void onListItemClick(ListView l, View v,
-			int position, long id) {
+	protected void onListItemClick(ListView l, View v, int position, long id) {
 		Subject selectedSubject = (Subject) getListAdapter().getItem(position);
 		startActivity(getCompanyiesActivityIntentBySubject(selectedSubject, this));
 
 	}
-	
-	public static String getFirstLetterCapital(String string){
-		return string.charAt(0)
-		+ string.substring(1).toLowerCase(Locale.getDefault());
+
+	public static String getFirstLetterCapital(String string) {
+		return string.charAt(0) + string.substring(1).toLowerCase(Locale.getDefault());
 	}
 
-	public static Intent getCompanyiesActivityIntentBySubject(Subject subject,
-			Context context) {
+	public static Intent getCompanyiesActivityIntentBySubject(Subject subject, Context context) {
 		Intent intent = new Intent(context, CompaniesActivity.class);
 
 		MySQLiteHelper mysqlHelper = new MySQLiteHelper(context);
-		ArrayList<Company> companies = (ArrayList<Company>) CompanyHelper
-				.getAllCompaniesBySubject(mysqlHelper.getReadableDatabase(), subject);
+		ArrayList<Company> companies = (ArrayList<Company>) CompanyHelper.getAllCompaniesBySubject(
+				mysqlHelper.getReadableDatabase(), subject);
 		intent.putParcelableArrayListExtra(CompaniesActivity.COMPANIES, companies);
 
 		intent.putExtra(CompaniesActivity.TITLE, subject.getName());

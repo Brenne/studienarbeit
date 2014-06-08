@@ -190,7 +190,7 @@ public class LocationsActivity extends LocationServiceActivity implements
 						"com.google.android.maps.MapsActivity");
 				startActivity(intent);
 			}else{
-				Toast.makeText(this, "Route nicht verfügbar", Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, "Route nicht verfï¿½gbar", Toast.LENGTH_SHORT).show();
 			}
 			return true;
 		default:

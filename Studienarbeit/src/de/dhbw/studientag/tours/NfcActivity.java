@@ -359,4 +359,10 @@ public class NfcActivity extends LocationServiceActivity {
 
 	}
 
+	@Override
+	public void onConnectionSuspended(int cause) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

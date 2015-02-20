@@ -15,11 +15,11 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 
 import de.dhbw.studientag.model.TourPoint;
 import de.dhbw.studientag.tours.BestTourController;
@@ -31,8 +31,8 @@ import de.dhbw.studientag.tours.BestTourController;
  */
 public abstract class LocationServiceActivity extends Activity implements
 
-GooglePlayServicesClient.ConnectionCallbacks,
-		GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
+GoogleApiClient.ConnectionCallbacks,
+		GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
 	// Milliseconds per second
 	private static final int MILLISECONDS_PER_SECOND = 1000;
@@ -50,7 +50,7 @@ GooglePlayServicesClient.ConnectionCallbacks,
 	private static final String TAG = "LocationServiceActivity";
 	private static final int NUM_UPDATES = 5;
 
-	protected LocationClient mLocationClient;
+	protected GoogleApiClient mGoogleApiClient;
 	protected Location mCurrentLocation;
 	boolean mUpdatesRequested;
 	// Define an object that holds accuracy and frequency parameters
@@ -78,7 +78,11 @@ GooglePlayServicesClient.ConnectionCallbacks,
 		 * callbacks.
 		 */
 
-		mLocationClient = new LocationClient(this, this, this);
+		mGoogleApiClient = new GoogleApiClient.Builder(this)
+        .addApi(LocationServices.API)
+        .addConnectionCallbacks(this)
+        .addOnConnectionFailedListener(this)
+        .build();
 		mUpdatesRequested = true;
 	}
 
@@ -88,12 +92,15 @@ GooglePlayServicesClient.ConnectionCallbacks,
 		
 		if(on_off){
 			mEditor.putBoolean(KEY_UPDATES_ON, true).apply();
-			if(mLocationClient.isConnected()){
-				mLocationClient.requestLocationUpdates(mLocationRequest, this);
+			if(mGoogleApiClient.isConnected()){
+				 LocationServices.FusedLocationApi.requestLocationUpdates(
+			                mGoogleApiClient, mLocationRequest, this);
+				
 			}
 		}else{
 			mEditor.putBoolean(KEY_UPDATES_ON, false).apply();
-			mLocationClient.removeLocationUpdates(this);
+			LocationServices.FusedLocationApi.removeLocationUpdates(
+							mGoogleApiClient, this);
 		}
 	}
 
@@ -118,7 +125,7 @@ GooglePlayServicesClient.ConnectionCallbacks,
 	@Override
 	protected void onStart() {
 		super.onStart();
-		mLocationClient.connect();
+		mGoogleApiClient.connect();
 
 	}
 
@@ -127,17 +134,18 @@ GooglePlayServicesClient.ConnectionCallbacks,
 	@Override
 	protected void onStop() {
 		// If the client is connected
-		if (mLocationClient.isConnected()) {
+		if (mGoogleApiClient.isConnected()) {
 			/*
 			 * Remove location updates for a listener. The current Activity is
 			 * the listener, so the argument is "this".
 			 */
-			mLocationClient.removeLocationUpdates(this);
+			LocationServices.FusedLocationApi.removeLocationUpdates(
+					mGoogleApiClient, this);
 		}
 		/*
 		 * After disconnect() is called, the client is considered "dead".
 		 */
-		mLocationClient.disconnect();
+		mGoogleApiClient.disconnect();
 		super.onStop();
 	}
 
@@ -283,10 +291,11 @@ GooglePlayServicesClient.ConnectionCallbacks,
 
 	@Override
 	public void onConnected(Bundle connectionHint) {
-		mCurrentLocation = mLocationClient.getLastLocation();
+		mCurrentLocation =LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 		if (mUpdatesRequested || mCurrentLocation == null) {
 			Log.v(TAG, "updatesRequestet mLocationClient requestLocationUpdates");
-			mLocationClient.requestLocationUpdates(mLocationRequest, this);
+			LocationServices.FusedLocationApi.requestLocationUpdates(
+	                mGoogleApiClient, mLocationRequest, this);
 			
 		}
 
@@ -294,11 +303,6 @@ GooglePlayServicesClient.ConnectionCallbacks,
 
 	}
 
-	@Override
-	public void onDisconnected() {
-		// Display the connection status
-		// TODO color menu icon red
-
-	}
+	
 
 }

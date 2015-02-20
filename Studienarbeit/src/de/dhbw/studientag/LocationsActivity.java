@@ -239,4 +239,10 @@ public class LocationsActivity extends LocationServiceActivity implements
 		return false;
 	}
 
+	@Override
+	public void onConnectionSuspended(int cause) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

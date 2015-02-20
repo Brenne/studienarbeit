@@ -155,4 +155,10 @@ public class TourActivity extends LocationServiceActivity implements
 		
 	}
 
+	@Override
+	public void onConnectionSuspended(int cause) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
